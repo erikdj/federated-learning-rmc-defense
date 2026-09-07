@@ -2127,6 +2127,8 @@ def _fixture_report(tmp_path):
                     for t in A.BRACKET_TARGETS}},
             "strict_identity_loao_sensitivity": keys(
                 "_note", "identity_key", "exclusion_census", "status"),
+            "window_aware_loao_sensitivity": keys(
+                "_note", "window_rule", "corpus_census", "status"),
             "g2_scored_rows_contrast": A.SEC.g2_scored_rows_contrast(
                 scored, A.SCENARIOS, seeds, A.ATTACKS, A.exact_sign_p,
                 A.student_t_ci, A.ci_on_retained),

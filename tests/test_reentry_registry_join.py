@@ -158,7 +158,7 @@ def test_the_registry_half_lands_on_the_joined_event_row():
 def test_the_row_carries_exactly_the_declared_field_set():
     """Schema stays v5 — the join adds no field the logger does not declare.
     The declared set is the frozen v1.10 table PLUS the additive nearest pair
-    (signal_logger.REENTRY_NEAREST_FIELDS, PR #57)."""
+    (signal_logger.REENTRY_NEAREST_FIELDS, )."""
     strategy = _strategy([_fake_plugin([_row(f"{RUN_UID}:5:raw1")])])
     assert set(_fields(strategy)) == set(REENTRY_EVENT_FIELDS) | set(REENTRY_NEAREST_FIELDS)
 

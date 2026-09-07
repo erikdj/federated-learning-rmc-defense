@@ -25,7 +25,7 @@ def test_s3_console_url_custom_region():
 
 
 def test_s3_console_url_exact_prefix_keeps_no_trailing_slash():
-    """PR #13 P2 (comment 3566953651): a unit's console link must filter on
+    """ : a unit's console link must filter on
     a prefix that string-matches the OBJECT key `.../results/{unit_id}.json`.
     With exact=True the given prefix is used verbatim — no appended `/`
     (which would make the filter `.../{unit_id}/`, matching nothing)."""

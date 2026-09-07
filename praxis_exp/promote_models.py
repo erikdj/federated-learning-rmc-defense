@@ -1,4 +1,4 @@
-"""GWU-47 Lane D — sweep-level model promotion: champion/challenger aliases.
+"""Sweep-level model promotion through champion/challenger aliases.
 
 ``log_native_model`` runs per-unit in the container with no cross-unit view, so it
 cannot pick the best model for a defense — an in-container alias set would be a

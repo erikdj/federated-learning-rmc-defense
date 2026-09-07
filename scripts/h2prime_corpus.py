@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -279,6 +280,67 @@ def rotation_plan(seeds_ascending: list[int]) -> list[Rotation]:
 # --------------------------------------------------------------------------
 # loading — assembly map in, rows out (mirrors revalidate_v115.load())
 # --------------------------------------------------------------------------
+def annotate_window_families(rows: list[dict]) -> None:
+    """Record, per row, which attack families its DERIVED window drew on.
+
+    `R.derive_window_feats` computes norm_variance / loss_slope / cos_drift /
+    cos_variance over a trailing window of up to `R.WINDOW` rows per
+    (logical_cid, tenure-episode). In S2 the same identity switches attack
+    family WITHOUT a tenure reset, so the first rows of a retained family carry
+    feature values computed partly from rows of the family being held out. In
+    S3/S4 a family switch coincides with a reconnect under a new logical_cid,
+    so no window there spans two families.
+
+    This writes `_window_families` on EVERY row: the sorted set of attack
+    families of the malicious rows inside that row's window (past + current).
+    It is the input to the reported-only window-aware LOAO arm
+    (`score_corpus(..., window_aware=True)`); nothing here touches a feature
+    value, and the primary arm never reads it.
+
+    The episode logic is transcribed from the frozen builder statement for
+    statement — same grouping key, same sort key, same `tenure <= prev_tenure`
+    reset, same trailing `[-WINDOW:]` slice, and `R.WINDOW` is READ from the
+    builder rather than retyped — so the annotation describes the window the
+    features were actually computed on rather than a parallel reconstruction of
+    it. The builder itself is under the § 2.2b golden gate and is not edited.
+    """
+    by_cid: dict[str, list[dict]] = defaultdict(list)
+    for r in rows:
+        by_cid[r["logical_cid"]].append(r)
+    for _cid, rs in by_cid.items():
+        rs.sort(key=lambda r: r["scenario_round"])
+        episode: list[dict] = []
+        prev_tenure = None
+        for r in rs:
+            t = r.get("tenure")
+            if prev_tenure is not None and t is not None and t <= prev_tenure:
+                episode = []            # rejoin -> new episode
+            prev_tenure = t
+            episode.append(r)
+            w = episode[-R.WINDOW:]
+            r["_window_families"] = sorted(
+                {x["attack_type"] for x in w
+                 if x["malicious_gt"] and x.get("attack_type")})
+
+
+def require_window_annotation(rows: list[dict]) -> None:
+    """The window-aware arm's precondition: every row carries its families.
+
+    An unannotated corpus leaves the window exclusion nothing to match on, so
+    the arm would silently reproduce the PRIMARY fit and publish it under the
+    window-aware name. A missing annotation is a staging defect, so it stops
+    loudly here rather than being defaulted away.
+    """
+    unannotated = sum(1 for r in rows if "_window_families" not in r)
+    if unannotated:
+        raise HardStop(
+            f"WINDOW-AWARE ARM: {unannotated} of {len(rows)} rows carry no "
+            "`_window_families` annotation, so the window exclusion cannot be "
+            "applied. Rows must be loaded through `load_cells` (or annotated "
+            "with `annotate_window_families`) before this arm scores them."
+        )
+
+
 def load_cells(cells: list[Cell]) -> list[dict]:
     """One `derive_window_feats()` invocation per (scenario, seed, defense) file.
 
@@ -305,6 +367,10 @@ def load_cells(cells: list[Cell]) -> list[dict]:
             r["_defense"] = cell.defense
             r["_source"] = cell.source
         R.derive_window_feats(frows)
+        # Annotation only — the feature values above are already final. Written
+        # here, per file, so every loaded row carries it and the reported-only
+        # window-aware arm can never be handed a partially-annotated corpus.
+        annotate_window_families(frows)
         rows.extend(frows)
     return rows
 

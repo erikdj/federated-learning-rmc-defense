@@ -205,7 +205,7 @@ class SignalLogger:
             **run_metadata,
             # v3 (2026-06-06): adds defense-agnostic `tenure`; `malicious_gt` is now per-identity (F6/F7).
             # v4 (2026-07-25): adds `tge_ema_score` — the TGE′ bank's EMA-reputation
-            #   leg (null when the row's client was unscored; GWU-53). Bumping the
+            # leg (null when the row's client was unscored; ). Bumping the
             #   version keeps pre-TGE′ v3 logs (which cannot carry the field)
             #   distinguishable from TGE′ logs, so a bank log missing its EMA leg
             #   can't be mistaken for legitimately null.

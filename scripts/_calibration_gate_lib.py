@@ -7,19 +7,19 @@ in scripts/_calibration_gate_store.py.
 
 Ground truth citations (read directly from source, not assumed -- see
 scripts/audit_calibration_gate.py module docstring for the full surprise list):
-  - result JSON schema: scripts/run_phase4_flower.py run_one() ~L1028-1082.
+  - result JSON schema: scripts/run_phase4_flower.py run_one ~L1028-1082.
     There is NO top-level "mode" field and NO persisted lr/local-epochs
     field anywhere in the result JSON -- only result["provenance"]["optimizer_state"]
     (short form "persistent"/"reset", NOT "persistent_optimizer") and
     result["seed"]/["final_accuracy"]/["elapsed_seconds"].
-  - TGE provenance fields: scripts/run_phase4_flower.py tge_provenance_fields()
+  - TGE provenance fields: scripts/run_phase4_flower.py tge_provenance_fields
     ~L303-353.
   - signal-log row schema (v5, adds aggregation_coefficient + the H3 re-entry
     event contract; v4 adds tge_ema_score; v3 still accepted -- readers are
     version-GATED, never migrated, so historical v4/v3 logs keep parsing
     byte-identically and no v4 row is reinterpreted):
     flowerfl/signal_logger.py SignalLogger + the per-row tge_* fields built in
-    flowerfl/scenario_strategy.py ScenarioStrategy._maybe_log_signals() ~L612-645.
+    flowerfl/scenario_strategy.py ScenarioStrategy._maybe_log_signals ~L612-645.
   - participation floor: scripts/run_phase4_flower.py A3_PARTICIPATION_FLOOR_FRAC
     = 0.95, NUM_SUPERNODES = 21 (20 client supernodes + 1 server slot).
 """
@@ -50,8 +50,8 @@ OPTIMIZER_STATE_TO_HPARAMS_SECTION = {"reset": "flower_reset", "persistent": "pe
 
 # Candidate (result-level, alias) hparam key names this audit will look for.
 # GROUND-TRUTH SURPRISE: as of this writing, run_phase4_flower.py's result
-# JSON persists NEITHER of these anywhere (checked run_one() end to end) --
-# lr/epochs are only enforced pre-hoc by _assert_lr_matches_locked() at
+# JSON persists NEITHER of these anywhere (checked run_one end to end) --
+# lr/epochs are only enforced pre-hoc by _assert_lr_matches_locked at
 # generation time and never written to the artifact. This check is written
 # to work correctly IF a future runner change starts persisting hparams
 # (e.g. under a "hparams" or "run_config" block), and reports a loud SKIP
@@ -74,7 +74,7 @@ NUM_CLIENT_SUPERNODES = 20  # NUM_SUPERNODES=21 minus 1 server slot (spec sec 4.
 # Krum+TGE signal log.
 TGE_FIELDS_NULL_WHEN_UNSCORED = (
     "tge_score", "tge_gbdt_score", "tge_lstm_score",
-    # tge_ema_score — the TGE′ bank's EMA-reputation leg (schema v4, GWU-53).
+    # tge_ema_score — the TGE′ bank's EMA-reputation leg (schema v4, ).
     # Null when the row's client was unscored, exactly like the other TGE
     # fields: the cohort-observation hook updates a filtered client's EMA
     # internally but never emits it as a scored row, so an unscored row
@@ -91,7 +91,7 @@ _ENTRYPOINT_MOD = None
 def _load_container_entrypoint():
     """Load docker/entrypoint.py by FILE PATH (cached). The local package is
     named 'docker', which collides with the PyPI docker SDK (an mlflow dependency
-    mlflow imports and caches first), so `from docker.entrypoint import ...`
+    mlflow imports and caches first), so `from docker.entrypoint import...`
     resolves to the SDK in the installed CLI and raises ModuleNotFoundError
     (pytest masks it because the repo root is on sys.path). Loading by path
     bypasses the name."""
@@ -119,7 +119,7 @@ def defense_token_for(config: str) -> str:
 
 def tge_runtime_defaults() -> dict[str, Any]:
     """Live defaults for the TGE plugin/rule, mirroring
-    scripts/run_phase4_flower.py::tge_provenance_fields()'s own approach of
+    scripts/run_phase4_flower.py::tge_provenance_fields's own approach of
     reading them via inspect.signature so this can never drift from the
     deployed code."""
     from flowerfl.byzantine_defense import TGEnsemblePlugin
@@ -284,8 +284,8 @@ def check_provenance_hparams(unit: UnitRef, result: dict, locked_hparams: dict) 
             continue
         found[canonical] = observed
         expected = locked_section[canonical]
-        # Tolerant conversion (round-7 sweep, 3567232374 family): a
-        # non-numeric recorded value must be a loud mismatch, not a float()
+        # Tolerant conversion (round-7 sweep,  family): a
+        # non-numeric recorded value must be a loud mismatch, not a float
         # ValueError/TypeError that aborts the gate.
         try:
             matches = float(observed) == float(expected)
@@ -340,8 +340,8 @@ def check_provenance_tge_fields(unit: UnitRef, result: dict) -> CheckResult:
         if got != want:
             problems.append(f"{key} expected {want!r}, got {got!r}")
     threshold = prov.get("tge_operational_threshold")
-    # Tolerant conversion (round-7 sweep, 3567232374 family): non-numeric
-    # threshold values must fail loudly, not crash float().
+    # Tolerant conversion (round-7 sweep,  family): non-numeric
+    # threshold values must fail loudly, not crash float.
     try:
         threshold_ok = threshold is not None and abs(
             float(threshold) - float(defaults["threshold"])
@@ -361,7 +361,7 @@ def check_provenance_tge_fields(unit: UnitRef, result: dict) -> CheckResult:
 def check_provenance_defense_sizing(
     unit: UnitRef, result: dict, sizing: tuple[int, int] | None
 ) -> CheckResult:
-    """Defense-sizing provenance (methodology v1.19 / PR #12 round-2 P2):
+    """Defense-sizing provenance (methodology v1.19 / round-2 P2):
     run_phase4_flower.py::_defense_provenance_fields writes, for EVERY
     scenario-mode unit,
       - scenario_declared_adversaries / defense_cohort_size: scenario-derived
@@ -412,9 +412,9 @@ def check_rounds_consistency(unit: UnitRef, result: dict) -> CheckResult:
     round 1..num_rounds -- ScenarioStrategy.evaluate prints the parsed
     "[ScenarioStrategy] Round N eval" line unconditionally per call
     (flowerfl/scenario_strategy.py:669-681). So a healthy run yields
-    rounds + 2 trajectory rows covering exactly {0, ..., rounds+1}.
+    rounds + 2 trajectory rows covering exactly {0,..., rounds+1}.
 
-    Recurrence guard for the --rounds passthrough bug (PR #13): the manifest's
+    Recurrence guard for the --rounds passthrough bug : the manifest's
     declared rounds is the expectation, so a container that silently ran the
     runner's default round count instead of the manifest's shows up here.
     """
@@ -423,7 +423,7 @@ def check_rounds_consistency(unit: UnitRef, result: dict) -> CheckResult:
     observed = {t.get("round") for t in (result.get("trajectory") or [])}
     missing = sorted(expected - observed)  # int-only (expected is ints)
     # key=repr: trajectory-derived rounds can mix int/str/None -- a raw sort
-    # crashed before the failure was emitted (round-6 P2, 3567214958 sibling
+    # crashed before the failure was emitted (round-6 P2,  sibling
     # site; also subsumes the earlier None special-case).
     extra = sorted(observed - expected, key=repr)
     passed = not missing and not extra
@@ -482,7 +482,7 @@ def check_methodology_version(
     manifest's meta block (praxis_exp/manifest.py write_manifest / matrix_launch.py
     L84), NEVER inside a per-unit result JSON or per-unit MLflow run tag (see
     docker/entrypoint.py's per-unit tag set: unit_id/config/scenario/seed/
-    image_digest only -- confirmed by reading main() directly).
+    image_digest only -- confirmed by reading main directly).
 
     The value must EQUAL the expected version (audit-time active version from
     docs/METHODOLOGY_LOG.md, or the --expect-methodology-version override for
@@ -508,7 +508,7 @@ def check_unit_methodology_version(
     unit: UnitRef, result: dict, expected_version: str
 ) -> CheckResult | None:
     """Per-unit methodology field, IF one is present: the runner's result JSON
-    carries none today (verified: run_one()'s provenance block has no
+    carries none today (verified: run_one's provenance block has no
     methodology field), so this returns None (no check emitted) when absent --
     but if a future runner starts stamping one, a stale value must fail
     rather than ride along unexamined."""
@@ -550,13 +550,13 @@ def check_signal_hygiene(
 
     # the observed values are
     # row-derived and can mix incomparable types (missing field -> None,
-    # string "2", int 3) -- a raw sorted() raised TypeError BEFORE the
+    # string "2", int 3) -- a raw sorted raised TypeError BEFORE the
     # intended required failure was emitted, aborting the whole report.
     # key=repr gives a deterministic display order over any value mix.
     observed_schema = sorted({r.get("signal_log_schema_version") for r in rows}, key=repr)
-    # Accept v3 (pre-TGE′), v4 (adds tge_ema_score, GWU-53) and v5 (adds the
+    # Accept v3 (pre-TGE′), v4 (adds tge_ema_score, ) and v5 (adds the
     # post-filter aggregation_coefficient + the H3 re-entry event contract,
-    # GWU-9) so historical experiments (e.g. EXP-011) still audit while TGE′
+    # ) so historical experiments (e.g. EXP-011) still audit while TGE′
     # logs are v4 and H3-era logs are v5. This is a version GATE, not a
     # migration: v4 rows keep their exact v4 meaning (notably `effective_weight`
     # = raw pre-filter num_examples) and are never reinterpreted as v5. Anything
@@ -572,7 +572,7 @@ def check_signal_hygiene(
 
     # the sole value must be PRESENT and
     # non-empty. A bare set-based len==1 test passed an all-None log as
-    # "single run_started_at=None", and mixed None/str crashed sorted()
+    # "single run_started_at=None", and mixed None/str crashed sorted
     # with a TypeError before the check could even fail.
     def _has_started_at(r: dict) -> bool:
         v = r.get("run_started_at")
@@ -599,7 +599,7 @@ def check_signal_hygiene(
         pair_counts[(r.get("server_round"), r.get("logical_cid"))] += 1
     # key=repr: pair tuples are row-derived; a duplicated pair with
     # server_round=None next to an int pair crashes a raw tuple sort
-    # (round-6 P2, 3567214958 sibling site).
+    # (round-6 P2,  sibling site).
     dupes = sorted((k for k, c in pair_counts.items() if c > 1), key=repr)
     results.append(CheckResult(
         "signal_hygiene.duplicate_rows", uid, not dupes, True,
@@ -658,7 +658,7 @@ def check_signal_hygiene(
     observed_rounds = set(by_round)
     missing_rounds = sorted(expected_rounds - observed_rounds)
     # key=repr: observed rounds are row-derived (None/str possible)
-    # while expected are ints (round-6 P2, 3567214958 sibling site).
+    # while expected are ints (round-6 P2,  sibling site).
     unexpected_rounds = sorted(observed_rounds - expected_rounds, key=repr)
     coverage_problems: list[str] = []
     if missing_rounds:
@@ -848,10 +848,10 @@ FANOUT_TARGET_UNITS = 100
 
 
 def build_wall_clock_table(rows: list[dict]) -> tuple[list[dict], dict]:
-    """rows: [{"unit_id":..., "config":..., "elapsed_seconds":...}, ...]
+    """rows: [{"unit_id":..., "config":..., "elapsed_seconds":...},...]
     (elapsed_seconds sourced from result["elapsed_seconds"], the only wall-clock
-    field run_phase4_flower.py's run_one() actually records -- see
-    `elapsed = time.time() - t0` in the ground-truth citations above)."""
+    field run_phase4_flower.py's run_one actually records -- see
+    `elapsed = time.time - t0` in the ground-truth citations above)."""
     valid = [r for r in rows if isinstance(r.get("elapsed_seconds"), (int, float))]
     if not valid:
         return list(rows), {

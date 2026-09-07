@@ -34,7 +34,7 @@ def test_v1_pin_retained_under_its_own_name():
 
 @pytest.mark.unit
 def test_active_pin_is_the_committed_bundle_v2_sha():
-    """Post-swap (PR #71): the active pin IS the sha256 of the committed
+    """Post-swap : the active pin IS the sha256 of the committed
     data/h4_serving/manifest_v2.json bytes — recomputed here, never trusted."""
     import hashlib
     manifest = (Path(__file__).resolve().parent.parent

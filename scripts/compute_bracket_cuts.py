@@ -17,11 +17,11 @@ Krum/TrustScore):
                        (METHODOLOGY_LOG v-entry: "selected on EXP-005c+005e dev
                        honest scores at FPR<=0.10 (krum 0.3983 / trustscore
                        0.3575)"). Those calibration runs were S4_full_mix ONLY.
-    tge, krum_tge    : EXP-014 ramp-3 closed-loop, S4_full_mix, 5 dev seeds
+    tge, krum_tge : EXP-014 ramp-3 closed-loop, S4_full_mix, 5 dev seeds
                        (the §4 re-freeze that set the frozen 0.5754 / 0.0391).
 
   SENSITIVITY (S0-S4 pooled — reported, NOT adjudicated):
-    tge, krum_tge    : EXP-014, all S0-S4, 5 dev seeds (SAME runs, broader scope;
+    tge, krum_tge : EXP-014, all S0-S4, 5 dev seeds (SAME runs, broader scope;
                        frozen sensitivity 0.2885 / 0.0562 on the closed_loop
                        record). Fully anchored.
     krum, trustscore : N/A. NO S0-S4 pool exists under the frozen-cut provenance
@@ -38,7 +38,7 @@ HARD ANCHOR GATE: every pool that HAS a frozen 10% record must reproduce it
 EXACTLY (to the recorded precision). Any mismatch aborts loudly — 1%/5% numbers
 are never emitted from a pool that fails its anchor.
 
-v1.10 §3.3 PARAMETERIZATION (GWU-68): the input pool roots are now CLI-
+v1.10 §3.3 PARAMETERIZATION : the input pool roots are now CLI-
 parameterizable (`--source-root`, with per-pool `--dev-src` / `--exp014-signals`
 overrides) so the leak-free reseal pools can be supplied without editing this
 script. With everything unset the defaults are EXACTLY the frozen hard-coded
@@ -48,7 +48,7 @@ script refuses to write inside the frozen leak-on snapshot dir
 (reproduction/protocol/h2-bracket/), which is preserved byte-for-byte.
 
 v1.14 §3.1 LEAK-FREE RE-FREEZE MODE (`--leakfree-signals`): executes the
-v1.10 §3.1-3.5 cut mechanics on the leak-free reseal pools. The GWU-68
+v1.10 §3.1-3.5 cut mechanics on the leak-free reseal pools. The
 parameterization above turned out to be insufficient for this in three ways,
 each fixed here and each pinned by a test:
 
@@ -73,7 +73,7 @@ degeneracy warning and the Krum+TGE survivor coverage.
 
 The leak-free mode adds NOTHING to a default-input build — that is what keeps
 the value-identity gate byte-for-byte — and it is itself an overridden-input
-run, so run_identity_gate() gates it exactly as it gates --source-root.
+run, so run_identity_gate gates it exactly as it gates --source-root.
 """
 from __future__ import annotations
 
@@ -154,7 +154,7 @@ EXPECTED_DEFAULT_PURPOSE = (
     "10% point is the anchor)")
 
 # Pinned structural shape of the frozen record, re-validated independently by
-# main() on every attestation (6 pools x {1%,5%,10%} = 18 cuts):
+# main on every attestation (6 pools x {1%,5%,10%} = 18 cuts):
 EXPECTED_GATE_POOLS = 6
 EXPECTED_GATE_CUTS = 18
 
@@ -272,11 +272,11 @@ def build_leakfree_sources(signals_dir: Path) -> dict:
 
 def validate_leakfree_provenance(signals_dir: Path, files: list[Path]) -> dict:
     """v1.14 §3.1 regime-provenance gate: prove every input cell IS leak-free
-    BEFORE any pool is built. `is_dir()` plus a filename match is not provenance
+    BEFORE any pool is built. `is_dir` plus a filename match is not provenance
     — a leak-ON cell staged under a directory called "leakfree" would otherwise
     be pooled silently, which is the exact failure class v1.10 §2.4 forbids.
 
-    The signal .jsonl rows carry no regime field, so the authority is the staged
+    The signal.jsonl rows carry no regime field, so the authority is the staged
     manifest (LEAKFREE_PROVENANCE_NAME), built from the EXP-041 result JSONs at
     staging time. Every check HALTs loudly and names the offending cell; absence
     of the flag is failure, never a permissive default.
@@ -610,7 +610,7 @@ def run_identity_gate(frozen_path: Path = FROZEN_SNAPSHOT_JSON) -> dict:
     committed frozen leak-on snapshot (the only structural exclusion is
     IDENTITY_SKIP_FIELDS; all other historic deltas are held to field-specific
     expected values, asserted below). Called
-    unconditionally by main() whenever ANY input override is active, BEFORE any
+    unconditionally by main whenever ANY input override is active, BEFORE any
     overridden-input (leak-free) computation — no skip path, no escape flag: a
     checkout that cannot prove default-input identity CANNOT derive leak-free
     cuts. Returns the attestation recorded in the output _meta."""
@@ -798,7 +798,7 @@ def main() -> int:
     ap.add_argument("--anchor-json", type=Path, default=None,
                     help="frozen bracket_cuts.json to cross-verify shared quantiles "
                          "against (value-identical); proves same distribution snapshot")
-    # v1.10 §3.3 parameterization (GWU-68): supply the leak-free pool paths
+    # v1.10 §3.3 parameterization : supply the leak-free pool paths
     # without editing this script. Unset => the frozen hard-coded defaults,
     # value-identically (regression-gated in tests/test_compute_bracket_cuts.py).
     ap.add_argument("--source-root", type=Path, default=None,
@@ -813,7 +813,7 @@ def main() -> int:
                     help="per-pool override for the EXP-014 closed-loop signals "
                          "dir; beats --source-root")
     # v1.14 §3.1 leak-free re-freeze mode. Mutually exclusive with every
-    # leak-on input override (see the cross-regime guard in main()).
+    # leak-on input override (see the cross-regime guard in main).
     ap.add_argument("--leakfree-signals", type=Path, default=None,
                     help="LEAK-FREE RE-FREEZE (v1.14 §3.1): dir holding the "
                          "leak-free reseal S4 cells "
@@ -891,7 +891,7 @@ def main() -> int:
     identity_gate = None
     if inputs_overridden:
         identity_gate = run_identity_gate()
-        # Independent re-validation in main()'s own control flow: main does not blindly trust the returned attestation —
+        # Independent re-validation in main's own control flow: main does not blindly trust the returned attestation —
         # it must be structurally complete, passed, and reference the
         # hardcoded frozen snapshot with the pinned pool/cut counts.
         expected_vs = str(FROZEN_SNAPSHOT_JSON.relative_to(REPO))

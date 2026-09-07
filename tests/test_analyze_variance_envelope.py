@@ -1,4 +1,4 @@
-"""Tests for scripts/analyze_variance_envelope.py (GWU-44 Lane C).
+"""Tests for scripts/analyze_variance_envelope.py.
 
 Pins the per-defense run-to-run variance-envelope reduction that gates the H2
 dev-sweep sizing decision. The study runs later on AWS; these tests drive the
@@ -325,7 +325,7 @@ def test_decompose_zero_boundary_is_nonpositive():
 
 
 # ---------------------------------------------------------------------------
-# end-to-end analyze() — tiers, fixed-cut variance, JSON output
+# end-to-end analyze — tiers, fixed-cut variance, JSON output
 # ---------------------------------------------------------------------------
 
 def _two_arm_manifest(base: Path):
@@ -459,7 +459,7 @@ def test_tier_arm_b_only_no_anchor(tmp_path):
     report = ave.run_from_paths(manifest, thresholds)
     dec = report["decomposition"]["krum"]["recall_coldstart"]
     assert dec["tier"] == "total_only"
-    assert dec["sigma_total"] is not None   # labelled seed(+)run
+    assert dec["sigma_total"] is not None   # labelled seedrun
     assert dec["sigma_run"] is None
     assert dec["sigma_seed"] is None
     assert "anchor" in dec["note"].lower()

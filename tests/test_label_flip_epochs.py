@@ -1,19 +1,19 @@
-"""label_flip epoch equalization (GWU-72, director ruling 2026-08-04).
+"""label_flip epoch equalization (director ruling 2026-08-04).
 
-train_label_flip() historically ran a SINGLE natural pass over the trainloader
-while train() and every other training path ran ``for _ in range(epochs)`` with
+train_label_flip historically ran a SINGLE natural pass over the trainloader
+while train and every other training path ran ``for _ in range(epochs)`` with
 local_epochs=5 — label_flip attackers trained 5x less than everyone else.
 
 Asserts the equalized contract:
   (a) natural path honors ``epochs``: epochs=E takes E * len(loader) optimizer
-      steps, identical to train();
+      steps, identical to train;
   (b) the default (epochs omitted) preserves the legacy single pass for any
       external caller of the old signature, and ``epochs`` is KEYWORD-ONLY
       appended after the legacy parameters so every pre-change positional slot
       is preserved exactly (``train_label_flip(net, loader, 0.001)`` still
       means lr=0.001 — the compatibility constraint);
   (c) the fleet dispatch (FlowerClient scenario branch AND legacy static
-      branch) passes local_epochs, exactly as _honest_train() does for train();
+      branch) passes local_epochs, exactly as _honest_train does for train;
   (d) the update-match branch (Stage-F §4) is unaffected: with max_steps set,
       steps == max_steps regardless of epochs.
 
@@ -49,7 +49,7 @@ class _TwoLogit(nn.Module):
 
 
 # ---------------------------------------------------------------------------
-# (a) Natural path honors epochs — equalized with train()
+# (a) Natural path honors epochs — equalized with train
 # ---------------------------------------------------------------------------
 
 def test_label_flip_natural_path_takes_epochs_times_loader_steps():

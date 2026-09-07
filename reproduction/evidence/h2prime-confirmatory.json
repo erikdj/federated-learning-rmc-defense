@@ -1151,6 +1151,7 @@
    "status": "PASS"
   },
   "map_meta": {
+   "bucket": "private historical artifact storage (not distributed)",
    "builder": "scripts/build_exp051_assembly_map.py",
    "cells_by_source": {
     "EXP-051": 48,
@@ -1164,7 +1165,7 @@
    "unit_template": "{scenario}__krum_tge__persistent_optimizer__seed{seed}"
   },
   "map_path": "historical assembly map (not distributed)",
-  "map_sha256": "090525fadcd4f865aed64ca5bbf39e79b6c9ec43d56d54295b9b88682d0b7419",
+  "map_sha256": "46e9790e740009d22fac46f32a9b01327f0f01437a452594306a57cec46cb4ca",
   "n_cells": 50,
   "n_rows": 49050,
   "n_seeds": 10,
@@ -1195,8 +1196,8 @@
     "sign_test",
     "ci95_student_t_on_paired_diff"
    ],
-   "nodes_checked": 655,
-   "rules": 30,
+   "nodes_checked": 656,
+   "rules": 31,
    "schema": "scripts/h2prime_schema.py",
    "status": "PASS"
   },
@@ -1230,7 +1231,7 @@
    96540,
    98362
   ],
-  "spec": "docs/superpowers/specs/2026-08-09-praxis-experimental-design-v1.15-h2prime.md",
+  "spec": "docs/reproduction/experiments.md#h2prime",
   "versions": {
    "numpy": "2.2.6",
    "python": "3.10.20",
@@ -1520,6 +1521,308 @@
    "per_fold": {},
    "rotation": 1,
    "test_seed": 17869
+  }
+ ],
+ "fit_census_window_aware": [
+  {
+   "calibration_seed": 29387,
+   "fit_seeds": [
+    39375,
+    39477,
+    45013
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 1,
+   "test_seed": 17869
+  },
+  {
+   "calibration_seed": 39375,
+   "fit_seeds": [
+    39477,
+    45013,
+    47599
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 2,
+   "test_seed": 29387
+  },
+  {
+   "calibration_seed": 39477,
+   "fit_seeds": [
+    45013,
+    47599,
+    70402
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 3,
+   "test_seed": 39375
+  },
+  {
+   "calibration_seed": 45013,
+   "fit_seeds": [
+    47599,
+    70402,
+    90369
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 4,
+   "test_seed": 39477
+  },
+  {
+   "calibration_seed": 47599,
+   "fit_seeds": [
+    70402,
+    90369,
+    96540
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 5,
+   "test_seed": 45013
+  },
+  {
+   "calibration_seed": 70402,
+   "fit_seeds": [
+    90369,
+    96540,
+    98362
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 6,
+   "test_seed": 47599
+  },
+  {
+   "calibration_seed": 90369,
+   "fit_seeds": [
+    96540,
+    98362,
+    17869
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 7,
+   "test_seed": 70402
+  },
+  {
+   "calibration_seed": 96540,
+   "fit_seeds": [
+    98362,
+    17869,
+    29387
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 8,
+   "test_seed": 90369
+  },
+  {
+   "calibration_seed": 98362,
+   "fit_seeds": [
+    17869,
+    29387,
+    39375
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 9,
+   "test_seed": 96540
+  },
+  {
+   "calibration_seed": 17869,
+   "fit_seeds": [
+    29387,
+    39375,
+    39477
+   ],
+   "per_fold": {
+    "alie": {
+     "n_excluded_family_rows": 4563,
+     "n_fit_positive": 1971,
+     "n_fit_rows": 10152,
+     "n_window_excluded_rows": 54
+    },
+    "gaussian_noise": {
+     "n_excluded_family_rows": 1188,
+     "n_fit_positive": 5346,
+     "n_fit_rows": 13527,
+     "n_window_excluded_rows": 54
+    },
+    "label_flip": {
+     "n_excluded_family_rows": 675,
+     "n_fit_positive": 5859,
+     "n_fit_rows": 14040,
+     "n_window_excluded_rows": 54
+    }
+   },
+   "rotation": 10,
+   "test_seed": 98362
   }
  ],
  "rotation_plan": [
@@ -11250,6 +11553,704 @@
     }
    },
    "status": "UNDEFINED \u2014 structurally degenerate under RMC"
+  },
+  "window_aware_loao_sensitivity": {
+   "_note": "REPORTED, NON-ADJUDICATING sensitivity arm. The primary \u00a7 2.2a exclusion is a row-label rule; this arm additionally excludes rows whose DERIVED WINDOW saw the held-out family. No band, floor or sign rule is evaluated on it.",
+   "corpus_census": {
+    "S0": {
+     "foreign_family_pairs": {},
+     "n_malicious_rows": 4320,
+     "n_malicious_rows_with_a_FOREIGN_family_in_window": 0,
+     "share_of_malicious_rows_with_a_foreign_family": 0.0
+    },
+    "S1": {
+     "foreign_family_pairs": {},
+     "n_malicious_rows": 4320,
+     "n_malicious_rows_with_a_FOREIGN_family_in_window": 0,
+     "share_of_malicious_rows_with_a_foreign_family": 0.0
+    },
+    "S2": {
+     "foreign_family_pairs": {
+      "alie<-gaussian_noise": 180,
+      "gaussian_noise<-label_flip": 180,
+      "label_flip<-alie": 180
+     },
+     "n_malicious_rows": 4320,
+     "n_malicious_rows_with_a_FOREIGN_family_in_window": 540,
+     "share_of_malicious_rows_with_a_foreign_family": 0.125
+    },
+    "S3": {
+     "foreign_family_pairs": {},
+     "n_malicious_rows": 3960,
+     "n_malicious_rows_with_a_FOREIGN_family_in_window": 0,
+     "share_of_malicious_rows_with_a_foreign_family": 0.0
+    },
+    "S4": {
+     "foreign_family_pairs": {},
+     "n_malicious_rows": 3960,
+     "n_malicious_rows_with_a_FOREIGN_family_in_window": 0,
+     "share_of_malicious_rows_with_a_foreign_family": 0.0
+    }
+   },
+   "divergence_is_itself_the_finding": "\u00a7 3.2: 'If the two arms diverge materially, that divergence is itself the finding and is reported as such.'",
+   "fit_census": [
+    {
+     "calibration_seed": 29387,
+     "fit_seeds": [
+      39375,
+      39477,
+      45013
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 1,
+     "test_seed": 17869
+    },
+    {
+     "calibration_seed": 39375,
+     "fit_seeds": [
+      39477,
+      45013,
+      47599
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 2,
+     "test_seed": 29387
+    },
+    {
+     "calibration_seed": 39477,
+     "fit_seeds": [
+      45013,
+      47599,
+      70402
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 3,
+     "test_seed": 39375
+    },
+    {
+     "calibration_seed": 45013,
+     "fit_seeds": [
+      47599,
+      70402,
+      90369
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 4,
+     "test_seed": 39477
+    },
+    {
+     "calibration_seed": 47599,
+     "fit_seeds": [
+      70402,
+      90369,
+      96540
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 5,
+     "test_seed": 45013
+    },
+    {
+     "calibration_seed": 70402,
+     "fit_seeds": [
+      90369,
+      96540,
+      98362
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 6,
+     "test_seed": 47599
+    },
+    {
+     "calibration_seed": 90369,
+     "fit_seeds": [
+      96540,
+      98362,
+      17869
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 7,
+     "test_seed": 70402
+    },
+    {
+     "calibration_seed": 96540,
+     "fit_seeds": [
+      98362,
+      17869,
+      29387
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 8,
+     "test_seed": 90369
+    },
+    {
+     "calibration_seed": 98362,
+     "fit_seeds": [
+      17869,
+      29387,
+      39375
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 9,
+     "test_seed": 96540
+    },
+    {
+     "calibration_seed": 17869,
+     "fit_seeds": [
+      29387,
+      39375,
+      39477
+     ],
+     "per_fold": {
+      "alie": {
+       "n_excluded_family_rows": 4563,
+       "n_fit_positive": 1971,
+       "n_fit_rows": 10152,
+       "n_window_excluded_rows": 54
+      },
+      "gaussian_noise": {
+       "n_excluded_family_rows": 1188,
+       "n_fit_positive": 5346,
+       "n_fit_rows": 13527,
+       "n_window_excluded_rows": 54
+      },
+      "label_flip": {
+       "n_excluded_family_rows": 675,
+       "n_fit_positive": 5859,
+       "n_fit_rows": 14040,
+       "n_window_excluded_rows": 54
+      }
+     },
+     "rotation": 10,
+     "test_seed": 98362
+    }
+   ],
+   "n_window_excluded_rows_total": 1620,
+   "p1_quantity": {
+    "_note": "the P1 estimand recomputed on this arm, WITHOUT its verdict: no floor is applied and no band is decided here",
+    "delta_mean_recall": 0.02171717171717169,
+    "delta_realized_blended_fpr": 0.0010902381751090179,
+    "floor_for_reference_only": 0.35,
+    "primary": {
+     "ci95_student_t": {
+      "df": 9,
+      "hi": 0.5854893027855343,
+      "lo": 0.41855110125486966,
+      "mean": 0.502020202020202,
+      "n": 10,
+      "sd_sample": 0.11668986413110252,
+      "se": 0.03690057505098689,
+      "t_crit": 2.262
+     },
+     "mean_recall": 0.502020202020202,
+     "per_seed_realized_blended_fpr": {
+      "17869": 0.11564911103656492,
+      "29387": 0.09732472324723246,
+      "39375": 0.08705132505870514,
+      "39477": 0.1367829587386783,
+      "45013": 0.09455719557195572,
+      "47599": 0.10344682992284468,
+      "70402": 0.09816336799731634,
+      "90369": 0.1020211338477021,
+      "96540": 0.11044951358604493,
+      "98362": 0.08059376048305938
+     },
+     "per_seed_recall": {
+      "17869": 0.8055555555555556,
+      "29387": 0.4217171717171717,
+      "39375": 0.47474747474747475,
+      "39477": 0.48737373737373735,
+      "45013": 0.4898989898989899,
+      "47599": 0.4898989898989899,
+      "70402": 0.4393939393939394,
+      "90369": 0.3686868686868687,
+      "96540": 0.51010101010101,
+      "98362": 0.5328282828282829
+     },
+     "realized_blended_fpr": 0.1026039919490104,
+     "slice": "S4"
+    },
+    "window_aware": {
+     "ci95_student_t": {
+      "df": 9,
+      "hi": 0.6340344095893996,
+      "lo": 0.41344033788534784,
+      "mean": 0.5237373737373737,
+      "n": 10,
+      "sd_sample": 0.1541953370723485,
+      "se": 0.04876084697260208,
+      "t_crit": 2.262
+     },
+     "mean_recall": 0.5237373737373737,
+     "per_seed_realized_blended_fpr": {
+      "17869": 0.10743039248574304,
+      "29387": 0.09937940288493793,
+      "39375": 0.08457732304595773,
+      "39477": 0.13690875545119086,
+      "45013": 0.09921167393492117,
+      "47599": 0.10101476014760148,
+      "70402": 0.10650788326065079,
+      "90369": 0.10583696746058369,
+      "96540": 0.11187520966118752,
+      "98362": 0.08419993290842
+     },
+     "per_seed_recall": {
+      "17869": 0.8358585858585859,
+      "29387": 0.48484848484848486,
+      "39375": 0.4898989898989899,
+      "39477": 0.4444444444444444,
+      "45013": 0.4444444444444444,
+      "47599": 0.48737373737373735,
+      "70402": 0.41919191919191917,
+      "90369": 0.39141414141414144,
+      "96540": 0.7828282828282829,
+      "98362": 0.45707070707070707
+     },
+     "realized_blended_fpr": 0.10369423012411942,
+     "slice": "S4"
+    }
+   },
+   "p2_quantity": {
+    "_note": "the P2 sign count recomputed on this arm, WITHOUT its verdict: the \u2265 n-of-N rule is not applied here",
+    "delta_n_strictly_positive": 0,
+    "per_seed_margin_delta": {
+     "17869": -0.003390313390313482,
+     "29387": 0.019430199430199413,
+     "39375": 0.07128205128205123,
+     "39477": -0.08386752136752135,
+     "45013": -0.12052706552706555,
+     "47599": -0.017492877492877534,
+     "70402": 0.01209401709401714,
+     "90369": 0.049180911680911654,
+     "96540": 0.2776139601139601,
+     "98362": -0.1882051282051282
+    },
+    "primary_per_seed_margin": {
+     "17869": 0.9273005698005699,
+     "29387": 0.626937321937322,
+     "39375": 0.7288034188034188,
+     "39477": 0.4889173789173789,
+     "45013": 0.6188532763532764,
+     "47599": 0.4758689458689459,
+     "70402": 0.5404629629629629,
+     "90369": 0.35865384615384616,
+     "96540": 0.5358119658119658,
+     "98362": 0.44363960113960116
+    },
+    "primary_sign_test": {
+     "n_eff": 10,
+     "negative": 0,
+     "p_one_sided_exact": 0.0009765625,
+     "positive": 10,
+     "zero": 0
+    },
+    "required_strictly_positive_for_reference_only": 9,
+    "window_aware_per_seed_margin": {
+     "17869": 0.9239102564102564,
+     "29387": 0.6463675213675214,
+     "39375": 0.80008547008547,
+     "39477": 0.40504985754985756,
+     "45013": 0.4983262108262108,
+     "47599": 0.45837606837606837,
+     "70402": 0.5525569800569801,
+     "90369": 0.4078347578347578,
+     "96540": 0.8134259259259259,
+     "98362": 0.25543447293447297
+    },
+    "window_aware_sign_test": {
+     "n_eff": 10,
+     "negative": 0,
+     "p_one_sided_exact": 0.0009765625,
+     "positive": 10,
+     "zero": 0
+    }
+   },
+   "per_scenario_blended_recall": {
+    "S0": {
+     "delta_window_minus_primary": -0.0708333333333333,
+     "n_paired_seeds": 10,
+     "per_seed_delta": {
+      "17869": 0.0,
+      "29387": 0.0,
+      "39375": 0.10879629629629628,
+      "39477": -0.36342592592592593,
+      "45013": -0.38888888888888895,
+      "47599": 0.013888888888888895,
+      "70402": 0.11574074074074076,
+      "90369": 0.10185185185185186,
+      "96540": 0.3194444444444444,
+      "98362": -0.6157407407407407
+     },
+     "primary_mean": 0.655787037037037,
+     "primary_per_seed": {
+      "17869": 0.8958333333333334,
+      "29387": 0.8958333333333334,
+      "39375": 0.7893518518518519,
+      "39477": 0.8958333333333334,
+      "45013": 0.8958333333333334,
+      "47599": 0.4722222222222222,
+      "70402": 0.25925925925925924,
+      "90369": 0.38657407407407407,
+      "96540": 0.1712962962962963,
+      "98362": 0.8958333333333334
+     },
+     "window_aware_mean": 0.5849537037037037,
+     "window_aware_per_seed": {
+      "17869": 0.8958333333333334,
+      "29387": 0.8958333333333334,
+      "39375": 0.8981481481481481,
+      "39477": 0.5324074074074074,
+      "45013": 0.5069444444444444,
+      "47599": 0.4861111111111111,
+      "70402": 0.375,
+      "90369": 0.48842592592592593,
+      "96540": 0.49074074074074076,
+      "98362": 0.2800925925925926
+     }
+    },
+    "S1": {
+     "delta_window_minus_primary": 0.05671296296296302,
+     "n_paired_seeds": 10,
+     "per_seed_delta": {
+      "17869": 0.0,
+      "29387": 0.0,
+      "39375": 0.2060185185185185,
+      "39477": -0.004629629629629539,
+      "45013": -0.032407407407407385,
+      "47599": 0.01388888888888884,
+      "70402": -0.0092592592592593,
+      "90369": -0.006944444444444475,
+      "96540": 0.40509259259259256,
+      "98362": -0.0046296296296296224
+     },
+     "primary_mean": 0.5824074074074074,
+     "primary_per_seed": {
+      "17869": 0.8935185185185185,
+      "29387": 0.8958333333333334,
+      "39375": 0.6921296296296297,
+      "39477": 0.9004629629629629,
+      "45013": 0.5185185185185185,
+      "47599": 0.5092592592592593,
+      "70402": 0.4930555555555556,
+      "90369": 0.2777777777777778,
+      "96540": 0.49537037037037035,
+      "98362": 0.14814814814814814
+     },
+     "window_aware_mean": 0.6391203703703704,
+     "window_aware_per_seed": {
+      "17869": 0.8935185185185185,
+      "29387": 0.8958333333333334,
+      "39375": 0.8981481481481481,
+      "39477": 0.8958333333333334,
+      "45013": 0.4861111111111111,
+      "47599": 0.5231481481481481,
+      "70402": 0.4837962962962963,
+      "90369": 0.2708333333333333,
+      "96540": 0.9004629629629629,
+      "98362": 0.14351851851851852
+     }
+    },
+    "S2": {
+     "delta_window_minus_primary": -0.014814814814814836,
+     "n_paired_seeds": 10,
+     "per_seed_delta": {
+      "17869": -0.0023148148148148806,
+      "29387": 0.0092592592592593,
+      "39375": -0.06481481481481488,
+      "39477": -0.125,
+      "45013": -0.034722222222222265,
+      "47599": 0.05555555555555558,
+      "70402": 0.00694444444444442,
+      "90369": 0.0023148148148147696,
+      "96540": 0.0439814814814814,
+      "98362": -0.03935185185185186
+     },
+     "primary_mean": 0.6298611111111111,
+     "primary_per_seed": {
+      "17869": 0.8842592592592593,
+      "29387": 0.3587962962962963,
+      "39375": 0.7430555555555556,
+      "39477": 0.6319444444444444,
+      "45013": 0.5046296296296297,
+      "47599": 0.5231481481481481,
+      "70402": 0.8680555555555556,
+      "90369": 0.37962962962962965,
+      "96540": 0.8449074074074074,
+      "98362": 0.5601851851851852
+     },
+     "window_aware_mean": 0.6150462962962963,
+     "window_aware_per_seed": {
+      "17869": 0.8819444444444444,
+      "29387": 0.3680555555555556,
+      "39375": 0.6782407407407407,
+      "39477": 0.5069444444444444,
+      "45013": 0.4699074074074074,
+      "47599": 0.5787037037037037,
+      "70402": 0.875,
+      "90369": 0.3819444444444444,
+      "96540": 0.8888888888888888,
+      "98362": 0.5208333333333334
+     }
+    },
+    "S3": {
+     "delta_window_minus_primary": -0.016161616161616155,
+     "n_paired_seeds": 10,
+     "per_seed_delta": {
+      "17869": -0.012626262626262652,
+      "29387": 0.0,
+      "39375": -0.02020202020202022,
+      "39477": -0.03282828282828282,
+      "45013": 0.0,
+      "47599": 0.025252525252525193,
+      "70402": -0.058080808080808066,
+      "90369": 0.11868686868686873,
+      "96540": 0.08585858585858586,
+      "98362": -0.2676767676767677
+     },
+     "primary_mean": 0.7929292929292929,
+     "primary_per_seed": {
+      "17869": 0.9772727272727273,
+      "29387": 0.8787878787878788,
+      "39375": 0.8686868686868687,
+      "39477": 0.29292929292929293,
+      "45013": 0.8939393939393939,
+      "47599": 0.8611111111111112,
+      "70402": 0.8813131313131313,
+      "90369": 0.7525252525252525,
+      "96540": 0.9015151515151515,
+      "98362": 0.6212121212121212
+     },
+     "window_aware_mean": 0.7767676767676768,
+     "window_aware_per_seed": {
+      "17869": 0.9646464646464646,
+      "29387": 0.8787878787878788,
+      "39375": 0.8484848484848485,
+      "39477": 0.2601010101010101,
+      "45013": 0.8939393939393939,
+      "47599": 0.8863636363636364,
+      "70402": 0.8232323232323232,
+      "90369": 0.8712121212121212,
+      "96540": 0.9873737373737373,
+      "98362": 0.35353535353535354
+     }
+    },
+    "S4": {
+     "delta_window_minus_primary": 0.02171717171717169,
+     "n_paired_seeds": 10,
+     "per_seed_delta": {
+      "17869": 0.030303030303030276,
+      "29387": 0.06313131313131315,
+      "39375": 0.015151515151515138,
+      "39477": -0.04292929292929293,
+      "45013": -0.04545454545454547,
+      "47599": -0.0025252525252525415,
+      "70402": -0.02020202020202022,
+      "90369": 0.022727272727272763,
+      "96540": 0.2727272727272728,
+      "98362": -0.0757575757575758
+     },
+     "primary_mean": 0.502020202020202,
+     "primary_per_seed": {
+      "17869": 0.8055555555555556,
+      "29387": 0.4217171717171717,
+      "39375": 0.47474747474747475,
+      "39477": 0.48737373737373735,
+      "45013": 0.4898989898989899,
+      "47599": 0.4898989898989899,
+      "70402": 0.4393939393939394,
+      "90369": 0.3686868686868687,
+      "96540": 0.51010101010101,
+      "98362": 0.5328282828282829
+     },
+     "window_aware_mean": 0.5237373737373737,
+     "window_aware_per_seed": {
+      "17869": 0.8358585858585859,
+      "29387": 0.48484848484848486,
+      "39375": 0.4898989898989899,
+      "39477": 0.4444444444444444,
+      "45013": 0.4444444444444444,
+      "47599": 0.48737373737373735,
+      "70402": 0.41919191919191917,
+      "90369": 0.39141414141414144,
+      "96540": 0.7828282828282829,
+      "98362": 0.45707070707070707
+     }
+    }
+   },
+   "status": "COMPUTED",
+   "window_key": "h2prime_corpus.annotate_window_families \u2014 the frozen builder's (logical_cid, tenure-episode) grouping, transcribed, not re-derived",
+   "window_length_rounds": 3,
+   "window_rule": "for held-out family F, the FIT population additionally drops every row whose derived window touched F (F in the row's `_window_families`); the rule subsumes the \u00a7 2.2a current-label exclusion. Calibration and test populations are untouched, and the baselines are unchanged."
   }
  },
  "verdict": {
@@ -11258,5 +12259,5 @@
   "p2": "PASS",
   "terminal_protocol": "\u00a7 3.2: an INCONCLUSIVE band stays INCONCLUSIVE for this sealed cohort. The only permitted post-hoc actions are the enumerated clerical corrections (a) and (b); anything else requires a new dated pre-registration AND a freshly sealed cohort."
  },
- "verdict_block": "==============================================================================\nH2\u2032 CONFIRMATORY ADJUDICATION \u2014 profile CONFIRMATORY\n==============================================================================\ncorpus       : 50 cells, 10 seeds, defense krum_tge, sources {'EXP-051': 48, 'EXP-053': 2}\ngolden gate  : PASS (dcef0f7)\nrows loaded  : 49050  (census {'honest': 27270, 'malicious': 21780, 'malicious_blank_family_excluded_from_blend': 900})\nbaseline null-drops : none\n\n--- P1 \u2014 blended-LOAO recall@10%FPR on S4 \u2265 0.35 ------------------\n  mean blended recall     : 0.5020   (floor 0.35)\n  95% Student-t CI        : [0.4186, 0.5855]  (df=9, t=2.262, SE=0.0369) \u2014 REPORTED, not adjudicating\n  realized blended FPR    : 0.1026   (comparability [0.08, 0.12])\n  per-seed recall         : 17869=0.806, 29387=0.422, 39375=0.475, 39477=0.487, 45013=0.490, 47599=0.490, 70402=0.439, 90369=0.369, 96540=0.510, 98362=0.533\n  VERDICT                 : PASS \u2014 mean blended recall 0.5020 \u2265 floor 0.35 at realized blended FPR 0.1026\n\n--- P2 \u2014 ALIE-superiority over the per-unit oracle maximum ---------\n  paired seed differences : 10 positive / 0 negative / 0 zero (required \u2265 9 strictly positive)\n  exact one-sided p       : 0.00098 (\u03b1 = 0.05; the COUNT governs, p is a readout)\n  per-seed detector vs oracle-max (macro-average over ALIE scenarios):\n    seed  17869 : detector 0.927 vs oracle 0.000 \u2192 diff +0.9273\n    seed  29387 : detector 0.627 vs oracle 0.000 \u2192 diff +0.6269\n    seed  39375 : detector 0.729 vs oracle 0.000 \u2192 diff +0.7288\n    seed  39477 : detector 0.489 vs oracle 0.000 \u2192 diff +0.4889\n    seed  45013 : detector 0.619 vs oracle 0.000 \u2192 diff +0.6189\n    seed  47599 : detector 0.476 vs oracle 0.000 \u2192 diff +0.4759\n    seed  70402 : detector 0.540 vs oracle 0.000 \u2192 diff +0.5405\n    seed  90369 : detector 0.359 vs oracle 0.000 \u2192 diff +0.3587\n    seed  96540 : detector 0.536 vs oracle 0.000 \u2192 diff +0.5358\n    seed  98362 : detector 0.444 vs oracle 0.000 \u2192 diff +0.4436\n  ADJUDICATING comparability guard (v1.15b \u00a7 1.2, row-pooled):\n    detector       : 0.1155 (3150/27270 honest rows flagged) \u2014 INSIDE\n    arg-max baseline: 0.1084 (2957/27270) \u2014 INSIDE\n    arg-max selections {'krum_score': 50, 'L2_to_median': 0, 'cos_to_median': 0}; ties 50/50 cells (tie-break = frozen tuple order)\n  sub-readout FPRs (REPORTED, non-adjudicating):\n    per-unit inside interval : detector 27/50, arg-max baseline 38/50\n    per-instrument pooled    : krum_score 0.1084, L2_to_median 0.1041, cos_to_median 0.1125\n  VERDICT                 : PASS \u2014 10 strictly positive / 0 negative / 0 zero paired differences; rule requires \u2265 9 strictly positive (attained exact one-sided p = 0.00098)\n\n--- SECONDARY (reported, no pass/fail): S4 blend vs oracle max ---\n  detector 0.5020 vs oracle 0.3295 \u2192 margin +0.1725, 10/10 seeds favour the detector, exact p = 0.00098\n  detector realized FPR 0.1026\n--- SECONDARY (reported, no pass/fail): S3 blend vs oracle max ---\n  detector 0.7929 vs oracle 0.1136 \u2192 margin +0.6793, 10/10 seeds favour the detector, exact p = 0.00098\n  detector realized FPR 0.1049\n--- SECONDARY (reported, no pass/fail): AUC per scenario -----------\n  S0=0.901, S1=0.895, S2=0.864, S3=0.929, S4=0.807\n--- SECONDARY (reported, no pass/fail): global-cut sensitivity ------\n  S4 blend under the GLOBAL cut: 0.6159 at realized FPR 0.1631 (per-scenario arm adjudicates; global would NOT be comparable)\n--- SECONDARY (reported, no pass/fail): G2 matched TGE contrast -----\n  S0: NOT COMPARABLE \u2014 all 10 folds excluded \u2014 10 out-of-interval realized FPR (\u00a7 3.2 comparability); no statistic computed\n  S1: NOT COMPARABLE \u2014 all 10 folds excluded \u2014 10 out-of-interval realized FPR (\u00a7 3.2 comparability); no statistic computed\n  S2: NOT COMPARABLE \u2014 all 10 folds excluded \u2014 10 out-of-interval realized FPR (\u00a7 3.2 comparability); no statistic computed\n  S3: detector 0.191 vs TGE 0.795 (margin -0.604, malicious coverage 0.886)\n  S4: detector 0.408 vs TGE 0.453 (margin -0.045, malicious coverage 0.668)\n--- SECONDARY (reported, no pass/fail): strict-identity LOAO -------\n  identity key : canonical base device lineage (v1.15b \u00a7 3)\n    alie            9 devices \u2192 45 aliases, 21780 rows excluded (0 alias(es) a raw logical_cid key would have leaked)\n    gaussian_noise  9 devices \u2192 45 aliases, 21780 rows excluded (27 alias(es) a raw logical_cid key would have leaked)\n    label_flip      9 devices \u2192 45 aliases, 21780 rows excluded (27 alias(es) a raw logical_cid key would have leaked)\n  STATUS       : UNDEFINED \u2014 structurally degenerate under RMC\n    fold alie           : positive class empty after the v1.15b \u00a7 3 device-lineage exclusion (8181 fit rows, 0 positive)\n    fold gaussian_noise : positive class empty after the v1.15b \u00a7 3 device-lineage exclusion (8181 fit rows, 0 positive)\n    fold label_flip     : positive class empty after the v1.15b \u00a7 3 device-lineage exclusion (8181 fit rows, 0 positive)\n  The RMC adversary SWITCHES strategy: the same device lineages carry every attack family, so excluding all devices that carry family F anywhere in the corpus removes the ENTIRE positive class and no detector can be fit. This is not a divergence measurement \u2014 it is the finding, recorded pre-data as the determination in v1.15b \u00a7 3: device-strict LOAO and RMC's switching adversary are mutually exclusive by construction, which is the structural reason the behavior-row grain is the only LOAO grain RMC admits. No fallback exclusion grain is invented here.\n  The PRIMARY adjudication above is unaffected.\n\n==============================================================================\nOVERALL (P1 \u2227 P2) : PASS \u2014 P1 \u2227 P2 both hold\n                    P1 = PASS   P2 = PASS\n=============================================================================="
+ "verdict_block": "==============================================================================\nH2\u2032 CONFIRMATORY ADJUDICATION \u2014 profile CONFIRMATORY\n==============================================================================\ncorpus       : 50 cells, 10 seeds, defense krum_tge, sources {'EXP-051': 48, 'EXP-053': 2}\ngolden gate  : PASS (dcef0f7)\nrows loaded  : 49050  (census {'honest': 27270, 'malicious': 21780, 'malicious_blank_family_excluded_from_blend': 900})\nbaseline null-drops : none\n\n--- P1 \u2014 blended-LOAO recall@10%FPR on S4 \u2265 0.35 ------------------\n  mean blended recall     : 0.5020   (floor 0.35)\n  95% Student-t CI        : [0.4186, 0.5855]  (df=9, t=2.262, SE=0.0369) \u2014 REPORTED, not adjudicating\n  realized blended FPR    : 0.1026   (comparability [0.08, 0.12])\n  per-seed recall         : 17869=0.806, 29387=0.422, 39375=0.475, 39477=0.487, 45013=0.490, 47599=0.490, 70402=0.439, 90369=0.369, 96540=0.510, 98362=0.533\n  VERDICT                 : PASS \u2014 mean blended recall 0.5020 \u2265 floor 0.35 at realized blended FPR 0.1026\n\n--- P2 \u2014 ALIE-superiority over the per-unit oracle maximum ---------\n  paired seed differences : 10 positive / 0 negative / 0 zero (required \u2265 9 strictly positive)\n  exact one-sided p       : 0.00098 (\u03b1 = 0.05; the COUNT governs, p is a readout)\n  per-seed detector vs oracle-max (macro-average over ALIE scenarios):\n    seed  17869 : detector 0.927 vs oracle 0.000 \u2192 diff +0.9273\n    seed  29387 : detector 0.627 vs oracle 0.000 \u2192 diff +0.6269\n    seed  39375 : detector 0.729 vs oracle 0.000 \u2192 diff +0.7288\n    seed  39477 : detector 0.489 vs oracle 0.000 \u2192 diff +0.4889\n    seed  45013 : detector 0.619 vs oracle 0.000 \u2192 diff +0.6189\n    seed  47599 : detector 0.476 vs oracle 0.000 \u2192 diff +0.4759\n    seed  70402 : detector 0.540 vs oracle 0.000 \u2192 diff +0.5405\n    seed  90369 : detector 0.359 vs oracle 0.000 \u2192 diff +0.3587\n    seed  96540 : detector 0.536 vs oracle 0.000 \u2192 diff +0.5358\n    seed  98362 : detector 0.444 vs oracle 0.000 \u2192 diff +0.4436\n  ADJUDICATING comparability guard (v1.15b \u00a7 1.2, row-pooled):\n    detector       : 0.1155 (3150/27270 honest rows flagged) \u2014 INSIDE\n    arg-max baseline: 0.1084 (2957/27270) \u2014 INSIDE\n    arg-max selections {'krum_score': 50, 'L2_to_median': 0, 'cos_to_median': 0}; ties 50/50 cells (tie-break = frozen tuple order)\n  sub-readout FPRs (REPORTED, non-adjudicating):\n    per-unit inside interval : detector 27/50, arg-max baseline 38/50\n    per-instrument pooled    : krum_score 0.1084, L2_to_median 0.1041, cos_to_median 0.1125\n  VERDICT                 : PASS \u2014 10 strictly positive / 0 negative / 0 zero paired differences; rule requires \u2265 9 strictly positive (attained exact one-sided p = 0.00098)\n\n--- SECONDARY (reported, no pass/fail): S4 blend vs oracle max ---\n  detector 0.5020 vs oracle 0.3295 \u2192 margin +0.1725, 10/10 seeds favour the detector, exact p = 0.00098\n  detector realized FPR 0.1026\n--- SECONDARY (reported, no pass/fail): S3 blend vs oracle max ---\n  detector 0.7929 vs oracle 0.1136 \u2192 margin +0.6793, 10/10 seeds favour the detector, exact p = 0.00098\n  detector realized FPR 0.1049\n--- SECONDARY (reported, no pass/fail): AUC per scenario -----------\n  S0=0.901, S1=0.895, S2=0.864, S3=0.929, S4=0.807\n--- SECONDARY (reported, no pass/fail): global-cut sensitivity ------\n  S4 blend under the GLOBAL cut: 0.6159 at realized FPR 0.1631 (per-scenario arm adjudicates; global would NOT be comparable)\n--- SECONDARY (reported, no pass/fail): G2 matched TGE contrast -----\n  S0: NOT COMPARABLE \u2014 all 10 folds excluded \u2014 10 out-of-interval realized FPR (\u00a7 3.2 comparability); no statistic computed\n  S1: NOT COMPARABLE \u2014 all 10 folds excluded \u2014 10 out-of-interval realized FPR (\u00a7 3.2 comparability); no statistic computed\n  S2: NOT COMPARABLE \u2014 all 10 folds excluded \u2014 10 out-of-interval realized FPR (\u00a7 3.2 comparability); no statistic computed\n  S3: detector 0.191 vs TGE 0.795 (margin -0.604, malicious coverage 0.886)\n  S4: detector 0.408 vs TGE 0.453 (margin -0.045, malicious coverage 0.668)\n--- SECONDARY (reported, no pass/fail): strict-identity LOAO -------\n  identity key : canonical base device lineage (v1.15b \u00a7 3)\n    alie            9 devices \u2192 45 aliases, 21780 rows excluded (0 alias(es) a raw logical_cid key would have leaked)\n    gaussian_noise  9 devices \u2192 45 aliases, 21780 rows excluded (27 alias(es) a raw logical_cid key would have leaked)\n    label_flip      9 devices \u2192 45 aliases, 21780 rows excluded (27 alias(es) a raw logical_cid key would have leaked)\n  STATUS       : UNDEFINED \u2014 structurally degenerate under RMC\n    fold alie           : positive class empty after the v1.15b \u00a7 3 device-lineage exclusion (8181 fit rows, 0 positive)\n    fold gaussian_noise : positive class empty after the v1.15b \u00a7 3 device-lineage exclusion (8181 fit rows, 0 positive)\n    fold label_flip     : positive class empty after the v1.15b \u00a7 3 device-lineage exclusion (8181 fit rows, 0 positive)\n  The RMC adversary SWITCHES strategy: the same device lineages carry every attack family, so excluding all devices that carry family F anywhere in the corpus removes the ENTIRE positive class and no detector can be fit. This is not a divergence measurement \u2014 it is the finding, recorded pre-data as the determination in v1.15b \u00a7 3: device-strict LOAO and RMC's switching adversary are mutually exclusive by construction, which is the structural reason the behavior-row grain is the only LOAO grain RMC admits. No fallback exclusion grain is invented here.\n  The PRIMARY adjudication above is unaffected.\n--- SECONDARY (reported, no pass/fail): window-aware LOAO ---------\n  rule         : fit also drops rows whose derived window saw the held-out family\n    S0  0/4320 malicious rows carry a foreign family in-window (0.000)\n    S1  0/4320 malicious rows carry a foreign family in-window (0.000)\n    S2  540/4320 malicious rows carry a foreign family in-window (0.125)\n    S3  0/3960 malicious rows carry a foreign family in-window (0.000)\n    S4  0/3960 malicious rows carry a foreign family in-window (0.000)\n  rows dropped : 1620 beyond the current-label rule, summed over folds\n  S4 blend     : primary 0.5020 vs window-aware 0.5237 (delta +0.0217) at realized FPR 0.1037\n  P2 sign count: primary 10 positive vs window-aware 10 positive (delta +0)\n  per-scenario blend delta (window \u2212 primary): S0=-0.071, S1=+0.057, S2=-0.015, S3=-0.016, S4=+0.022\n\n==============================================================================\nOVERALL (P1 \u2227 P2) : PASS \u2014 P1 \u2227 P2 both hold\n                    P1 = PASS   P2 = PASS\n=============================================================================="
 }

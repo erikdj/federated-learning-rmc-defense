@@ -82,7 +82,7 @@ def make_result(
         "scenario_path": f"rmc/scenarios/{SCENARIO}.json",
         "optimizer_state": optimizer_state,
         "flwr_version": "1.29.0",
-        # defense-sizing provenance (v1.19 / PR #12 round-2 P2):
+        # defense-sizing provenance (v1.19 / round-2 P2):
         # run_phase4_flower.py::_defense_provenance_fields L689-710
         "krum_f_policy": KRUM_F_POLICY if has_krum else "n/a",
         "scenario_declared_adversaries": S4_DECLARED_ADVERSARIES,
@@ -196,7 +196,7 @@ def make_signal_rows_for_round(
         cid = f"client_{i}"
         scored = "TGE" in config and i < n_scored
         # Mark a couple of clients malicious every round so
-        # audit_run_instrumentation.audit()'s "malicious_gt never True" /
+        # audit_run_instrumentation.audit's "malicious_gt never True" /
         # "scored malicious=0" gaps don't fire on an otherwise-valid fixture.
         malicious = i < 2
         krum_score = None

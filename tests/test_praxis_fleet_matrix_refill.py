@@ -63,12 +63,13 @@ def _git():
     g = MagicMock()
     g.working_tree_clean.return_value = True
     g.head_sha.return_value = "abc1234"
+    g.resolve_push_branch.return_value = "main"
     g.tag_target_sha.side_effect = lambda _repo, name: {"exp/EXP-005": "0ldsha00"}.get(name)
     return g
 
 
 def _seed_launched(store, exp_id, units, *, done_ids, meta_overrides=None):
-    """Arrange a prior launch: its manifest (with GWU-41 parent_run_id +
+    """Arrange a prior launch: its manifest (with parent_run_id +
     array_job_id recorded) plus done-markers for the completed cells."""
     meta = {
         "methodology_version": "v1.9",
@@ -154,6 +155,25 @@ def test_refill_uses_environment_resource_tags(tmp_path, monkeypatch):
         "EXP": "EXP-005", "Project": "public-project",
         "Owner": "public-owner", "Purpose": "reproducibility",
     }
+
+
+def test_refill_pushes_to_explicit_branch_override(tmp_path):
+    repo = _repo(tmp_path)
+    units = _doc_units()
+    store = InMemoryObjectStore()
+    _seed_launched(store, "EXP-005", units, done_ids=_all_but(units, {0, 6}))
+    git = _git()
+    git.resolve_push_branch.return_value = "maintenance"
+
+    refill_matrix(
+        repo, "EXP-005", None, image_digest="sha256:deadbeef",
+        branch="maintenance", container_tracking_uri="http://10.0.0.10:5000",
+        _store=store, _batch=FakeBatchSubmitter(), _mlflow=_mlflow(),
+        _git=git, _no_push=False,
+    )
+
+    git.resolve_push_branch.assert_called_once_with(repo, "maintenance")
+    git.push_with_tags.assert_called_once_with(repo, branch="maintenance")
 
 
 def test_refill_full_array_leaves_done_cells_as_idempotent_skips(tmp_path):
@@ -456,7 +476,7 @@ def test_refill_same_provenance_does_not_check_terminal(tmp_path):
 # --------------------------------------------------------------------------
 
 def test_refill_legacy_manifest_mints_cross_linked_parent_and_warns(tmp_path, capsys):
-    """A manifest predating GWU-41 (no parent_run_id) mints a NEW cross-linked
+    """A manifest predating (no parent_run_id) mints a NEW cross-linked
     refill parent run and warns loudly; children nest under it."""
     repo = _repo(tmp_path)
     units = _doc_units()
@@ -474,7 +494,7 @@ def test_refill_legacy_manifest_mints_cross_linked_parent_and_warns(tmp_path, ca
 
 
 # --------------------------------------------------------------------------
-# GWU-48 guard applies to refills too
+# guard applies to refills too
 # --------------------------------------------------------------------------
 
 def test_refill_refuses_on_job_def_image_mismatch(tmp_path):

@@ -20,7 +20,7 @@ Architecture:
         - Provides hook points: pre_aggregate, score_updates, post_aggregate
 
 Two distinct notions of "threshold" appear below and should not be conflated:
-    1. Each plugin's own accept/reject cutoff used in filter_updates() (e.g.
+    1. Each plugin's own accept/reject cutoff used in filter_updates (e.g.
        TGEnsemblePlugin's self._threshold=0.7, Krum's top-m selection) — this
        governs which updates are actually included in THIS round's
        aggregation. It is an operational decision, not an evaluation metric.
@@ -28,7 +28,7 @@ Two distinct notions of "threshold" appear below and should not be conflated:
        the continuous per-client scores each plugin exposes via
        `_round_scores` (KrumDefensePlugin, TrustScorePlugin) or
        `_last_details` (TGEnsemblePlugin), which flowerfl/scenario_strategy.py
-       reads after each score_updates() call and writes into the signal log
+       reads after each score_updates call and writes into the signal log
        (flowerfl/signal_logger.py). The evaluation threshold is selected
        per-defense on the 5 dev seeds and then frozen before scoring the 10
        confirmatory seeds (spec v1.3 § 2, "frozen-threshold-from-dev"
@@ -107,7 +107,7 @@ class ByzantineDefensePlugin(ABC):
         AFTER an upstream filter (e.g. TGE behind Krum) can still see every
         participant's update. Default no-op: only stateful defenses that must
         observe the whole cohort regardless of downstream filtering override it
-        (TGE′'s EMA reputation leg — GWU-53). Must not mutate the results.
+        (TGE′'s EMA reputation leg). Must not mutate the results.
         """
         pass
 
@@ -121,7 +121,7 @@ class ByzantineDefensePlugin(ABC):
         the RMC threat model forbids (identity linkage is exactly what H3's
         fingerprint registry is being evaluated for). ScenarioStrategy calls
         this every scored round with {raw cid -> logical identity}; stateful
-        plugins key their per-client state through `resolve_identity()`.
+        plugins key their per-client state through `resolve_identity`.
         Methodology v1.15.
         """
         self._identity_map = dict(cid_to_identity)
@@ -163,7 +163,7 @@ class ByzantineDefensePlugin(ABC):
         normalized to [0.0, 1.0]) is a no-op filter; subclasses override
         this to apply their own operational accept/reject rule (see module
         docstring for how this differs from the recall@FPR evaluation
-        threshold). PluggableStrategy.aggregate_fit() calls this once per
+        threshold). PluggableStrategy.aggregate_fit calls this once per
         plugin, chaining each plugin's output into the next plugin's input.
         """
         filtered = []
@@ -217,8 +217,8 @@ class KrumDefensePlugin(ByzantineDefensePlugin):
             dynamic_f: When True, f is recomputed EVERY round from that
                 round's participant count n as ``ceil(n/2) - 1`` and the keep
                 count as ``max(1, n - f - 2)`` — the April Szeląg-anchor
-                formula (scripts/reproduce_szelag.py:388,739). Adopted for
-                scenario deployments (methodology v1.19, PR #12 P1) because
+                formula (the original baseline reproduction). Adopted for
+                scenario deployments (methodology v1.19, ) because
                 S3/S4 disconnect rounds schedule only ~11 participants (the 9
                 adversaries are disconnected — the RMC pattern) and a static
                 f=9 there makes num_closest = 11-9-2 = 0 (uncomputable).
@@ -256,7 +256,7 @@ class KrumDefensePlugin(ByzantineDefensePlugin):
         Records the resulting per-client scores into `self._round_scores`
         (keyed by server_round) for the recall@FPR evaluation pipeline (see
         module docstring) — this is in addition to returning them for
-        filter_updates()'s own accept/reject decision this round.
+        filter_updates's own accept/reject decision this round.
         """
         n = len(results)
         f = self._effective_f(n)  # per-round ceil(n/2)-1 when dynamic (v1.19)
@@ -269,7 +269,7 @@ class KrumDefensePlugin(ByzantineDefensePlugin):
         # keep-first-m-by-arrival-order and flattening the krum_score
         # signal-log channel (no variance -> H2 recall@FPR uncomputable for
         # the Krum arm). The score is computable whenever num_closest >= 1 —
-        # the April Szelag anchor (scripts/reproduce_szelag.py::aggregate_krum)
+        # the April Szelag anchor (the original baseline reproduction)
         # computes it at exactly n=20/f=9 with no guard, and
         # Szelag-faithfulness is the pre-registered principle: the praxis
         # deliberately studies Krum PUSHED PAST its certified tolerance
@@ -357,7 +357,7 @@ class KrumDefensePlugin(ByzantineDefensePlugin):
         This is Krum's OPERATIONAL exclusion decision for this round's
         aggregation — the `threshold` parameter is unused (Krum selects by
         rank, not by a score cutoff); it is accepted only to satisfy the
-        base class's filter_updates() signature.
+        base class's filter_updates signature.
         """
         n = len(results)
         f = self._effective_f(n)  # per-round ceil(n/2)-1 when dynamic (v1.19)
@@ -402,7 +402,7 @@ class TrustScorePlugin(ByzantineDefensePlugin):
     This demonstrates a stateful plugin that tracks client behavior
     over time — the foundation for detecting reconnecting malicious clients.
 
-    Does NOT override filter_updates(): it relies on the ABC's default
+    Does NOT override filter_updates: it relies on the ABC's default
     (keep score > 0.0). Because trust scores start at 0.5 (neutral) and move
     via an exponential moving average rather than a hard cutoff, this is a
     much weaker operational exclusion rule than KrumDefensePlugin's top-m
@@ -410,7 +410,7 @@ class TrustScorePlugin(ByzantineDefensePlugin):
     clients are actually excluded from aggregation even when their trust
     score has dropped substantially. Recall@10%FPR for this defense is
     therefore evaluated primarily from the continuous `_round_scores`
-    exposed below, not from what filter_updates() actually excludes.
+    exposed below, not from what filter_updates actually excludes.
     """
 
     def __init__(self, decay_rate: float = 0.9, outlier_threshold: float = 2.0):
@@ -548,7 +548,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
     IsolationForest for tenure < 2, a linear blend for tenure in [2, ramp_rounds),
     pure LSTM for tenure >= ramp_rounds. The configured ramp is authoritative
     (the old silent `max(ramp, 8)` floor was removed per amendment v1.6 § 2,
-    closing GWU-8): the provisional canonical value is 8, and the FINAL value
+    closing ): the provisional canonical value is 8, and the FINAL value
     is selected empirically at the H2 dev gate described in
     `docs/reproduction/experiments.md` — do not cite the ramp as locked until
     that selection has run.
@@ -578,7 +578,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
             ramp_rounds: Rounds over which to blend cold-start -> long memory.
             long_memory_expert: "lstm" (incumbent TGE — bit-identical), "ema"
                 (EMA reputation leg only, component isolation), or "bank" (TGE′:
-                min(LSTM, EMA), GWU-53). Selects how the tenure gate's
+                min(LSTM, EMA), ). Selects how the tenure gate's
                 long-memory leg is formed.
             ema_alpha: EMA retention weight for the reputation expert (ema/bank
                 only; inert for "lstm"). ADOPTED at 0.9 from TrustScore's
@@ -616,7 +616,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
         self._cid_counter = 0
         # Defense overhead instrumentation (Task 4c.4): wall-clock per round (ms)
         self._timing_per_round: list[float] = []
-        # Cohort-observation time for the CURRENT round (GWU-53), folded
+        # Cohort-observation time for the CURRENT round, folded
         # into the round's recorded TGE time by score_updates so
         # tge_score_time_per_round_ms includes the observe_cohort pass.
         self._pending_observe_ms: float = 0.0
@@ -632,7 +632,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
         (v1.15), the key is the scenario's LOGICAL identity (`client_N` /
         `client_N_newM`) — so an identity reset genuinely resets tenure and
         LSTM history, matching the signal log's ground-truth
-        `compute_tenure(logical_cid, ...)` and the RMC threat model (the
+        `compute_tenure(logical_cid,...)` and the RMC threat model (the
         server cannot link a new identity to an old client without H3's
         fingerprint registry).
 
@@ -737,7 +737,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
         )
 
         # Defense overhead bookkeeping (Task 4c.4). Fold in this round's
-        # observe_cohort time (GWU-53) so the reported per-round TGE
+        # observe_cohort time so the reported per-round TGE
         # cost includes the full-cohort observation pass, then clear it.
         _t_elapsed_ms = (time.perf_counter() - _t_start) * 1000.0
         _t_elapsed_ms += self._pending_observe_ms
@@ -801,7 +801,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
         return filtered
 
     def on_round_start(self, server_round: int, num_clients: int) -> None:
-        """Cache the current round on self so filter_updates() (which doesn't
+        """Cache the current round on self so filter_updates (which doesn't
         receive server_round directly) can pass it to record_scored/record_accepted."""
         self._current_round = server_round
 
@@ -810,7 +810,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
         results: List[Tuple[ClientProxy, FitRes]],
         server_round: int,
     ) -> None:
-        """Update the EMA reputation leg for the FULL round cohort (GWU-53).
+        """Update the EMA reputation leg for the FULL round cohort.
 
         The bank's EMA is a once-per-participating-round reputation, cohort-wide
         and independent of upstream filtering (amendment v1.7 §2.1). In the
@@ -823,7 +823,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
         scored-row signal-log population is byte-identical. No-op in lstm mode
         and before the forest fits (guarded here to skip feature extraction).
 
-        Timing (GWU-53): this hook's full-cohort flattening + feature
+        Timing : this hook's full-cohort flattening + feature
         extraction + forest scoring is substantial (and roughly duplicates the
         subsequent scoring pass), so its wall-clock is captured here and folded
         into the round's reported TGE overhead by score_updates — otherwise
@@ -843,7 +843,7 @@ class TGEnsemblePlugin(ByzantineDefensePlugin):
     def on_round_end(self, server_round: int, aggregated_params: Parameters) -> None:
         """End-of-round: trigger periodic expert refitting.
 
-        Delegates to TGEnsembleModel.on_round_end(), which refits the
+        Delegates to TGEnsembleModel.on_round_end, which refits the
         IsolationForest / retrains the LSTM once accumulated data crosses
         each expert's warmup/refit_interval thresholds (see TGEnsembleModel
         in rmc/tg_ensemble.py). No-op most rounds.
@@ -875,7 +875,7 @@ def canonicalize_result_order(results, server_round=None):
     float-summation-order-invariant.
 
     Sorting on the client's OWN reported partition_id pins both. partition_id is on
-    EVERY FitRes — the single return in FlowerClient.fit() (flowerfl/client_app.py:
+    EVERY FitRes — the single return in FlowerClient.fit (flowerfl/client_app.py:
     149) sets metrics["partition_id"] after every honest AND attack branch — so the
     fallback below never fires in production; a missing key falls back to a STABLE
     cid order (never arrival order) with a loud warning. NOT keyed on flower cid
@@ -883,7 +883,7 @@ def canonicalize_result_order(results, server_round=None):
 
     IDEMPOTENT: the key is deterministic and the sort stable, so re-sorting an
     already-canonical list is a no-op. This lets ScenarioStrategy canonicalize
-    ONCE at its entry (so super().aggregate_fit AND _maybe_log_signals consume the
+    ONCE at its entry (so super.aggregate_fit AND _maybe_log_signals consume the
     SAME ordered list, avoiding cross-client signal-log misattribution) while
     PluggableStrategy still canonicalizes for direct (non-scenario) callers,
     harmlessly.
@@ -918,17 +918,17 @@ class PluggableStrategy(Strategy):
     custom defense logic.
 
     Hook execution order:
-    1. on_round_start() - plugins prepare for the round
-    2. score_updates() - plugins score each client's update
-    3. filter_updates() - plugins filter out low-scoring clients
-    4. base_strategy.aggregate_fit() - actual aggregation on filtered updates
-    5. on_round_end() - plugins process the result
+    1. on_round_start - plugins prepare for the round
+    2. score_updates - plugins score each client's update
+    3. filter_updates - plugins filter out low-scoring clients
+    4. base_strategy.aggregate_fit - actual aggregation on filtered updates
+    5. on_round_end - plugins process the result
 
     Multi-plugin composition (e.g. Krum + TGE, or the pre-correction-era
     Krum + ColdStartDefensePlugin) is SEQUENTIAL, not independent: each
-    plugin's score_updates()/filter_updates() pair only sees the subset of
+    plugin's score_updates/filter_updates pair only sees the subset of
     results that survived every prior plugin in `self._plugins` (see
-    aggregate_fit() below). Plugin order therefore matters — it determines
+    aggregate_fit below). Plugin order therefore matters — it determines
     which defense gets first refusal on excluding a client.
     """
 
@@ -949,12 +949,12 @@ class PluggableStrategy(Strategy):
         # aggregation (a round where every update was filtered out) so this
         # always holds the last successfully aggregated model.
         self._last_aggregated_parameters = None
-        # H3 / GWU-9 (schema v5): the round's POST-`filter_updates` aggregation
+        # H3 / (schema v5): the round's POST-`filter_updates` aggregation
         # coefficients, {raw cid -> a_i}. Recorded here because this is the only
         # place that sees BOTH the full participant list and the survivor set
         # the base strategy actually aggregates. Keyed by the round it was
         # computed in so a consumer can never be handed another round's numbers
-        # (the v1.17 cross-attribution lesson). See aggregation_coefficients().
+        # (the v1.17 cross-attribution lesson). See aggregation_coefficients.
         self._round_coefficients: Optional[Dict[str, float]] = None
         self._round_coefficients_round: Optional[int] = None
         self._coefficient_base_warned = False
@@ -991,7 +991,7 @@ class PluggableStrategy(Strategy):
     def configure_evaluate(self, server_round, parameters, client_manager):
         return self._base.configure_evaluate(server_round, parameters, client_manager)
 
-    # --- H3 aggregation-coefficient bookkeeping (schema v5, GWU-9) ---
+    # --- H3 aggregation-coefficient bookkeeping (schema v5, ) ---
 
     def aggregation_coefficients(self, server_round: int) -> Optional[Dict[str, float]]:
         """This round's post-defense aggregation coefficients, or ``None``.
@@ -1072,7 +1072,7 @@ class PluggableStrategy(Strategy):
     ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
         """Aggregate with Byzantine defense plugins.
 
-        Runs every plugin's score_updates()/filter_updates() pair in
+        Runs every plugin's score_updates/filter_updates pair in
         sequence (see class docstring for why order matters), then delegates
         the surviving updates to the wrapped base_strategy for the actual
         FedAvg/etc. aggregation math. Returns (None, {}) — Flower's
@@ -1097,7 +1097,7 @@ class PluggableStrategy(Strategy):
         # investigation, 2026-07-27). ScenarioStrategy.aggregate_fit already
         # canonicalizes at its OUTER entry (so its _maybe_log_signals consumes the
         # same ordering the plugins scored — see that method) and calls
-        # super().aggregate_fit == this method; the helper is idempotent, so this
+        # super.aggregate_fit == this method; the helper is idempotent, so this
         # re-sort is a harmless no-op for scenario runs and the sole pin for direct
         # (non-scenario) PluggableStrategy callers.
         results = canonicalize_result_order(results, server_round)
@@ -1109,7 +1109,7 @@ class PluggableStrategy(Strategy):
         # reassigned after each plugin, so subsequent plugins in the list
         # only score/filter the subset that already survived — this is the
         # SEQUENTIAL composition described in the class docstring.
-        # Cohort observation (GWU-53): give every plugin the COMPLETE, unfiltered
+        # Cohort observation : give every plugin the COMPLETE, unfiltered
         # cohort before any filtering, so a plugin composed after an upstream
         # filter (TGE′'s EMA leg behind Krum) can observe all participants. Base
         # class no-op — incumbent plugins are unaffected.
@@ -1154,7 +1154,7 @@ class PluggableStrategy(Strategy):
         trace["kept_cids"] = [str(cp.cid) for cp, _fr in filtered_results]
         print(f"[PluggableStrategy] After filtering: {len(filtered_results)}/{len(results)} updates")
 
-        # H3 schema v5 (GWU-9): record the post-filter coefficients BEFORE the
+        # H3 schema v5 : record the post-filter coefficients BEFORE the
         # base aggregation, from the exact survivor list handed to it.
         self._record_aggregation_coefficients(server_round, results, filtered_results)
 

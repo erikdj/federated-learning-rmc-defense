@@ -172,6 +172,7 @@ SECONDARY_BLOCKS = (
     "bracket_recall_by_fpr",
     "g2_scored_rows_contrast", "global_cut_sensitivity",
     "exp048_standalone_tge_full_coverage", "strict_identity_loao_sensitivity",
+    "window_aware_loao_sensitivity",
     "declared_vacuous_cells", "not_computed_by_this_executor",
     "S3_blend_margin", "S4_blend_margin", "per_family_fold_recalls",
 )
@@ -520,6 +521,17 @@ SCHEMA: tuple[Rule, ...] = (
         select="secondaries.strict_identity_loao_sensitivity",
         required=("_note", "identity_key", "exclusion_census", "status"),
         authority="v1.15b § 3 — canonical device lineage, reported-only",
+    ),
+    Rule(
+        name="window-aware sensitivity",
+        select="secondaries.window_aware_loao_sensitivity",
+        # The four keys that ride BOTH branches. `status` names the branch, and
+        # the census plus the stated rule are what make the arm auditable even
+        # when it is structurally undefined — the same shape the strict arm's
+        # rule takes, for the same reason.
+        required=("_note", "window_rule", "corpus_census", "status"),
+        authority=("§ 2.2b (window derivation) / § 3.2 mandatory sensitivity "
+                   "— derived-window family exposure, reported-only"),
     ),
 )
 

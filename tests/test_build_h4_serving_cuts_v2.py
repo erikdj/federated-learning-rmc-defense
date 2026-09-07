@@ -231,7 +231,7 @@ def test_cut_mechanics_are_the_frozen_e3_quantile(env):
     expected = float(np.quantile(np.asarray(honest, dtype=float), 1 - 0.10))
     assert cuts["S3"]["krum_family"] == pytest.approx(expected)
     # primary mechanics stay the frozen E3 quantile; the recorded semantics
-    # must also disclose the erratum-C C1 fallback (PR #69 provenance fix)
+    # must also disclose the erratum-C C1 fallback ( provenance fix)
     assert v2["cut_semantics"].startswith("primary: cut = ")
     assert "Erratum-C C1 fallback" in v2["cut_semantics"]
 
@@ -314,7 +314,7 @@ def test_wrong_arm_class_refuses(env, capsys):
 
 @pytest.mark.unit
 def test_swapped_result_files_refuse(env, capsys):
-    """PR #68 P1: a filename-swapped result (S1 payload under the S3 unit's
+    """: a filename-swapped result (S1 payload under the S3 unit's
     filename) must refuse on the scenario binding, never pool into the
     wrong (scenario, arm_class) cell (H3 event<->unit binding lesson)."""
     s1 = s3 = None
@@ -330,7 +330,7 @@ def test_swapped_result_files_refuse(env, capsys):
 
 @pytest.mark.unit
 def test_block_scenario_token_mismatch_refuses(env, capsys):
-    """PR #68 P1: the h2p_observe block's own scenario_token must equal the
+    """: the h2p_observe block's own scenario_token must equal the
     census cell's token (under the block's declared cuts_version)."""
     def mutate(u, payload):
         if u.config == "Krum" and u.scenario.startswith("S3") and u.seed == 42:
@@ -341,7 +341,7 @@ def test_block_scenario_token_mismatch_refuses(env, capsys):
 
 @pytest.mark.unit
 def test_provenance_scenario_path_mismatch_refuses(env, capsys):
-    """PR #68 P1: the result's OWN provenance scenario stem must match the
+    """: the result's OWN provenance scenario stem must match the
     census cell — a mislabeled result cannot ride a correct block header."""
     def mutate(u, payload):
         if u.config == "FedAvg" and u.scenario.startswith("S2") and u.seed == 42:
@@ -362,7 +362,7 @@ def test_c0_unit_binds_via_the_v1_alias_token(env, capsys):
 
 @pytest.mark.unit
 def test_provenance_arm_class_mismatch_refuses(env, capsys):
-    """PR #68 P1: the provenance arm-class declaration (when present) must
+    """: the provenance arm-class declaration (when present) must
     match the census cell too — no bypass around the block-level check."""
     def mutate(u, payload):
         if u.config == "Krum" and u.scenario.startswith("S0") and u.seed == 137:

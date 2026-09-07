@@ -17,10 +17,14 @@ also links the paper and dataset records.
 The [DataCite metadata for the dataset DOI](https://api.datacite.org/dois/10.21227/mbc1-1h68)
 names the dataset license as
 [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/legalcode)
-(`CC-BY-4.0`). That license permits sharing and adaptation, subject to its
-conditions: give appropriate credit, link the license, preserve applicable
-notices, and indicate changes without implying endorsement. Review any current
-DataPort access terms shown during download as well.
+(`CC-BY-4.0`). The DataPort page also grants academic research use indefinitely
+and asks commercial users to obtain permission from the lead author, Dr Mohamed
+Amine Ferrag. These notices express different commercial-use conditions; this
+release discloses both and does not claim that their relationship has been
+resolved or that separate commercial permission has been obtained. Consult the
+author through the upstream record for commercial-use clarification. The
+upstream commercial-use wording and verification date are preserved in
+[`data/DATASET_LICENSE.md`](../data/DATASET_LICENSE.md).
 
 The repository's MIT license applies to its software. It is not a replacement
 for the dataset license. The processed Parquet release identifies itself as
@@ -40,7 +44,7 @@ artifact is a later processing stage:
 | Published Edge-IIoTset corpus | 20,952,648 | 1,176 collected; 61 high-correlation features described by the authors | Upstream package |
 | `data/edge_full` project artifact | 20,939,617 | 45 numeric protocol features plus binary `Attack_label` | 10 sensor clients |
 | `data/edge_full_20` project artifact | 20,939,617 unique rows | Same 45 features plus label | 20 Dirichlet partitions; `alpha=0.5`, seed 42 |
-| `client_20.parquet` | 207,144 additional stored rows | Same schema | Byte copy of `client_19.parquet` for the RMC identity-reset role |
+| `client_20.parquet` | 207,144 additional stored rows | Same schema | Retained byte copy of `client_19.parquet`; not the scenario ladder's reconnect mechanism |
 
 The two 20.9-million counts refer to different stages and must not be treated
 as a simple raw-minus-dropped-rows calculation. `process_edge_full.py` samples
@@ -61,9 +65,11 @@ The main pipeline performs these transformations:
    size, shuffles each client, and writes ten Parquet files.
 5. `repartition_edge_20.py` concatenates those ten files and allocates each
    binary class independently across twenty clients with a Dirichlet draw
-   (`alpha=0.5`, seed 42). Clients 0–10 are assigned the honest role and
-   clients 11–19 the malicious role. It copies client 19 to client 20 to model
-   the same device returning under a new logical identity.
+   (`alpha=0.5`, seed 42). Dataset metadata retains an earlier role assignment
+   and a copy of client 19 as client 20. Executed S0–S4 scenarios assign the
+   nine malicious base clients to slots 0–8. Their reconnect identities map
+   back to the same original partition through `ScenarioStrategy`; they do not
+   switch to the client-20 copy.
 
 The output metadata's `total_rows` excludes the deliberate client-20 duplicate.
 Counting all 21 stored Parquet files therefore produces 21,146,761 rows.
@@ -76,9 +82,9 @@ the full-data scripts described here.
 
 ## Download the exact processed inputs
 
-Release `v0.1.0` includes the exact processed partitions used by the frozen
-row-index manifests. The archive is 289,722,799 bytes and its SHA-256 is
-`dc90d9560a29f04aeb7eb9a16ce10183f624246e1903865ba4d5679ac9b5de8e`.
+Release `v0.1.1` includes the exact processed partitions used by the frozen
+row-index manifests. The archive is 289,809,085 bytes and its SHA-256 is
+`f2b0e2a6aa3a72d6bbe6e01108bf22b7e8170fc6fd19680888d68fac3b6faa4d`.
 [`data/processed-data-manifest.json`](../data/processed-data-manifest.json)
 records the archive checksum and full SHA-256, byte size, Parquet row count,
 and frozen fingerprint for every member.
@@ -88,12 +94,12 @@ before extraction:
 
 ```bash
 mkdir -p .release-download
-gh release download v0.1.0 \
+gh release download v0.1.1 \
   --repo erikdj/federated-learning-rmc-defense \
-  --pattern edge-iiot-rmc-inputs-v1.tar.gz \
+  --pattern edge-iiot-rmc-inputs-v2.tar.gz \
   --dir .release-download
 
-DATA_ASSET=.release-download/edge-iiot-rmc-inputs-v1.tar.gz
+DATA_ASSET=.release-download/edge-iiot-rmc-inputs-v2.tar.gz
 EXPECTED_SHA=$(python -c \
   'import json; print(json.load(open("data/processed-data-manifest.json"))["release"]["sha256"])')
 echo "$EXPECTED_SHA  $DATA_ASSET" | sha256sum --check --strict

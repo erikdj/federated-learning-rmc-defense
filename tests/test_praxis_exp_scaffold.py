@@ -35,3 +35,26 @@ def test_scaffold_warns_on_duplicate_slug(tmp_repo):
     scaffold_experiment(tmp_repo, slug="reused")
     with pytest.raises(ScaffoldError, match="exists"):
         scaffold_experiment(tmp_repo, slug="reused")
+
+
+def test_shipped_public_template_scaffolds_without_private_references(tmp_path):
+    """The repository itself ships the input needed by ``praxis exp new``."""
+    from praxis_exp.scaffold import scaffold_experiment
+
+    source = Path(__file__).parents[1] / "docs" / "experiments" / "_TEMPLATE.md"
+    exp_dir = tmp_path / "docs" / "experiments"
+    exp_dir.mkdir(parents=True)
+    (exp_dir / "_TEMPLATE.md").write_text(source.read_text())
+    (tmp_path / "docs" / "METHODOLOGY_LOG.md").write_text(
+        "## v0.1 — public release\n"
+    )
+
+    path = scaffold_experiment(tmp_path, slug="adopter-smoke")
+    text = path.read_text()
+
+    assert path.name == "EXP-001-adopter-smoke.md"
+    assert "EXP-001" in text and "adopter-smoke" in text and "v0.1" in text
+    assert "rmc/scenarios/" in text
+    assert "docs/reproduction/experiments.md" in text
+    assert "docs/superpowers/" not in text
+    assert ".planning/" not in text

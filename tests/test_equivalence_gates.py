@@ -7,7 +7,7 @@ final params, reported loss, persistent-Adam optimizer state, and torch RNG stat
 This proves the Stage-F off arm is the incumbent, so cross-arm contrasts are clean.
 
 Gate B — instrumentation macro-equivalence: the per-class-instrumented evaluator
-(test_detailed, PR #32) reproduces the macro accuracy/precision/recall/F1 of the
+(test_detailed, ) reproduces the macro accuracy/precision/recall/F1 of the
 pre-branch macro evaluator (test) bit-for-bit, and old (pre-suffix) eval lines
 still replay unchanged with the per-class fields ABSENT (never fabricated).
 
@@ -156,7 +156,7 @@ def test_gate_b_old_log_replays_with_per_class_absent():
     # macro fields replay unchanged...
     assert entry["f1"] == 0.812 and entry["accuracy"] == 0.844 and entry["loss"] == 0.331
     assert entry["precision"] == 0.805 and entry["recall"] == 0.822
-    # ...and the per-class fields are ABSENT, never fabricated.
+    #...and the per-class fields are ABSENT, never fabricated.
     for k in ("attack_recall", "attack_precision", "attack_f1",
               "benign_recall", "benign_precision", "benign_f1"):
         assert k not in entry
@@ -171,7 +171,7 @@ def test_gate_b_old_log_replays_with_per_class_absent():
 # ---------------------------------------------------------------------------
 
 def _classic_cic(net, loader, epochs, lr, wd):
-    """Reference re-implementation of the pre-Stage-F train() epochs loop."""
+    """Reference re-implementation of the pre-Stage-F train epochs loop."""
     criterion = nn.CrossEntropyLoss()
     opt = optim.Adam(net.parameters(), lr=lr, weight_decay=wd)
     net.train()

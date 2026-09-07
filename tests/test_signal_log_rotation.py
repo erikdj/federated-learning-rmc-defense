@@ -1,4 +1,4 @@
-"""Signal-log custody on rerun (GWU-59).
+"""Signal-log custody on rerun.
 
 The signal log is named <exec_mode>__<scenario>__<defense>__seed<seed>.jsonl —
 no SMOTE identity — and SignalLogger opens it append-only. So when run_one does
@@ -57,7 +57,7 @@ def test_rotate_absent_file_is_noop(tmp_path):
 
 
 def test_rotate_moves_and_starts_fresh_new_log_only_new_rows(tmp_path):
-    """The custody guarantee: old rows go to .superseded-1, and a fresh append
+    """The custody guarantee: old rows go to.superseded-1, and a fresh append
     (as SignalLogger does) writes ONLY the new arm's rows to the original path."""
     from run_phase4_flower import _rotate_stale_signal_log
     p = tmp_path / "flower_reset__S4__krum__seed42.jsonl"

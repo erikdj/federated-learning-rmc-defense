@@ -1,4 +1,4 @@
-"""Disjoint evaluation holdout (GWU-61, image v8 change 3).
+"""Disjoint evaluation holdout (image v8 change 3).
 
 The server-side FixedEvalManager built its global holdout by stratified-sampling
 each client's FULL parquet, never excluding the rows load_data routes into that
@@ -222,7 +222,7 @@ def test_holdout_cache_reusable_for_legacy_run():
     # a legacy run may reuse a legacy or field-missing cached result...
     assert _holdout_cache_reusable(_cached(holdout_disjoint=False), legacy_active) is True
     assert _holdout_cache_reusable(_cached(), legacy_active) is True
-    # ...but NOT a disjoint one
+    #...but NOT a disjoint one
     assert _holdout_cache_reusable(_cached(holdout_disjoint=True), legacy_active) is False
 
 
@@ -234,7 +234,7 @@ def test_reuse_cached_or_rotate_recomputes_on_holdout_mode_mismatch(tmp_path):
     from run_phase4_flower import _reuse_cached_or_rotate
     jp = tmp_path / "r.json"
     jp.write_text(_json.dumps(_cached(holdout_disjoint=False)))
-    # active run: default disjoint (holdout-disjoint True threaded by main())
+    # active run: default disjoint (holdout-disjoint True threaded by main)
     out = _reuse_cached_or_rotate(
         jp, {"holdout-disjoint": True}, "rmc/scenarios/S0.json",
         "ScenarioKrum", 42, "reset", "exp",
@@ -572,7 +572,7 @@ def test_pool_shortfall_warns_loudly_not_silent(tmp_path, monkeypatch, capsys):
 # Durable holdout provenance (drift-investigation fix): the [FixedEval] stdout
 # record never reliably reaches CloudWatch (captured-stdout section), so the
 # rows-excluded / size / per-class counts must live in the result-JSON
-# provenance. FixedEvalManager.holdout_provenance() is the artifact source;
+# provenance. FixedEvalManager.holdout_provenance is the artifact source;
 # run_phase4_flower._holdout_provenance_fields copies it into the result dict.
 # ---------------------------------------------------------------------------
 def test_holdout_provenance_disjoint(disj_dataset):

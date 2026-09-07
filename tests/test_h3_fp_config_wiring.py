@@ -73,7 +73,7 @@ def test_defense_token_round_trips_both_h3_tokens():
 
 @pytest.mark.unit
 def test_h3_tokens_follow_the_class_name_lowered_convention():
-    """The token IS `strategy_name.replace("Scenario", "").lower()` — the same
+    """The token IS `strategy_name.replace("Scenario", "").lower` — the same
     derivation `server_app._signal_log_components` performs at runtime, so the
     map cannot drift from what the signal log actually writes."""
     for config, (strategy_name, token) in H3_CONFIGS.items():
@@ -352,7 +352,7 @@ def _tau_is_locked() -> bool:
 def test_tau_is_locked_in_this_tree():
     """The canary this section was written around — now FLIPPED.
 
-    It previously asserted `not _tau_is_locked()`, guarding the premise of the
+    It previously asserted `not _tau_is_locked`, guarding the premise of the
     pre-lock tests below. EXP-050 locked both τ (2026-08-10), which is exactly
     the event the original docstring anticipated ("when τ lands, this canary
     flips and the locked-posture tests take over"). Same guard, opposite sign:
@@ -524,7 +524,7 @@ def test_an_unknown_cohort_label_is_rejected():
 
 @pytest.mark.unit
 def test_a_damaged_locked_artifact_stops_the_run_instead_of_downgrading(monkeypatch):
-    """PR #52 round-2 P1: post-lock integrity failure must PROPAGATE.
+    """ round-2 P1: post-lock integrity failure must PROPAGATE.
 
     The observe-only downgrade is for the genuinely pre-lock state only. A
     locked artifact whose bytes are off the SHA-256 pin (or missing entirely)

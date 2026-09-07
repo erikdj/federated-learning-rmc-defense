@@ -58,7 +58,7 @@ class FlowerClient(NumPyClient):
                  weight_decay: float = 3e-3,
                  optimizer_state: str = "reset",      # NEW: "reset" | "persistent"
                  node_id: "int | None" = None,        # NEW: Flower-assigned id for keying
-                 base_seed: int = 42,                 # GWU-31: experiment seed
+                 base_seed: int = 42,                 # experiment seed
                  max_steps: "int | None" = None,      # Stage-F §4: update-matching cap
                  arm_label: "str | None" = None,      # Stage-F: arm name (loud errors/manifest)
                  update_match: bool = False,          # Stage-F §4: update-match flag
@@ -116,7 +116,7 @@ class FlowerClient(NumPyClient):
         1. Per-round config from ScenarioStrategy (attack_type in config dict)
         2. Fallback to static is_malicious flag (legacy non-scenario mode)
         """
-        # GWU-31: seed all RNGs to a per-(client, round) value BEFORE any
+        # seed all RNGs to a per-(client, round) value BEFORE any
         # stochastic op (dropout masks, DataLoader shuffle, attack noise), so
         # each client/round has a distinct-but-reproducible stream. server_round
         # arrives via FitIns.config (ScenarioStrategy injects it); it defaults to
@@ -160,7 +160,7 @@ class FlowerClient(NumPyClient):
                 if self.use_brfss:
                     train_loss = train_brfss_label_flip(self.net, self.trainloader, lr=self.lr, weight_decay=self.weight_decay, **self._stage_f_train_kwargs())
                 else:
-                    # GWU-72: legacy static branch equalized the same way as
+                    # legacy static branch equalized the same way as
                     # the scenario-driven label_flip dispatch below.
                     train_loss = train_label_flip(self.net, self.trainloader, epochs=self.local_epochs, lr=self.lr, weight_decay=self.weight_decay, **self._stage_f_train_kwargs())
             elif self.attack_type == "noise":
@@ -338,14 +338,14 @@ class FlowerClient(NumPyClient):
         elif attack_type == "alie":
             # Real ALIE (Baruch et al., 2019) — client trains honestly.
             # The server replaces this client's update with the cross-client
-            # statistical attack in ScenarioStrategy._maybe_apply_real_alie().
+            # statistical attack in ScenarioStrategy._maybe_apply_real_alie.
             return self._honest_train()
         elif attack_type == "label_flip":
             if self.use_brfss:
                 return train_brfss_label_flip(self.net, self.trainloader, **self._stage_f_train_kwargs())
             else:
-                # GWU-72: pass epochs=local_epochs exactly as _honest_train()
-                # does for train() — label_flip attackers previously ran a
+                # pass epochs=local_epochs exactly as _honest_train
+                # does for train — label_flip attackers previously ran a
                 # single natural pass (5x under-trained vs honest clients).
                 return train_label_flip(self.net, self.trainloader, epochs=self.local_epochs, **self._stage_f_train_kwargs())
         else:
@@ -385,12 +385,12 @@ def client_fn(context: Context):
     lr = float(run_config.get("learning-rate", 0.01))
     local_epochs = int(run_config.get("local-epochs", 1))
     weight_decay = float(run_config.get("weight-decay", 3e-3))
-    base_seed = int(run_config.get("seed", 42))  # GWU-31: per-(client, round) RNG base
+    base_seed = int(run_config.get("seed", 42))  # per-(client, round) RNG base
 
     # Get partition ID from node config
     partition_id = int(context.node_config.get("partition-id", 0))
 
-    # SMOTE study knob (GWU-59): flag-gated per-client training-split oversampling.
+    # SMOTE study knob : flag-gated per-client training-split oversampling.
     # Default OFF; when enabled, config is validated LOUDLY here at parse time
     # (before any data load / training) so an unknown variant or invalid target
     # fails fast rather than silently downgrading. Applied uniformly to ALL
@@ -518,7 +518,7 @@ def client_fn(context: Context):
         weight_decay=weight_decay,
         optimizer_state=optimizer_state,                # NEW
         node_id=int(context.node_id) if context.node_id is not None else None,  # NEW
-        base_seed=base_seed,                            # GWU-31
+        base_seed=base_seed,                            #
         max_steps=max_steps,                            # Stage-F §4
         arm_label=arm_label,                            # Stage-F
         update_match=update_match,                      # Stage-F §4

@@ -2,17 +2,17 @@
 
 Pure helpers (resolve_unit, should_skip, build_unit_tags, build_unit_params,
 s3_uris_for_unit, trajectory_metrics, final_metrics, cold_start_model_tag,
-build_unit_note) are unit-tested; main() does the I/O and is integration-tested
+build_unit_note) are unit-tested; main does the I/O and is integration-tested
 by the calibration runs.
 
 MLflow enrichment (redesign spec 2026-07-12-mlflow-enrichment-redesign-design):
   - req 1 (lifecycle): _RunController owns the run's terminal status so it
     ALWAYS agrees with unit_status — runner failure ends FAILED, uncaught
     exception ends FAILED, Spot-reclaim SIGTERM ends KILLED (+ reclaim_reason).
-  - req 2 (traces): RETIRED (GWU-47) — an FL training run has no call tree, so
+  - req 2 (traces): RETIRED — an FL training run has no call tree, so
     the per-round timeline is an mlflow.log_table, not a trace. resolve_unit and
     the skip-check still run before any MLflow contact so an already-committed
-    unit exits 0 even with MLflow down (PR #13, comment 3567094768).
+    unit exits 0 even with MLflow down.
   - req 2/3 (params ≠ tags): experiment INPUTS -> PARAMS (build_unit_params);
     identity/provenance/status/links -> TAGS (build_unit_tags + start metadata).
     A key lives in exactly one of the two — no duplication.
@@ -51,11 +51,11 @@ from praxis_exp.storage import ObjectStore, S3ObjectStore
 from praxis_exp.units import Unit
 
 # config-label -> signal-log defense token
-# (strategy_name.replace("Scenario","").lower()).
+# (strategy_name.replace("Scenario","").lower).
 #
 # VERIFIED against flowerfl/server_app.py line 76:
-#   defense = strategy_name.replace("Scenario", "").lower() or "unknown"
-# and run_phase4_flower.py build_strategy_for_config() lines 233-252:
+#   defense = strategy_name.replace("Scenario", "").lower or "unknown"
+# and run_phase4_flower.py build_strategy_for_config lines 233-252:
 #
 #   "Krum"     -> ScenarioKrum.__name__       -> "krum"
 #   "TrustScore"-> ScenarioTrustScore.__name__ -> "trustscore"
@@ -72,7 +72,7 @@ _DEFENSE_TOKEN: dict[str, str] = {
     "Krum+TGE":   "krumtge",
     "TGE":        "tgensemble",
     "Krum+TGEprime": "krumtgeprime",  # ScenarioKrumTGEPrime lowered (server_app.py:78)
-    "TGEprime":   "tgeprime",         # ScenarioTGEPrime lowered — TGE′, GWU-53
+    "TGEprime":   "tgeprime",         # ScenarioTGEPrime lowered — TGE′,
     "Krum+CS":    "krumcs",
     "TrustScore+CS": "trustscorecs",
     "FedMedian":  "fedmedian",
@@ -84,8 +84,8 @@ _DEFENSE_TOKEN: dict[str, str] = {
     "TGE+FP":     "tgefp",            # ScenarioTGEFP lowered
     "Krum+TGE+FP": "krumtgefp",       # ScenarioKrumTGEFP lowered
     # H4 composition arms (spec 2026-08-16 § 2 + erratum-A; BUILD_CONTRACT).
-    # Same class-name-lowered convention; unit-id tokens (h2p_fp_krum, ...)
-    # come from the config label via replace('+','_').lower() as always.
+    # Same class-name-lowered convention; unit-id tokens (h2p_fp_krum,...)
+    # come from the config label via replace('+','_').lower as always.
     "H2P+FP+Krum": "h2pfpkrum",       # ScenarioH2PFPKrum lowered
     "H2P+FP":     "h2pfp",            # ScenarioH2PFP lowered
     "H2P+Krum":   "h2pkrum",          # ScenarioH2PKrum lowered
@@ -118,7 +118,7 @@ def resolve_unit(store: ObjectStore, exp_id: str, array_index: int) -> Unit:
 
 
 def resolve_manifest_run_extras(store: ObjectStore, exp_id: str) -> dict:
-    """The manifest's experiment-level ``run_extras`` (GWU-59), or {} if absent.
+    """The manifest's experiment-level ``run_extras``, or {} if absent.
 
     Read on the RUN path only (after the skip-check), so a done-marker unit still
     exits without any extra work. Both the original launch and an in-namespace
@@ -179,7 +179,7 @@ def s3_uris_for_unit(bucket: str, exp_id: str, unit_id: str) -> dict[str, str]:
 def trajectory_metrics(result: dict) -> list[tuple[str, float, int]]:
     """Per-round accuracy/f1/loss as (key, value, step) triples, step=server
     round. Ground-truthed against run_phase4_flower.py's
-    parse_eval_trajectory() output schema: trajectory is a list of
+    parse_eval_trajectory output schema: trajectory is a list of
     {"round": int, "f1": float, "accuracy": float, "loss": float} dicts.
     """
     points: list[tuple[str, float, int]] = []
@@ -187,7 +187,7 @@ def trajectory_metrics(result: dict) -> list[tuple[str, float, int]]:
         step = entry.get("round")
         if step is None:
             continue
-        # precision/recall are present on new-image trajectories (PR #15) and
+        # precision/recall are present on new-image trajectories and
         # skipped on older ones — all five live-contract metrics when available.
         # The six per-class keys mirror the direct-log block in
         # run_phase4_flower.py so self-heal/backfill-replayed units get the same
@@ -255,7 +255,7 @@ def cold_start_model_tag(result: dict) -> Optional[str]:
 def build_unit_note(unit: Unit, *, result: dict, console_url: str, result_filename: str) -> str:
     """Short markdown note (mlflow.note.content) for the child run: unit summary,
     RMC params, gate verdict, clickable S3 console link + result filename (req 5 /
-    GWU-47 Lane C — set on BOTH the live and backfill paths). Well within the
+    set on BOTH the live and backfill paths). Well within the
     8000-char tag cap."""
     lines = [
         f"### {unit.unit_id}",
@@ -310,7 +310,7 @@ def stage_f_argv_from_run_extras(run_extras: "dict | None") -> list[str]:
     without them produces byte-identical argv. Same strict-coercion contract as
     ``smote_argv_from_run_extras``: a hand-edited manifest with a typo'd bool
     (e.g. ``"ture"``) or weight mode (``"orginal"``) RAISES here — it must never
-    silently run the arm on the incumbent defaults (the GWU-59 near-miss this
+    silently run the arm on the incumbent defaults (the near-miss this
     chain exists to prevent).
     """
     if not run_extras:
@@ -351,7 +351,7 @@ def leakage_argv_from_run_extras(run_extras: "dict | None") -> list[str]:
     pre-registered pipeline is untouched. Same strict-coercion contract as
     ``smote_argv_from_run_extras``/``stage_f_argv_from_run_extras``: a hand-edited
     manifest with a typo'd bool (e.g. ``"ture"``, or a number) RAISES here rather
-    than silently running the leak-on incumbent (the GWU-59 near-miss this chain
+    than silently running the leak-on incumbent (the near-miss this chain
     exists to prevent).
     """
     if not run_extras or "normalize_train_only" not in run_extras:
@@ -484,7 +484,7 @@ def runner_argv(
 ) -> list[str]:
     """argv for the per-unit runner subprocess.
 
-    ``--rounds`` is passed explicitly (PR #13 P2, comment 3567046864): the
+    ``--rounds`` is passed explicitly : the
     runner defaults rounds to 50 (run_phase4_flower.py:1180), and this argv
     historically never carried it — a pre-existing omission (the pre-branch
     entrypoint lacked it too) that the enrichment surfaced by logging
@@ -492,7 +492,7 @@ def runner_argv(
     be what the subprocess actually executes, or the manifest/MLflow lie
     about the trajectory.
 
-    ``run_extras`` (GWU-59) carries experiment-level run-config overrides from
+    ``run_extras`` carries experiment-level run-config overrides from
     the manifest meta (e.g. SMOTE); absent/empty appends nothing, keeping the
     argv byte-identical to the incumbent so a non-SMOTE sweep is unaffected.
     """
@@ -518,8 +518,7 @@ def post_persist_enrichment(
     mlflow_mod: Any, unit: Unit, *, bucket: str, exp_id: str,
     result: dict, model_path: Path,
 ) -> bool:
-    """Best-effort MLflow decoration AFTER persist_unit's done-marker commit
-    .
+    """Best-effort MLflow decoration after persist_unit's done-marker commit.
 
     The S3 done-marker is the unit's source of truth. Once persist_unit
     returns, this unit HAS succeeded — a raise here would exit the container
@@ -536,7 +535,7 @@ def post_persist_enrichment(
 
     Returns ``True`` iff the ENTIRE guarded block completed, ``False`` if any
     step raised. The never-raise contract is unchanged — the
-    return value only tells ``main()`` whether to set the ``live_enrichment=
+    return value only tells ``main`` whether to set the ``live_enrichment=
     complete`` marker the finalizer's skip-complete fast path requires. A False
     return does NOT mean the unit failed: its done-marker is committed, so it is
     durably successful; only its MLflow decoration is incomplete (must be re-logged
@@ -557,7 +556,7 @@ def post_persist_enrichment(
             mlflow_mod.log_artifact(str(model_path))
             mlflow_mod.set_tag("model_file", model_path.name)
         # signal log as a dataset-by-source (context "signal") — no byte copy;
-        # parity with the backfill path (GWU-47 Lane A). Deterministic S3 key.
+        # parity with the backfill path. Deterministic S3 key.
         from praxis_exp.mlflow_client import build_signal_dataset
         mlflow_mod.log_input(
             build_signal_dataset(
@@ -588,7 +587,7 @@ def post_persist_enrichment(
 class _RunController:
     """Owns the child run's terminal status so it can never disagree with
     ``unit_status`` (redesign § 1/§ 3). Replaces the old ``with
-    mlflow.start_run()`` context manager, whose ``return`` on a runner failure
+    mlflow.start_run`` context manager, whose ``return`` on a runner failure
     sealed the run FINISHED. Every terminal path routes through ``terminate``,
     which is idempotent (first status wins) so a Spot-reclaim SIGTERM that
     marks the run KILLED is not later overwritten by the finally/except path.
@@ -757,7 +756,7 @@ def _set_start_metadata(
 
 def _model_num_features(dataset_dir: str) -> Optional[int]:
     """Input feature count for the model signature, from the dataset's
-    ``metadata.json`` ``_meta.num_features`` (GWU-47 Lane D). ``None`` if absent
+    ``metadata.json`` ``_meta.num_features``. ``None`` if absent
     — the caller then logs the model without a signature (still best-effort)."""
     meta = _read_dataset_metadata(dataset_dir)
     if meta and isinstance(meta.get("_meta"), dict):
@@ -773,7 +772,7 @@ def _pytorch_log_model(
 ) -> Any:
     """Call mlflow.pytorch.log_model tolerating the 2.x (``artifact_path``) vs
     3.x (``name``) keyword rename. Returns the ``ModelInfo`` — its ``model_id``
-    links final metrics to the logged model (GWU-47 Lane D)."""
+    links final metrics to the logged model."""
     try:
         return mlflow_mod.pytorch.log_model(
             model_obj, name="model", registered_model_name=registered_model_name,
@@ -790,7 +789,7 @@ def log_native_model(
     mlflow_mod: Any, *, model_path: Path, defense_token: str, model_dataset: str,
     result: Optional[dict] = None, _torch: Any = None, _create_model: Any = None,
 ) -> None:
-    """req 8 / GWU-47 Lane D: log the final global model as a native ``pytorch``
+    """req 8 / : log the final global model as a native ``pytorch``
     flavor, register it as ``praxis-{defense_token}``, attach a signature +
     deterministic ``input_example``, and link ``final_metrics(result)`` to the
     logged model via ``model_id``.
@@ -848,7 +847,7 @@ def _find_resumable_run_id(
     experiment_id: str, unit_id: str, parent_run_id: Optional[str],
     *, _client_factory: Any = None,
 ) -> Optional[str]:
-    """GWU-45 Lane A: the newest prior MLflow run id for this ``(parent, unit)``,
+    """: the newest prior MLflow run id for this ``(parent, unit)``,
     or ``None`` — so a Batch retry of an uncommitted unit RESUMES its run instead
     of minting a fresh child per attempt (root-cause zombie reduction, design
     § 5.1). Strictly best-effort: ANY failure returns ``None`` and the caller
@@ -862,7 +861,7 @@ def _find_resumable_run_id(
     carries none must mint a FRESH run, never cross-resume.
 
     Deliberately NOT a ``PraxisMlflowClient`` method: that client builds
-    ``Config()`` in ``__init__`` (mlflow_client.py), which raises ``ConfigError``
+    ``Config`` in ``__init__`` (mlflow_client.py), which raises ``ConfigError``
     without ``AWS_PROFILE`` — and the Batch container carries none. So this uses a
     bare, Config-free ``mlflow.tracking.MlflowClient`` and issues the SAME
     filter/order as ``PraxisMlflowClient.find_runs_by_unit`` (newest = last in
@@ -909,13 +908,13 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
     bucket = os.environ["PRAXIS_BUCKET"]
     index = int(os.environ["AWS_BATCH_JOB_ARRAY_INDEX"])
     if _store is None:
-        # imported inside main() so the module imports in the test env (tests inject fakes).
+        # imported inside main so the module imports in the test env (tests inject fakes).
         import boto3
         store: ObjectStore = S3ObjectStore(bucket, boto3.client("s3"))
     else:
         store = _store
 
-    # PR #13 P2 (comment 3567094768): resolve + skip-check run BEFORE any
+    # resolve + skip-check run BEFORE any
     # tracking-server contact — and before tracing setup, which is MLflow
     # machinery, so these two calls carry no spans. A unit whose done-marker
     # is already committed must exit 0 even with MLflow down; otherwise a
@@ -929,12 +928,12 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
         return 0
 
     if _mlflow is None:
-        # imported inside main() so the module imports in the test env (tests inject fakes).
+        # imported inside main so the module imports in the test env (tests inject fakes).
         import mlflow
     else:
         mlflow = _mlflow
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
-    # GWU-45 Lane A: capture the Experiment so its experiment_id can scope the
+    # capture the Experiment so its experiment_id can scope the
     # resume-by-unit lookup below (mlflow.set_experiment returns the Experiment).
     experiment = mlflow.set_experiment(os.environ["PRAXIS_MLFLOW_EXPERIMENT"])
     _enable_system_metrics(mlflow)  # req 5 (before the run so the collector spans it)
@@ -942,7 +941,7 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
     methodology_version = os.environ.get("PRAXIS_METHODOLOGY_VERSION", "")
     out_dir = Path("results") / exp_id / unit.unit_id
 
-    # GWU-45 Lane A: resume the (parent, unit) run on a Batch retry instead of
+    # resume the (parent, unit) run on a Batch retry instead of
     # minting a fresh child per attempt — a reclaimed uncommitted unit collapses
     # all its retries into ONE run, so reclaims stop accumulating zombies. The
     # skip-check above already proved the unit uncommitted, so any prior
@@ -953,7 +952,7 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
         experiment.experiment_id, unit.unit_id, parent_run_id,
     )
 
-    # req 1: own the run's terminal status explicitly (no `with start_run()`
+    # req 1: own the run's terminal status explicitly (no `with start_run`
     # context manager) — a bare `return` inside it sealed the run FINISHED
     # regardless of unit_status. Every terminal path routes through the
     # controller so status ∈ {FINISHED, FAILED, KILLED} always agrees with
@@ -976,7 +975,7 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
                 mlflow, unit, bucket=bucket, exp_id=exp_id,
                 methodology_version=methodology_version,
                 image_digest=os.environ.get("PRAXIS_IMAGE_DIGEST", ""),
-                parent_run_id=parent_run_id,  # hoisted above (GWU-45 Lane A)
+                parent_run_id=parent_run_id,  # hoisted above
             )
         except Exception as e:
             start_ok = False
@@ -998,7 +997,7 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
                 unit,
                 scenario_dir=os.environ.get("PRAXIS_SCENARIO_DIR", "rmc/scenarios"),
                 out_dir=out_dir,
-                # GWU-59: append SMOTE (and any future run_extras) flags from the
+                # append SMOTE (and any future run_extras) flags from the
                 # manifest so a fleet unit actually runs the declared arm.
                 run_extras=resolve_manifest_run_extras(store, exp_id),
             ),
@@ -1077,7 +1076,7 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
 
         # AFTER the done-marker commit everything is best-effort decoration
         # (S3 links + note, model artifact, unit_status=done last) — see
-        # post_persist_enrichment: it never raises (PR #13 P2, comment 3566978588).
+        # post_persist_enrichment: it never raises.
         # post_ok is False if any decoration step failed -> gates the marker below.
         post_ok = post_persist_enrichment(
             mlflow, unit, bucket=bucket, exp_id=exp_id, result=result,
@@ -1103,7 +1102,7 @@ def main(_store: ObjectStore | None = None, _mlflow: Any | None = None) -> int:
             # live_enrichment=complete: the finalizer/reaper skip-complete
             # fast path may skip re-logging a run ONLY when this marker proves it was fully
             # logged in-container. unit_status=done is NOT sufficient — it is guaranteed for
-            # a committed unit even when decoration partially failed (above / PR #15) or a
+            # a committed unit even when decoration partially failed (above / ) or a
             # SIGTERM landed mid-decoration (_on_sigterm, which deliberately does NOT set
             # this marker). PRINCIPLE: the marker must witness EXACTLY the set the backfill
             # (_enrich_completed_unit) would repair — params/tags/S3-links AND the native

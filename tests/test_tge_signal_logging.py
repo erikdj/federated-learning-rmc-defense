@@ -28,7 +28,7 @@ def _fake_results(cids, dim=8, seed=0):
 def test_signal_logger_emits_schema_version(tmp_path):
     """Every JSONL record must include signal_log_schema_version=5 (v5 adds the
     post-filter aggregation_coefficient + the H3 re-entry event contract,
-    GWU-9; v4 added the TGE′ bank's tge_ema_score leg, GWU-53)."""
+    ; v4 added the TGE′ bank's tge_ema_score leg, )."""
     from flowerfl.signal_logger import SignalLogger
 
     out = tmp_path / "test.jsonl"

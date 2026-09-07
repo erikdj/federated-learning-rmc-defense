@@ -64,7 +64,7 @@ class Config:
         # is truthy — or the Lambda runtime marker AWS_LAMBDA_FUNCTION_NAME is set —
         # skip ONLY the aws_profile requirement (and leave it empty; the default
         # chain, not a profile, serves S3 reads and the mlflow.log_artifact upload).
-        # artifact_bucket stays REQUIRED regardless (GWU-45 Lane B, design § 5.5).
+        # artifact_bucket stays required because every fleet run writes custody data.
         role_mode = bool(
             os.environ.get("PRAXIS_USE_INSTANCE_ROLE")
             or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")

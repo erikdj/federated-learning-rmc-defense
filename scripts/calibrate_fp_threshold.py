@@ -12,7 +12,7 @@ Design authority
   any eval scenario runs**, gate (c))"; "**τ is NEVER re-derived after any eval
   scenario has run.**"; D9 axis (ii) device hold-out — τ **and** the covariance
   are calibrated on the **even** base partitions for the adjudicating cohort.
-* `docs/PHASE7_DESIGN.md` "Threshold τ calibration" — within-vs-across
+* `docs/harness/architecture.md` "Threshold τ calibration" — within-vs-across
   Mahalanobis distributions, τ at the dev-FPR = 1% point, then LOCKED.
 
 The allowlist is a PRE-REGISTRATION PROPERTY
@@ -33,7 +33,7 @@ Input contract (JSONL, one object per line, or a JSON array):
 
     {"run_id": "...", "source_unit": "...", "scenario": "control_honest",
      "seed": 42, "server_round": 7, "logical_id": "client_3",
-     "fingerprint": [ ... 180 floats ... ]}
+     "fingerprint": [... 180 floats... ]}
 
 `gt_logical_id` is accepted as an alias for `logical_id`, and `fingerprint` may
 be a JSON-encoded string (the `FitRes.metrics` transport form).

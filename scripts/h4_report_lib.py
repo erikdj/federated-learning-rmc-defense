@@ -375,7 +375,7 @@ def aggregate_diagnostics(units: Sequence[Mapping[str, Any]],
             "rule": (
                 "a C0 or S0 cell whose acc_final5 sits STRICTLY more than "
                 "5 pp below that cell's own peak rolling-5-round mean "
-                "accuracy (GWU-51 absorbing-state signature); NON-GATING — "
+                "accuracy (absorbing-state signature); NON-GATING — "
                 "the § 4.1 formula is computed as registered regardless"
             ),
             "n_cells_checked": n_reference_cells,
@@ -468,7 +468,7 @@ def write_memo(report: Mapping[str, Any], memo_path: Path) -> None:
         "",
         f"- Units missing an h4_diagnostics block: "
         f"{diagnostics['units_missing_diagnostics']['count']}",
-        f"- Reference-anomaly flags (C0/S0 cells, GWU-51 signature): "
+        f"- Reference-anomaly flags (C0/S0 cells, absorbing-state signature): "
         f"{len(anomalies['flagged_cells'])} of "
         f"{anomalies['n_cells_checked']} cells",
     ]

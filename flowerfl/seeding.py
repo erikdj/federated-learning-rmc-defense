@@ -1,4 +1,4 @@
-"""Deterministic seeding utilities (GWU-31).
+"""Deterministic seeding utilities.
 
 Before this module existed, the experiment `seed` from run_config was recorded
 in filenames and signal logs but was **never wired into any RNG** — torch's
@@ -11,7 +11,7 @@ Two small helpers fix that:
 
 - `seed_everything(seed)` seeds the three RNGs that feed every numeric path
   here (`random`, `numpy`, `torch`). Call it on the server before model
-  construction, and on each client at the top of `fit()`.
+  construction, and on each client at the top of `fit`.
 - `derive_seed(base, *components)` composes a stable per-(client, round)
   seed so distinct clients/rounds get distinct-but-reproducible streams.
 """
@@ -36,9 +36,9 @@ def seed_everything(seed: int) -> None:
     Note on PYTHONHASHSEED: we deliberately do NOT set it here. Once the
     interpreter is running, mutating `os.environ["PYTHONHASHSEED"]` is a no-op
     for the current process (hash randomisation is fixed at interpreter
-    start-up), and nothing in the numeric pipeline depends on `hash()` salting
+    start-up), and nothing in the numeric pipeline depends on `hash` salting
     anyway — the per-(client, round) composition below uses SHA-256, not the
-    salted built-in `hash()`.
+    salted built-in `hash`.
     """
     seed = int(seed)
     random.seed(seed)
@@ -54,7 +54,7 @@ def derive_seed(base: int, *components: int) -> int:
 
     The composition is a SHA-256 over the tuple repr reduced mod 2**31, so it
     is:
-      - stable across processes and platforms (unlike the built-in `hash()`,
+      - stable across processes and platforms (unlike the built-in `hash`,
         which is salted per-process via PYTHONHASHSEED),
       - order-sensitive (client/round order matters),
       - bounded to a non-negative value accepted by `torch.manual_seed` and

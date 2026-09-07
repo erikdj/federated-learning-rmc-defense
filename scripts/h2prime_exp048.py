@@ -17,7 +17,10 @@ import os
 from pathlib import Path
 from statistics import mean
 
-from h2prime_corpus import rotation_plan
+from h2prime_common import (EXP048_REQUIRED_KEYS, HardStop, Profile, R,
+                            SCENARIOS, SCORING_ENUM_CONTRACT,
+                            SCORING_VALUE_CONTRACT)
+from h2prime_corpus import h2_confirm_seeds, rotation_plan
 from h2prime_secondaries import (EXCLUSION_CAUSES, G2_MIN_SCORED_MALICIOUS,
                                  _census, _frac)
 # The staging gate lives in its own module (round 30, 800-line ceiling) and is
@@ -414,3 +417,47 @@ def exp048_full_coverage_contrast(rows: list[dict], plan, scored: dict,
             if pfe:
                 out["per_family"].setdefault(A, {})[scen] = pfe
     return out
+
+
+def exp048_input_gate(profile: Profile) -> str | None:
+    """§ 4 secondary 9's input must be staged BEFORE the single sealed pass.
+
+    The same-pass rule (EXP-051 § 5.1) means every mandatory output has to come
+    out of the one execution, so a missing input is a read-prep defect to fix
+    beforehand — not a disclosure to write afterwards. On a real invocation an
+    unset `H2PRIME_EXP048_SIG_DIR` is therefore a HARD STOP, deliberately
+    firing in `--dry-run` too, which is where read prep is meant to catch it.
+
+    EXP-048 was unsealed 2026-08-09: staging it carries no seal implication.
+    """
+    d = resolve_exp048_dir()
+    if not profile.adjudicating:
+        return d
+    if not d:
+        raise HardStop(
+            "EXP-048 INPUT GATE: H2PRIME_EXP048_SIG_DIR is unset or does not "
+            "exist, so the § 4 secondary 9 full-coverage TGE contrast could not "
+            "be produced by the single sealed pass. The sealed corpus is opened "
+            "EXACTLY ONCE (EXP-051 § 5.1), so every mandatory reported output "
+            "must come out of that pass — a missing input is a read-prep defect "
+            "to fix BEFORE the read, not a disclosure to write after it. Stage "
+            "the EXP-048 standalone-TGE logs (EXPOSED data, unsealed "
+            "2026-08-09) and point the variable at them, then re-run the dry-run."
+        )
+    # Existence is not staging. Validate CONTENT here, because a gate that
+    # accepts an empty directory only fails AFTER sealed rows have been opened,
+    # and the one-shot read cannot be retried.
+    try:
+        validate_exp048_dir(d, R.SCEN_SHORT, SCENARIOS, h2_confirm_seeds(),
+                            EXP048_REQUIRED_KEYS, SCORING_VALUE_CONTRACT,
+                            SCORING_ENUM_CONTRACT)
+    except (ValueError, OSError) as exc:
+        raise HardStop(
+            f"EXP-048 INPUT GATE: the staged directory {d} does not contain a "
+            f"usable standalone-TGE arm — {exc}. The § 4 secondary 9 contrast "
+            "runs the registered mechanics (rotation, LOAO fits, per-scenario "
+            "calibration, row-matched TGE comparison), so it needs a complete "
+            "scenario × seed grid of parseable `__tge__` unit files. Fix the "
+            "staging and re-run the dry-run BEFORE the sealed read."
+        ) from exc
+    return d

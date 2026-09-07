@@ -42,7 +42,7 @@ def test_expand_matrix_rejects_empty_dimension():
         expand_matrix(["Krum"], ["S0"], [], "persistent_optimizer", 2_000_000, 50)
 
 
-# --- GWU-44 Lane B: optional repeats axis for same-seed replicates ----------
+# --- : optional repeats axis for same-seed replicates ----------
 #
 # The load-bearing invariant: a __rep{r} suffix appears IFF the repeat axis is
 # active (repeats > 1). At repeats == 1 / absent, the emitted id string is

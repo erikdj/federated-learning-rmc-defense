@@ -256,8 +256,7 @@ def run_gate_s3(
     return report
 
 
-# --- Parse-time value-shape contract ( , 3567232374 +
-# 3567232376, closing the whole corrupt-but-valid-JSON family) -------------
+# --- Parse-time validation of structurally valid but malformed JSON ----------
 #
 # EVERYTHING the lib's checks dereference, use as a dict key, set member, or
 # sort input is validated HERE, once, at parse time. The contract every check
@@ -368,14 +367,14 @@ def _parse_unit_artifacts(
                 f"signal log {signal_label} line {lineno} is malformed: {exc}",
             )
         # Each JSONL record must be an object -- `null`/`[]`/`"str"` parse
-        # fine but crash every downstream r.get(...) (round-5 P2, 3567196082).
+        # fine but crash every downstream r.get(...).
         if not isinstance(parsed, dict):
             return None, None, CheckResult(
                 check_name, unit_id, False, True,
                 f"signal log {signal_label} line {lineno} is not a JSON object "
                 f"(got {type(parsed).__name__})",
             )
-        # Round-7 (3567232376 + sweep): identity/metadata fields are used as
+        # Identity/metadata fields are used as
         # dict/tuple keys, set members, and schedule-lookup keys downstream;
         # array/object values crash those structures with unhashable-type
         # TypeErrors. Enforce the scalar contract per line.

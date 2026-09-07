@@ -89,7 +89,7 @@ class MatrixDoc:
     mode: str
     max_per_client: int
     rounds: int
-    # Same-seed replicate count (GWU-44 Lane B). OPTIONAL — defaults to 1 so
+    # Same-seed replicate count. OPTIONAL — defaults to 1 so
     # every existing design doc (written before the axis) parses unchanged;
     # deliberately NOT in the _MATRIX required-field tuple for that reason.
     repeats: int

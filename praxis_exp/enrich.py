@@ -105,7 +105,7 @@ class _EnrichClient:
     def set_terminated(self, run_id: str, status: str = "FINISHED") -> None: ...
 
 
-# Input/renamed keys the OLD entrypoint stored as TAGS that the PR #15 param/tag
+# Input/renamed keys the old entrypoint stored as tags that the param/tag
 # isolation moved to PARAMS (config->defense PARAM) or renamed (defense->
 # defense_token, dataset->dataset_name). Stripped from a reused old run so the
 # recovered run is not left with duplicated param/tag fields.
@@ -168,7 +168,7 @@ def _log_signal_dataset(
     client: _EnrichClient, run_id: str, exp_id: str, bucket: str, unit: Unit,
 ) -> None:
     """Attach the unit's signal log as a **dataset-by-source** (context ``"signal"``)
-    — no byte copy (GWU-47 Lane A). REPAIR step: NO internal swallow — a failure
+    — no byte copy. REPAIR step: NO internal swallow — a failure
     PROPAGATES to the per-unit handler so the unit counts as failed."""
     dataset = build_signal_dataset(
         exp_id=exp_id, unit_id=unit.unit_id, bucket=bucket,
@@ -185,7 +185,7 @@ def _log_artifacts(
     a dataset-by-source (``_log_signal_dataset``). Any pre-existing ``signal.jsonl``
     copy left by the old copy-everything scheme is best-effort deleted so re-enrich
     MIGRATES old runs (not just stops future copies) — this is what makes the "drops
-    the duplicate signal artifact" migration promise true (GWU-47 Lane A)."""
+    the duplicate signal artifact" migration promise true."""
     # COSMETIC cleanup: only REMOVES a redundant legacy copy (writes no part of the
     # record), so per _enrich_completed_unit's rule it is the one kind of step that may
     # swallow — an absent artifact / a client lacking delete_artifact is a no-op.
@@ -259,7 +259,7 @@ def _enrich_completed_unit(
     s3_tags = unit_s3_tags(bucket, exp_id, unit.unit_id)
     for k, v in s3_tags.items():
         client.set_tag(run_id, k, v)
-    # note.content on the backfill path too (GWU-47 Lane C) — RMC params + gate verdict,
+    # note.content on the backfill path too — RMC params + gate verdict,
     # parity with the live post_persist_enrichment path.
     client.set_tag(run_id, "mlflow.note.content", build_unit_note(
         unit, result=result, console_url=s3_tags.get("s3_console_url", ""),
@@ -284,7 +284,7 @@ def _enrich_completed_unit(
     client.set_tag(run_id, "criteria_ok", "true" if unit_criteria_ok(result) else "false")
     client.set_tag(run_id, "unit_status", "done")
     client.set_terminated(run_id, "FINISHED")
-    # backfill_enrichment=complete (GWU-50) — the LAST write of this function, on
+    # backfill_enrichment=complete is the LAST write of this function, on
     # purpose. Post-round-9 every repair step above raises/propagates on failure (only
     # cosmetic cleanup — the legacy signal.jsonl delete and _strip_legacy_input_tags —
     # may swallow), so REACHING this line proves every repair step succeeded; the marker
@@ -293,7 +293,7 @@ def _enrich_completed_unit(
     # start_ok/metrics_ok/artifacts_ok/post_ok). It lets the skip-complete fast path
     # (_primary_already_complete) recognize a backfill-repaired unit exactly as it
     # recognizes a live one, closing the reaper/EventBridge re-log loop on
-    # backfill-heavy partial-failure sweeps (GWU-45's H1 fix, extended to this path).
+    # backfill-heavy partial-failure sweeps.
     client.set_tag(run_id, "backfill_enrichment", "complete")
 
 
@@ -337,7 +337,7 @@ def _primary_already_complete(
         the post-persist decoration block ALL succeeded) OR tag
         ``backfill_enrichment == "complete"`` (``_enrich_completed_unit`` sets it as its
         LAST write, so reaching it proves every propagating repair step succeeded —
-        GWU-50; a unit healed by the backfill path is as fully logged as a live one).
+        a unit healed by the backfill path is as fully logged as a live one).
         ``unit_status=done`` alone is INSUFFICIENT:
          guarantees
         ``done`` for a committed unit even when decoration partially failed, and the
@@ -394,7 +394,7 @@ def enrich_experiment(
     """Backfill/repair every unit of a completed sweep's MLflow record from S3.
 
     ``experiment_id`` (optional, keyword-only): when supplied — the self-heal
-    finalizer/reaper read it off the resolved parent run (GWU-45 Lane B) — enrich
+    finalizer/reaper read it off the resolved parent run — enrich
     uses it directly and SKIPS ``_experiment_name`` -> ``_find_design_doc``, so a
     sweep whose design doc was never baked (the acceptance EXP + every future EXP)
     still heals instead of raising. The CLI/agent path passes no id and falls back
@@ -407,7 +407,7 @@ def enrich_experiment(
     redundant metric/tag REST calls would blow the Lambda 900s ceiling at
     100-unit×50-round scale); it is counted in ``units_skipped_complete`` and its
     zombie/duplicate siblings are STILL reconciled. Default False keeps the CLI /
-    agent / GWU-47 re-migration paths byte-for-byte identical (they MUST keep
+    agent / re-migration paths byte-for-byte identical (they MUST keep
     re-authoring FINISHED runs — that is why the fast path is opt-in).
 
     The launch parent run is sealed FINISHED ONLY when every unit repaired cleanly
@@ -521,7 +521,7 @@ def enrich_experiment(
     parent_seal_failed = False
     if parent_run_id is not None:
         if failed == 0:
-            # GWU-41: reconcile §5.6 completeness BEFORE sealing FINISHED — a
+            # Reconcile completeness BEFORE sealing FINISHED — a
             # refill that completed previously-missing cells must clear the
             # finalizer's stale sweep_incomplete/missing_cells (preserving
             # refill_history), or the sealed parent claims incomplete forever.

@@ -10,7 +10,7 @@ H3 execution plan Step 1 (`docs/reproduction/experiments.md`):
 
 Design authority: v1.10 § 5.0 **D8** (construct = proxy path (a)) and § 5.1
 (the 45-feature set G4 "must be verified recoverable/reproducible from the
-current parquet ... as the top silent-failure risk"); `docs/PHASE7_DESIGN.md`
+current parquet... as the top silent-failure risk"); `docs/harness/architecture.md`
 "Fingerprint vector (180 dimensions)".
 
 The artifact this writes (`data/fingerprint_features_v1.json`) is
@@ -23,7 +23,7 @@ change and requires a dated amendment, not a regeneration.
 Usage:
     python scripts/lock_fingerprint_features.py [--check]
 
-    --check   Recompute and compare against the committed artifact; exit 1 on
+    --check Recompute and compare against the committed artifact; exit 1 on
               any difference. Writes nothing. (CI / pre-launch drift gate.)
 """
 from __future__ import annotations

@@ -189,7 +189,7 @@ def test_unit_s3_tags():
         "s3://praxis-bucket/sweeps/EXP-005/done/s0__krum__persistent_optimizer__seed42.marker"
     )
     # No trailing slash: the console filter must string-match the actual
-    # OBJECT key `.../results/{unit_id}.json` (PR #13 P2, comment 3566953651).
+    # OBJECT key `.../results/{unit_id}.json` .
     assert tags["s3_console_url"] == (
         "https://us-east-1.console.aws.amazon.com/s3/buckets/praxis-bucket"
         "?prefix=sweeps/EXP-005/results/s0__krum__persistent_optimizer__seed42"
@@ -202,7 +202,7 @@ def _console_prefix(url):
 
 
 def test_unit_console_url_prefix_matches_a_real_key():
-    """Drift-proof guard (PR #13 P2, comment 3566953651): the unit console
+    """Drift-proof guard : the unit console
     URL's prefix param must be a true string-prefix of the result object's
     actual S3 key — both derived from the same storage functions, so the
     console listing can never be empty for a persisted unit."""

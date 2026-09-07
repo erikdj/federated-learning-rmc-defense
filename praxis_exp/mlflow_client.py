@@ -31,7 +31,7 @@ def build_signal_dataset(
     digest: Optional[str] = None,
 ) -> Any:
     """Build a ``MetaDataset`` referencing a unit's signal log **by S3 source**
-    (no byte copy — GWU-47 Lane A). The default digest is a deterministic hash
+    (no byte copy). The default digest is a deterministic hash
     of the S3 key so re-logging the same signal dedups in ``log_inputs`` (an
     idempotent re-enrich must not duplicate the input). The signal S3 key is
     derived by ``praxis_exp.storage`` (single source of the key string)."""
@@ -93,7 +93,7 @@ class PraxisMlflowClient:
     def list_artifacts(self, run_id: str) -> Any:
         """A run's artifacts. ``emit_round_table``'s refresh uses this to detect
         an existing ``round_timeline.json`` — ``log_table`` APPENDS, so the table
-        must be deleted before re-logging or rows duplicate (GWU-47 Lane B)."""
+        must be deleted before re-logging or rows duplicate."""
         return self._client.list_artifacts(run_id)
 
     def delete_artifact(self, run_id: str, path: str) -> None:
@@ -108,7 +108,7 @@ class PraxisMlflowClient:
         """Log a column-oriented dict (or DataFrame) as an artifact table that
         renders in the 3.14 artifact browser. NOTE: ``MlflowClient.log_table``
         APPENDS to an existing ``artifact_file`` — callers (``emit_round_table``)
-        refresh (delete) first so re-runs do not duplicate rows (GWU-47 Lane B)."""
+        refresh (delete) first so re-runs do not duplicate rows."""
         self._client.log_table(run_id, data, artifact_file=artifact_file)
 
     def log_input(self, run_id: str, dataset: Any, context: str = "training") -> None:
@@ -131,9 +131,9 @@ class PraxisMlflowClient:
     ) -> Any:
         """Raw passthrough to ``MlflowClient.search_runs`` returning Run objects.
 
-        The self-heal finalizer/reaper (``praxis_exp.selfheal_lambda``, GWU-45
-        Lanes B/C) locate parent runs by ``batch_array_job_id`` / ``exp_id`` tags
-        and enumerate a parent's children; they need the full Run objects
+        The self-heal finalizer/reaper (``praxis_exp.selfheal_lambda``) locates
+        parent runs by ``batch_array_job_id`` / ``exp_id`` tags and enumerates a
+        parent's children; these operations need the full Run objects
         (``info.status``/``start_time``/``experiment_id`` + ``data.tags``), not the
         reduced projections ``find_parent_run``/``find_runs_by_unit`` return. Kept
         generic so the query string lives with the caller."""
@@ -143,10 +143,9 @@ class PraxisMlflowClient:
         )
 
     def list_experiment_ids(self) -> list[str]:
-        """All (active) experiment ids. The finalizer/reaper search parent runs by
+        """All (active) experiment ids. The finalizer/reaper searches parent runs by
         tag across EVERY experiment — the Batch event / schedule carries no
-        experiment id — so they need the full id list to pass to ``search_runs``
-        (GWU-45 Lanes B/C)."""
+        experiment id — so they need the full id list to pass to ``search_runs``."""
         return [e.experiment_id for e in self._client.search_experiments()]
 
     def find_parent_run(self, experiment_id: str, exp_id: str) -> Optional[str]:
@@ -216,7 +215,7 @@ class PraxisMlflowClient:
 
     def set_model_alias(self, name: str, alias: str, version: str) -> None:
         """Assign a registry alias to a model version. Sweep-scoped names
-        (``champion__{exp_id}`` / ``challenger__{exp_id}``, GWU-47 Lane D) — a
+        (``champion__{exp_id}`` / ``challenger__{exp_id}``) — a
         bare ``champion``/``challenger`` is a MUTABLE model-level ref the next
         sweep's promotion would overwrite, destroying the 'best within this
         sweep' record."""

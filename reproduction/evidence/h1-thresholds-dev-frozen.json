@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "cut_rule": "numpy quantile(honest_scores, 1 - target_fpr), linear interpolation; flag = score > cut",
+    "defense": "krum_tge",
+    "k": 3,
+    "model_sha256": {
+      "C": "9271838d7d14c513f731def94c16725a242bf012cce4bb28f3c18d02639e71a2",
+      "S": "9638fede835cc72498e503271f5090ae00c47ae6fe2cd24d1dd01aecebc305f5",
+      "W": "590e57ee788431fff704fa3724fa5f16bb984f0df364f42573fab499e75c26ae"
+    },
+    "models_dir": "models/h1_signal_family/leakfree_25cell",
+    "n_dev_cells": 25,
+    "purpose": "H1 family operating cuts frozen on the development leak-free corpus before the held-out read",
+    "source_dir": "not-distributed: H1 development signal corpus",
+    "target_fpr": 0.1
+  },
+  "thresholds": {
+    "C": {
+      "n_honest_dev": 915,
+      "realized_dev_fpr": 0.1005464480874317,
+      "target_fpr": 0.1,
+      "threshold": 0.7016743007511332
+    },
+    "S": {
+      "n_honest_dev": 915,
+      "realized_dev_fpr": 0.1005464480874317,
+      "target_fpr": 0.1,
+      "threshold": 0.6336447001006367
+    },
+    "W": {
+      "n_honest_dev": 915,
+      "realized_dev_fpr": 0.0994535519125683,
+      "target_fpr": 0.1,
+      "threshold": 0.8974294186230957
+    }
+  }
+}

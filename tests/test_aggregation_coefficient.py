@@ -1,4 +1,4 @@
-"""Post-defense aggregation-coefficient instrumentation (H3 Step 2, GWU-9).
+"""Post-defense aggregation-coefficient instrumentation (H3 Step 2, ).
 
 Why this exists
 ---------------

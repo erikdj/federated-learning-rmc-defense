@@ -1,6 +1,6 @@
 {
   "name": "S3_identity_reset_only",
-  "description": "Design D Scenario S3 (identity-reset-only). 9 adversaries (client_0..client_8) attack with Gaussian-then-ALIE, then reconnect under `client_N_new{K}` identities across 4 cycles (z_max=0.9). No benign churn, no strategy switching. Identity reset is the SOLE active confounder per spec \u00a7 5.",
+  "description": "Design D Scenario S3 (historical label: identity-reset-only). 9 adversaries (client_0..client_8) apply Gaussian noise in rounds 3-7 from original identities, then return under `client_N_new{K}` identities in rounds 9, 19, 29 and 39 with ALIE (z_max=0.9). The first reset also changes attack family from Gaussian noise to ALIE; later resets retain ALIE. No benign churn.",
   "dataset": "edge_full_20_rmc",
   "num_rounds": 50,
   "seed": 42,

@@ -491,7 +491,7 @@ def test_handler_raises_when_annotation_fails():
     incomplete-sweep annotation then fails transiently the reaper's open-parent scan
     NEVER revisits — the σ-safeguard tags (done_count/n_units/missing_cells/
     sweep_incomplete) are permanently lost, exactly the silent-incomplete-sweep failure
-    GWU-45 exists to prevent. The finalizer must RAISE so the bounded EventBridge retry
+     exists to prevent. The finalizer must RAISE so the bounded EventBridge retry
     re-runs the idempotent enrich + re-attempts the annotation. The raise is AFTER
     enrich (the enrich seam WAS called)."""
     import pytest

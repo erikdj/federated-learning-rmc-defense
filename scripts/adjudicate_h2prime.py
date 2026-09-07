@@ -73,15 +73,16 @@ from h2prime_common import (  # noqa: E402
 )
 from h2prime_corpus import (  # noqa: E402
     Cell, Rotation, design_matrix, exposed_devices, h2_confirm_seeds,
-    load_assembly_map, load_cells, rotation_plan, sealed_seeds,
+    load_assembly_map, load_cells, require_window_annotation, rotation_plan, sealed_seeds,
 )
 from h2prime_bands import (  # noqa: E402
     _slice_by_seed, adjudicate_p1, adjudicate_p2, overall_verdict,
-    strict_identity_block,
+    strict_identity_block, window_aware_block,
 )
 from h2prime_report import render_dry_run, render_verdict_block  # noqa: E402
 import h2prime_secondaries as SEC  # noqa: E402
 import h2prime_exp048 as E48  # noqa: E402
+from h2prime_exp048 import exp048_input_gate  # noqa: E402,F401
 import h2prime_schema as SCHEMA  # noqa: E402
 from h2prime_scoring import (  # noqa: E402,F401
     BRACKET_TARGETS, _blended_at_cuts, _cut_at, golden_gate,
@@ -91,7 +92,8 @@ from h2prime_scoring import (  # noqa: E402,F401
 # gate 0 — the § 2.2b golden-hash pre-condition
 # --------------------------------------------------------------------------
 def score_corpus(rows: list[dict], plan: list[Rotation],
-                 exclude_devices: dict[str, set[str]] | None = None) -> dict:
+                 exclude_devices: dict[str, set[str]] | None = None,
+                 window_aware: bool = False) -> dict:
     """Execute § 2.2a mechanically; return every per-cell quantity P1/P2 need.
 
     Structure and statement order mirror `blended_loao.py::main`: per rotation,
@@ -103,8 +105,24 @@ def score_corpus(rows: list[dict], plan: list[Rotation],
     every row of a device lineage that carries family F anywhere in the corpus
     is removed from the fit AND calibration populations. Scored test rows are
     untouched. Reported-only; it adjudicates nothing.
+
+    `window_aware` selects the WINDOW-AWARE arm: for fold F, the fit population
+    additionally drops every row whose derived window touched family F — i.e.
+    `F in r["_window_families"]`, the annotation `annotate_window_families`
+    writes at load time. It SUBSUMES the current-label rule (a family-F row is
+    always in its own window). Under S2 an identity switches family without a
+    tenure reset, so the first rows of a retained family carry window features
+    computed partly from held-out-family rows; this arm measures what the fit
+    looks like once those rows are gone too. Calibration and test populations
+    are untouched (calibration is honest-only by construction). Reported-only;
+    it adjudicates nothing.
+
+    With both flags at their defaults the function is behaviourally identical
+    to the pre-arm executor — no extra key is emitted and no row is dropped.
     """
     strict = exclude_devices is not None
+    if window_aware:
+        require_window_annotation(rows)
     degenerate: dict[str, str] = {}
     blend: dict[tuple[str, int], dict] = {}
     alie: dict[tuple[str, int], dict] = {}
@@ -130,6 +148,16 @@ def score_corpus(rows: list[dict], plan: list[Rotation],
             # § 2.2a item 3 — held-out family excluded from the FIT population.
             tr = [r for r in fit_rows_all
                   if not (r["malicious_gt"] and r.get("attack_type") == A)]
+            n_window_excluded = 0
+            if window_aware:
+                # The window rule, applied AFTER the current-label rule so the
+                # census counts only what it removes BEYOND it. It subsumes the
+                # label rule, so this difference is exactly the leakage
+                # surface: rows whose derived features saw family A without
+                # carrying its label.
+                kept = [r for r in tr if A not in r["_window_families"]]
+                n_window_excluded = len(tr) - len(kept)
+                tr = kept
             if strict:
                 banned = exclude_devices[A]
                 tr = [r for r in tr
@@ -147,17 +175,28 @@ def score_corpus(rows: list[dict], plan: list[Rotation],
                     f"positive class empty after the v1.15b § 3 device-lineage "
                     f"exclusion ({len(tr)} fit rows, {int(y.sum())} positive)")
                 continue
+            if window_aware and len(np.unique(y)) < 2:
+                # Same treatment as the strict arm: recorded as structurally
+                # UNDEFINED rather than fitted on one class. The primary arm is
+                # unaffected. See the report's window_aware_loao_sensitivity.
+                degenerate[A] = (
+                    f"positive class empty after the window-aware exclusion "
+                    f"({len(tr)} fit rows, {int(y.sum())} positive)")
+                continue
             clfs[A] = GradientBoostingClassifier(**GBDT_PARAMS).fit(X, y)
             census[A] = {"n_fit_rows": len(tr),
                          "n_fit_positive": int(y.sum()),
                          "n_excluded_family_rows": len(fit_rows_all) - len(tr)}
+            if window_aware:
+                census[A]["n_window_excluded_rows"] = n_window_excluded
         fit_census.append({"rotation": rot.i, "test_seed": rot.test,
                            "calibration_seed": rot.calibration,
                            "fit_seeds": list(rot.fit), "per_fold": census})
-        if strict and degenerate:
+        if (strict or window_aware) and degenerate:
             # The blend needs all three fold detectors; with any fold undefined
-            # the strict arm produces no comparable quantity at all. Stop here
-            # and report, rather than emit a partial blend that looks like one.
+            # the sensitivity arm produces no comparable quantity at all. Stop
+            # here and report, rather than emit a partial blend that looks like
+            # one.
             return {"blend": {}, "alie": {}, "per_family": {},
                     "base_blend": {b: {} for b, _t, _l in BASELINES},
                     "base_alie": {b: {} for b, _t, _l in BASELINES},
@@ -602,48 +641,6 @@ def _versions() -> dict:
             "numpy": np.__version__, "sklearn": sklearn.__version__}
 
 
-def exp048_input_gate(profile: Profile) -> str | None:
-    """§ 4 secondary 9's input must be staged BEFORE the single sealed pass.
-
-    The same-pass rule (EXP-051 § 5.1) means every mandatory output has to come
-    out of the one execution, so a missing input is a read-prep defect to fix
-    beforehand — not a disclosure to write afterwards. On a real invocation an
-    unset `H2PRIME_EXP048_SIG_DIR` is therefore a HARD STOP, deliberately
-    firing in `--dry-run` too, which is where read prep is meant to catch it.
-
-    EXP-048 was unsealed 2026-08-09: staging it carries no seal implication.
-    """
-    d = E48.resolve_exp048_dir()
-    if not profile.adjudicating:
-        return d
-    if not d:
-        raise HardStop(
-            "EXP-048 INPUT GATE: H2PRIME_EXP048_SIG_DIR is unset or does not "
-            "exist, so the § 4 secondary 9 full-coverage TGE contrast could not "
-            "be produced by the single sealed pass. The sealed corpus is opened "
-            "EXACTLY ONCE (EXP-051 § 5.1), so every mandatory reported output "
-            "must come out of that pass — a missing input is a read-prep defect "
-            "to fix BEFORE the read, not a disclosure to write after it. Stage "
-            "the EXP-048 standalone-TGE logs (EXPOSED data, unsealed "
-            "2026-08-09) and point the variable at them, then re-run the dry-run."
-        )
-    # Existence is not staging. Validate CONTENT here, because a gate that
-    # accepts an empty directory only fails AFTER sealed rows have been opened,
-    # and the one-shot read cannot be retried.
-    try:
-        E48.validate_exp048_dir(d, R.SCEN_SHORT, SCENARIOS, h2_confirm_seeds(),
-                                EXP048_REQUIRED_KEYS, SCORING_VALUE_CONTRACT,
-                                SCORING_ENUM_CONTRACT)
-    except (ValueError, OSError) as exc:
-        raise HardStop(
-            f"EXP-048 INPUT GATE: the staged directory {d} does not contain a "
-            f"usable standalone-TGE arm — {exc}. The § 4 secondary 9 contrast "
-            "runs the registered mechanics (rotation, LOAO fits, per-scenario "
-            "calibration, row-matched TGE comparison), so it needs a complete "
-            "scenario × seed grid of parseable `__tge__` unit files. Fix the "
-            "staging and re-run the dry-run BEFORE the sealed read."
-        ) from exc
-    return d
 
 
 def build_report(map_path: Path, profile: Profile, dry_run: bool) -> tuple[dict, str]:
@@ -654,8 +651,7 @@ def build_report(map_path: Path, profile: Profile, dry_run: bool) -> tuple[dict,
 
     meta = {
         "executor": "scripts/adjudicate_h2prime.py",
-        "spec": ("docs/superpowers/specs/"
-                 "2026-08-09-praxis-experimental-design-v1.15-h2prime.md"),
+        "spec": "docs/reproduction/experiments.md#h2prime",
         "experiment": "EXP-051 (48 cells) + EXP-053 refill (2 cells)",
         "profile": {"name": profile.name, "n_seeds": profile.n_seeds,
                     "n_cells": profile.n_cells, "df": profile.df,
@@ -712,16 +708,23 @@ def build_report(map_path: Path, profile: Profile, dry_run: bool) -> tuple[dict,
     # sealed corpus is opened exactly once (EXP-051 § 5.1).
     devices = exposed_devices(rows)
     scored_strict = score_corpus(rows, plan, exclude_devices=devices)
+    # The window-aware sensitivity, in the SAME invocation and for the same
+    # reason as the strict arm: the sealed corpus is opened exactly once
+    # (EXP-051 § 5.1), so every reported arm has to come out of this pass.
+    scored_window = score_corpus(rows, plan, window_aware=True)
 
     sec = secondaries(scored, profile, map_meta["seeds_ascending"])
     sec["strict_identity_loao_sensitivity"] = strict_identity_block(
         rows, scored, scored_strict, devices, profile,
         map_meta["seeds_ascending"])
+    sec["window_aware_loao_sensitivity"] = window_aware_block(
+        rows, scored, scored_window, profile, map_meta["seeds_ascending"])
     report = {
         "_meta": meta,
         "rotation_plan": plan_rows,
         "fit_census": scored["fit_census"],
         "fit_census_strict_identity": scored_strict["fit_census"],
+        "fit_census_window_aware": scored_window["fit_census"],
         "P1": p1,
         "P2": p2,
         "secondaries": sec,

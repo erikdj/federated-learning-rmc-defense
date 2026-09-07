@@ -52,6 +52,7 @@ def _git():
     g = MagicMock()
     g.working_tree_clean.return_value = True
     g.head_sha.return_value = "abc1234"
+    g.resolve_push_branch.return_value = "main"
     # Default: no exp/ tag exists yet (first launch). Without this, MagicMock's
     # truthy auto-return would route every test down the serial-suffix path.
     g.tag_target_sha.return_value = None
@@ -102,7 +103,7 @@ def test_launch_matrix_uses_environment_resource_tags(tmp_path, monkeypatch):
 
 
 def test_launch_matrix_stamps_parent_run_id_and_array_job_id_into_meta(tmp_path):
-    """GWU-41: a POST-SUBMIT best-effort meta update records this launch's
+    """: a POST-SUBMIT best-effort meta update records this launch's
     parent_run_id and array_job_id so a later refill can nest children under the
     SAME parent run and verify the prior array is terminal."""
     repo = _repo(tmp_path)
@@ -134,11 +135,65 @@ def test_launch_matrix_pushes_when_not_no_push(tmp_path):
                   container_tracking_uri="http://10.0.0.10:5000",
                   _store=InMemoryObjectStore(), _batch=FakeBatchSubmitter(),
                   _mlflow=_mlflow(), _git=git, _no_push=False)
-    git.push_with_tags.assert_called_once()
+    git.resolve_push_branch.assert_called_once_with(repo, None)
+    git.push_with_tags.assert_called_once_with(repo, branch="main")
+
+
+def test_launch_matrix_pushes_to_explicit_branch_override(tmp_path):
+    repo = _repo(tmp_path)
+    git = _git()
+    git.resolve_push_branch.return_value = "release"
+
+    launch_matrix(
+        repo, "EXP-005", image_digest="sha256:x", branch="release",
+        container_tracking_uri="http://10.0.0.10:5000",
+        _store=InMemoryObjectStore(), _batch=FakeBatchSubmitter(),
+        _mlflow=_mlflow(), _git=git,
+    )
+
+    git.resolve_push_branch.assert_called_once_with(repo, "release")
+    git.push_with_tags.assert_called_once_with(repo, branch="release")
+
+
+def test_launch_matrix_no_push_skips_branch_resolution_and_remote_push(tmp_path):
+    repo = _repo(tmp_path)
+    git = _git()
+    batch = FakeBatchSubmitter()
+
+    launch_matrix(
+        repo, "EXP-005", image_digest="sha256:x", branch="ignored",
+        container_tracking_uri="http://10.0.0.10:5000",
+        _store=InMemoryObjectStore(), _batch=batch,
+        _mlflow=_mlflow(), _git=git, _no_push=True,
+    )
+
+    git.resolve_push_branch.assert_not_called()
+    git.push_with_tags.assert_not_called()
+    git.create_annotated_tag.assert_called_once()
+    assert batch.calls
+
+
+def test_existing_manifest_message_routes_operator_to_refill(tmp_path):
+    repo = _repo(tmp_path)
+    store = InMemoryObjectStore()
+    units = _doc_units()
+    _seed_prior_launch(store, "EXP-005", units, done_count=1)
+
+    with pytest.raises(MatrixLaunchError) as exc:
+        launch_matrix(
+            repo, "EXP-005", image_digest="sha256:deadbeef",
+            container_tracking_uri="http://10.0.0.10:5000",
+            _store=store, _batch=FakeBatchSubmitter(), _mlflow=_mlflow(),
+            _git=_git(), _no_push=True,
+        )
+
+    message = str(exc.value)
+    assert "--refill" in message
+    assert "refill support disabled" not in message
 
 
 def test_launch_matrix_rolls_back_on_tag_push_failure(tmp_path):
-    """Rollback symmetry (PR #13 P2, comment 3567167519): tag/push failure
+    """Rollback symmetry : tag/push failure
     terminates the parent FAILED, deletes the tag this launch created, AND
     deletes this launch's manifest — so the retry is not refused by the
     one-launch-per-EXP guard."""
@@ -174,7 +229,7 @@ def test_launch_matrix_rolls_back_on_submit_failure(tmp_path):
 
 
 def test_launch_matrix_enrichment_failure_rolls_back(tmp_path):
-    """PR #13 P2 (comment 3567167519): the post-parent-run enrichment
+    """ : the post-parent-run enrichment
     (log_params here) previously sat outside all rollback handlers — a
     transient MLflow error exited with the manifest written and the parent
     stuck RUNNING, and the close-out's prior-manifest guard then refused
@@ -436,7 +491,7 @@ def test_launch_matrix_creates_serial_tag_when_existing_tag_at_different_sha(tmp
 
 
 def test_launch_matrix_serial_tag_skips_taken_suffixes(tmp_path):
-    """Third relaunch at a third SHA: .r2 is taken at another SHA, so .r3."""
+    """Third relaunch at a third SHA:.r2 is taken at another SHA, so.r3."""
     repo = _repo(tmp_path)
     store, batch, mlflow, git = InMemoryObjectStore(), FakeBatchSubmitter(), _mlflow(), _git()
     git.tag_target_sha.side_effect = lambda _repo, name: {
@@ -453,7 +508,7 @@ def test_launch_matrix_serial_tag_skips_taken_suffixes(tmp_path):
 
 
 def test_launch_matrix_rollback_deletes_the_serial_tag_it_created(tmp_path):
-    """Rollback must delete the tag THIS launch created (the .r2 suffix),
+    """Rollback must delete the tag THIS launch created (the.r2 suffix),
     not the base exp/EXP-NNN custody anchor from the prior launch."""
     repo = _repo(tmp_path)
     git = _git()
@@ -522,7 +577,7 @@ def _assert_refill_refused_no_side_effects(repo, store, match):
 
 
 def test_launch_matrix_refuses_orphaned_marker_under_old_unit_id(tmp_path):
-    """PR #13 P2 (comment 3567187757): the freshness probe was unit-id-keyed
+    """ : the freshness probe was unit-id-keyed
     (is_done over the NEW expansion only) — after a manual manifest removal
     with a CHANGED matrix, old markers under other unit ids evaded it and
     the namespace was treated as fresh. The check is now namespace-level:
@@ -552,7 +607,7 @@ def test_launch_matrix_refuses_stray_result_object(tmp_path):
 
 
 def test_launch_matrix_rollback_then_retry_succeeds(tmp_path):
-    """CRITICAL lock (comment 3567187757 x 3567167519): the transient-retry
+    """CRITICAL lock ( x ): the transient-retry
     flow the rollback work exists for. First attempt fails in enrichment ->
     rollback deletes this launch's manifest (and writes nothing else to the
     namespace by construction) -> the retry passes BOTH the prior-manifest
@@ -605,7 +660,7 @@ def _repo_with_repeats(tmp_path, n):
 
 
 def test_launch_matrix_threads_repeats_into_expansion(tmp_path):
-    """GWU-44 Lane B: matrix.repeats reaches expand_matrix — a repeats=2 doc
+    """: matrix.repeats reaches expand_matrix — a repeats=2 doc
     expands each (config,scenario,seed) into two __rep-suffixed replicate
     units with a single contiguous array_index across the whole product."""
     repo = _repo_with_repeats(tmp_path, 2)
@@ -626,16 +681,13 @@ def test_launch_matrix_threads_repeats_into_expansion(tmp_path):
 
 
 def test_launch_matrix_refuses_any_prior_manifest_with_runbook(tmp_path):
-    """PR #13 round 9 (comments 3567144111/3567144113, director decision):
-    relaunch/refill is DISABLED pending the hardening ticket — one launch per
-    EXP id. ANY prior manifest (here: pure failed-before-submit debris with
-    ZERO done-markers) refuses with the recovery runbook and zero side
-    effects."""
+    """A normal second launch refuses and directs a partial prior launch to
+    the explicit refill workflow while preserving the debris runbook."""
     from praxis_exp.manifest import read_manifest
     repo = _repo(tmp_path)
     store = InMemoryObjectStore()
     _seed_prior_launch(store, "EXP-005", _doc_units(), done_count=0)
-    msg = _assert_refill_refused_no_side_effects(repo, store, match="GWU-41")
+    msg = _assert_refill_refused_no_side_effects(repo, store, match="--refill")
     assert "NEW EXP id" in msg
     assert "manifest.json" in msg  # manual-delete runbook for verified debris
     # prior manifest untouched (launch_matrix's own write stamps launched_at)
@@ -644,7 +696,7 @@ def test_launch_matrix_refuses_any_prior_manifest_with_runbook(tmp_path):
 
 
 def test_launch_matrix_existing_tag_fresh_namespace_mints_serial(tmp_path):
-    """PR #13 P2 (comment 3567144113): tag annotations embed launch-specific
+    """ : tag annotations embed launch-specific
     facts (parent run id, image digest, manifest key), so NO existing
     annotation is ever reused — even at the same sha (e.g. relaunching after
     a manual namespace clear). The launch mints the next free serial tag
@@ -667,7 +719,7 @@ def test_launch_matrix_existing_tag_fresh_namespace_mints_serial(tmp_path):
 
 
 def test_launch_matrix_refuses_when_job_def_image_digest_mismatches(tmp_path):
-    """GWU-48: --image-digest is provenance-only; the job def selects the image
+    """: --image-digest is provenance-only; the job def selects the image
     AWS Batch runs. A job def pinned to a DIFFERENT digest than requested is a
     silent chain-of-custody break — refuse before any side effect."""
     from praxis_exp.storage import manifest_key

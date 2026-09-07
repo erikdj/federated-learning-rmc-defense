@@ -116,7 +116,7 @@ def test_s3_size_returns_content_length_and_none_on_missing():
 
 
 def test_in_memory_delete_removes_key_and_absent_key_is_noop():
-    """PR #13 P2 (comment 3567167519): launch rollback deletes the manifest
+    """ : launch rollback deletes the manifest
     this launch wrote; delete must be idempotent (absent key = no-op)."""
     s = InMemoryObjectStore()
     s.put_bytes("sweeps/E/manifest.json", b"{}")
@@ -134,7 +134,7 @@ def test_s3_delete_calls_delete_object():
 
 
 def test_in_memory_find_keys_prefix_scan_with_limit():
-    """PR #13 P2 (comment 3567187757): namespace-emptiness probe — the
+    """ : namespace-emptiness probe — the
     launch freshness check must be prefix-level, not unit-id-keyed."""
     s = InMemoryObjectStore()
     s.put_bytes("sweeps/EXP-005/done/u1.marker", b"")

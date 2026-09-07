@@ -23,7 +23,7 @@ SEED DISCIPLINE (stricter than the H3 scorer): the sealed confirmatory
 seeds are consumed by H4 for the first time, so NO seed value may appear
 in any log, refusal, or output JSON. Units are identified in refusals by
 arm/scenario plus SHA-256 prefixes of their path (launch tooling embeds
-the seed in filenames) via `redacted()`; seeds appear in outputs only as
+the seed in filenames) via `redacted`; seeds appear in outputs only as
 `seed_ordinal` — the index into the sorted sealed manifest.
 """
 from __future__ import annotations
@@ -249,9 +249,9 @@ def manifest_seed_list() -> List[int]:
 def _round_of(entry: Mapping[str, Any], unit_ref: str) -> int:
     """A VALIDATED integral round identifier — never a coercion.
 
-    `int()` would silently turn 1.9 into 1 and True into 1, corrupting
+    `int` would silently turn 1.9 into 1 and True into 1, corrupting
     round ordering and the duplicate-round guard.
-    Accepted: int (bool excluded) or a float that `.is_integer()` (a JSON
+    Accepted: int (bool excluded) or a float that `.is_integer` (a JSON
     round-trip artifact like 7.0 -> 7). REFUSED: bools, fractional floats,
     strings and everything else — the Lane-B emitter writes ints
     (`parse_eval_trajectory`), so a string round is a malformed unit, not
@@ -341,7 +341,7 @@ def _last5(trajectory: Sequence[Mapping[str, Any]],
 
 def acc_final5(trajectory: Sequence[Mapping[str, Any]], unit_ref: str) -> float:
     """§ 4.1 primary endpoint: mean sealed-test accuracy over the final 5
-    rounds (pre-registered robustness against the GWU-51 final-round-dip
+    rounds (pre-registered robustness against the final-round-dip
     class)."""
     window = _last5(trajectory, unit_ref)
     return sum(_accuracy_of(e, unit_ref) for e in window) / FINAL_WINDOW
@@ -393,7 +393,7 @@ def is_reference_anomaly(trajectory: Sequence[Mapping[str, Any]],
                          unit_ref: str) -> Dict[str, Any]:
     """§ 6 item 4 (`reference_anomaly`): flag a C0/S0 cell whose acc_final5
     sits STRICTLY more than ANOMALY_GAP below its own rolling-5 peak — the
-    sustained absorbing-state signature (GWU-51). Non-gating; the § 4.1
+    sustained absorbing-state signature. Non-gating; the § 4.1
     formula is computed as registered regardless of flags."""
     final5 = acc_final5(trajectory, unit_ref)
     peak = rolling5_peak(trajectory, unit_ref)

@@ -16,7 +16,7 @@ class BatchSubmitter(Protocol):
         ``None`` when this submitter does not implement resolution (a test fake
         opting out of image verification).
 
-        GWU-48: ``--image-digest`` is provenance-only — it does not select the
+        ``--image-digest`` is provenance-only — it does not select the
         image AWS Batch runs (the job definition's ``containerProperties.image``
         does). launch-matrix compares the two before submitting so a launch on a
         stale job def fails fast instead of silently running the wrong image. A
@@ -29,7 +29,7 @@ class BatchSubmitter(Protocol):
         """True iff the given array job is in a terminal state (SUCCEEDED /
         FAILED) with no attempt still able to run.
 
-        GWU-41 invariant 5: a provenance-changing refill must not launch while
+        A provenance-changing refill must not launch while
         the prior array is still RUNNABLE/RUNNING — an old child could win the
         done-marker race for a still-missing cell under the OLD image while the
         refill advertises new provenance.
@@ -42,11 +42,11 @@ class FakeBatchSubmitter:
 
     def __init__(self, job_def_image: str | None = None, array_terminal: bool = True) -> None:
         self.calls: list[dict[str, Any]] = []
-        # None -> opt out of GWU-48 image verification (default: the vast
+        # None -> opt out of image verification (default: the vast
         # majority of launch tests do not exercise the guard). Set to a
         # concrete "…@sha256:…" (or tag-pinned) reference to drive the guard.
         self.job_def_image = job_def_image
-        # GWU-41 invariant 5: default terminal (the storm-recovery case).
+        # Default terminal state for the storm-recovery case.
         self._array_terminal = array_terminal
         self.array_terminal_queries: list[str] = []
 
@@ -107,7 +107,7 @@ class Boto3BatchSubmitter:
 
     def job_definition_image(self, job_definition: str) -> str | None:
         """Resolve the job definition's ``containerProperties.image`` via
-        ``batch:describe-job-definitions`` (GWU-48).
+        ``batch:describe-job-definitions``.
 
         Never returns ``None`` in production: an unresolvable job definition or
         a definition without a container image is unaccountable state for a

@@ -1,11 +1,11 @@
-"""Dynamic per-round f in KrumDefensePlugin (methodology v1.19, PR #12 P1).
+"""Dynamic per-round f in KrumDefensePlugin (methodology v1.19, ).
 
 Static peak f=9 breaks S3/S4 disconnect rounds: those rounds schedule only
 ~11 participants (the 9 adversaries are DISCONNECTED — that is the RMC
 pattern), and at n=11 static f=9 gives num_closest = 11-9-2 = 0 < 1, firing
 the uncomputable fallback (uniform scores + ERROR log) on a large fraction of
 scheduled rounds. The April Szelag anchor solved this with per-round dynamic
-f (scripts/reproduce_szelag.py:388,739: ``math.ceil(n/2) - 1``), which
+f (the original baseline reproduction: ``math.ceil(n/2) - 1``), which
 reproduces the documented full-cohort operating point exactly:
 n=20 -> f=9, keep=n-f-2=9; n=11 -> f=5, keep=4 (computable, no ERROR).
 

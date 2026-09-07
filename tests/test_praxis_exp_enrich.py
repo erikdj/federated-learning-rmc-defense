@@ -135,7 +135,7 @@ class _FakeEnrichClient:
         # Mirror the materialized run view (search_runs reads run_metrics): a logged
         # metric becomes visible on the run, as real MLflow does — so a run backfilled
         # in one pass presents its final_f1 to the skip-complete check on the NEXT pass
-        # (the GWU-50 round-trip). run_metrics keeps the latest value per key (a dict);
+        # (the round-trip). run_metrics keeps the latest value per key (a dict);
         # self.metrics stays the full append-only call log used to prove (non-)re-log.
         self.run_metrics.setdefault(run_id, {})[key] = value
 
@@ -188,14 +188,14 @@ def test_enrich_reconstructs_completed_units(tmp_path):
     assert client.inputs[rid][0] == ("edge_full_20_rmc", "training")
     names = client.artifacts[rid]
     assert any(n.endswith(".json") for n in names)         # result.json still copied
-    assert not any(n.endswith(".jsonl") for n in names)    # signal NO LONGER copied (GWU-47 Lane A)
+    assert not any(n.endswith(".jsonl") for n in names)    # signal NO LONGER copied
     # signal is now referenced as a dataset-by-source input (context "signal")
     assert any(ctx == "signal" and name and name.startswith("signal_")
                for name, ctx in client.inputs[rid])
 
 
 def test_enrich_migrates_legacy_signal_artifact_to_dataset(tmp_path):
-    """GWU-47 Lane A migration: enrich best-effort deletes any pre-existing
+    """ migration: enrich best-effort deletes any pre-existing
     signal.jsonl artifact copy (so re-enrich removes the duplicate, not just
     stops future copies) and attaches the signal dataset-by-source instead."""
     repo = _build_repo(tmp_path)
@@ -209,7 +209,7 @@ def test_enrich_migrates_legacy_signal_artifact_to_dataset(tmp_path):
 
 
 def test_enrich_sets_note_content_with_rmc_params_and_verdict(tmp_path):
-    """GWU-47 Lane C: the backfill path sets mlflow.note.content (RMC params +
+    """: the backfill path sets mlflow.note.content (RMC params +
     gate verdict), parity with the live post_persist path."""
     repo = _build_repo(tmp_path)
     store = storage.InMemoryObjectStore()
@@ -363,7 +363,7 @@ def test_enrich_seals_parent_run_finished(tmp_path):
 
 
 def test_enrich_reconciles_refilled_sweep_before_sealing(tmp_path):
-    """GWU-41: when a refilled sweep is now complete, the enrich seal path clears
+    """: when a refilled sweep is now complete, the enrich seal path clears
     the finalizer's stale sweep_incomplete/missing_cells (preserving
     refill_history) so the sealed parent does not claim incomplete forever."""
     import json
@@ -590,7 +590,7 @@ def test_enrich_cosmetic_cleanup_failure_still_repairs(tmp_path):
 
 
 def test_enrich_uses_passed_experiment_id_without_design_doc(tmp_path):
-    """GWU-45 Lane B: the finalizer/reaper pass the parent run's experiment_id, so
+    """: the finalizer/reaper pass the parent run's experiment_id, so
     enrich skips _experiment_name -> _find_design_doc entirely. A sweep whose
     design doc was never baked (the acceptance EXP + every future EXP) still heals
     instead of raising from the missing docs/experiments doc (design § 5.4)."""
@@ -671,7 +671,7 @@ def test_enrich_skip_complete_still_reconciles_zombie_dup(tmp_path):
 
 def test_enrich_skip_complete_default_off_relogs(tmp_path):
     """Guard: default (skip_complete=False) re-logs EXACTLY as today — even an
-    already-complete unit is re-enriched (the CLI/agent/GWU-47 re-migration paths
+    already-complete unit is re-enriched (the CLI/agent/ re-migration paths
     must keep re-authoring FINISHED runs; that is why the fast path is opt-in)."""
     repo = _build_repo(tmp_path)
     store = storage.InMemoryObjectStore()
@@ -768,16 +768,16 @@ def test_enrich_treats_result_without_marker_as_uncommitted(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# GWU-50: skip fast path recognizes BACKFILL-completed units (not just live)
+# : skip fast path recognizes BACKFILL-completed units (not just live)
 # ---------------------------------------------------------------------------
 
 def test_enrich_skip_complete_skips_backfill_repaired_unit(tmp_path):
-    """GWU-50: a unit REPAIRED by the backfill path (_enrich_completed_unit) carries
+    """: a unit REPAIRED by the backfill path (_enrich_completed_unit) carries
     ``backfill_enrichment=complete`` as its LAST write, so a SECOND enrich pass with
     skip_complete=True recognizes it as already-complete and does NOT re-repair it.
     Without this, every reaper tick / EventBridge retry on a partial-failure sweep
     re-logs ~250 REST calls for each already-backfilled unit before reaching the
-    still-failed one — the H1 non-convergence loop GWU-45 fixed for the live path,
+    still-failed one — the H1 non-convergence loop fixed for the live path,
     here closed for the backfill path."""
     repo = _build_repo(tmp_path)
     store = storage.InMemoryObjectStore()
@@ -803,7 +803,7 @@ def test_enrich_skip_complete_skips_backfill_repaired_unit(tmp_path):
 
 
 def test_enrich_backfill_marker_absent_on_midway_failure_prevents_skip(tmp_path):
-    """GWU-50 propagation guard: if a REPAIR step raises mid-way through the backfill
+    """ propagation guard: if a REPAIR step raises mid-way through the backfill
     (here the result.json upload), _enrich_completed_unit never reaches its LAST write,
     so NO ``backfill_enrichment`` marker is stamped — the partially-logged run is left
     un-skippable and a later skip_complete pass re-attempts the repair instead of

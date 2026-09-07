@@ -54,8 +54,7 @@ def s3_console_url(bucket: str, prefix: str, *, region: str = "us-east-1", exact
     slash is appended, for prefixes that name a "folder" of objects. Pass
     ``exact=True`` when the prefix must string-match an OBJECT key stem
     (e.g. ``.../results/{unit_id}`` matching ``{unit_id}.json``) — appending
-    ``/`` there would make the filter match nothing (PR #13 P2,
-    comment 3566953651).
+    ``/`` there would make the filter match nothing.
     """
     p = prefix.lstrip("/")
     if not exact:
@@ -79,8 +78,7 @@ class ObjectStore(Protocol):
     def delete(self, key: str) -> None:
         """Delete the object; deleting an absent key is a no-op (idempotent).
 
-        Added for launch rollback (PR #13 P2, comment 3567167519): a failed
-        launch deletes the manifest it wrote so the retry is not refused by
+        A failed launch deletes the manifest it wrote so the retry is not refused by
         the one-launch-per-EXP guard.
         """
         ...
@@ -88,8 +86,7 @@ class ObjectStore(Protocol):
     def find_keys(self, prefix: str, *, limit: int = 25) -> list[str]:
         """Up to ``limit`` keys under ``prefix``, lexicographic order.
 
-        Added for the namespace-emptiness pre-flight (PR #13 P2, comment
-        3567187757): launch freshness must be prefix-level — a unit-id-keyed
+        Launch freshness must be prefix-level: a unit-id-keyed
         probe has blind spots the moment the matrix changes.
         """
         ...

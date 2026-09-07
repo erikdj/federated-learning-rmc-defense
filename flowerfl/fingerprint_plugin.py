@@ -13,14 +13,14 @@ Design authority
   "**regardless of any downstream action** (block, downweight, or accept)".
 * v1.10 § 5.1 gate **(e)** — `FitRes.metrics["fingerprint"]` present for 100%
   of client-rounds.
-* `docs/PHASE7_DESIGN.md` "Plugin integration"; chain order
+* `docs/harness/architecture.md` "Plugin integration"; chain order
   `[Krum, TGE, Fingerprint]` — this plugin is always **last**.
 
 Why observation lives in `observe_cohort`, not `score_updates`
 --------------------------------------------------------------
 `PluggableStrategy.aggregate_fit` calls `observe_cohort` on every plugin with
 the **complete, unfiltered** cohort before any plugin filters
-(`byzantine_defense.py`, the GWU-53 hook), then chains
+(`byzantine_defense.py`, the hook), then chains
 `score_updates`/`filter_updates` over the *shrinking* survivor set. Because
 this plugin is last, anything an upstream detector dropped would never reach its
 `score_updates` — and a dropped re-entrant is exactly the event H3 must score.
@@ -111,9 +111,9 @@ class FingerprintDefensePlugin(ByzantineDefensePlugin):
         # observe_cohort and NEVER touched by enforcement (§ 5.1 integrity).
         self._reentry_events: List[Dict[str, Any]] = []
         # THIS ROUND's cohort, keyed by CLAIMED IDENTITY, never by Flower CID
-        # (see _session_key()). Round-scoped on purpose: a run-long set would
+        # (see _session_key). Round-scoped on purpose: a run-long set would
         # make every client that merely sat out a sampling round look like an
-        # upstream rejection. See score_updates().
+        # upstream rejection. See score_updates.
         self._round_sessions: set[str] = set()
         self._cohort_round: Optional[int] = None
         # The round this plugin first observed anything — the enrollment round.
@@ -173,7 +173,7 @@ class FingerprintDefensePlugin(ByzantineDefensePlugin):
         of client-round are NOT in it:
 
         1. **Discovery-round fits.** `ScenarioStrategy.aggregate_fit` returns
-           before `super()` on the discovery round, so `observe_cohort` never
+           before `super` on the discovery round, so `observe_cohort` never
            sees them. That bypass is deliberate and documented there: the
            discovery round dispatches ALL clients including unscheduled ones,
            and routing them here would enrol devices the scenario never

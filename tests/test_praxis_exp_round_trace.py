@@ -21,7 +21,7 @@ def test_score_config():
     assert score_config("krumtge") == ("krum_score", "hard_topk")
     assert score_config("trustscore") == ("trust_score", "hard_topk")
     assert score_config("tgensemble")[1] == "soft_ensemble"
-    # TGE′ tokens (GWU-53; EXP-016 postmortem — unknown tokens silently lose the
+    # TGE′ tokens (; EXP-016 postmortem — unknown tokens silently lose the
     # timeline selection lens, so prime configs must be mapped explicitly).
     assert score_config("krumtgeprime") == ("krum_score", "hard_topk")
     assert score_config("tgeprime") == ("tge_score", "soft_ensemble")
@@ -144,7 +144,7 @@ def test_delete_prior_traces_search_failure_is_non_fatal():
     assert _delete_prior_traces(_Boom(), "40", "EXP-005c", "U") == 0
 
 
-# --- GWU-47 Lane B: per-round timeline as a log_table (column-oriented + refresh) ---
+# --- : per-round timeline as a log_table (column-oriented + refresh) ---
 
 def test_build_round_table_is_column_oriented_and_pandas_shaped():
     import pandas as pd
@@ -211,7 +211,7 @@ def test_emit_round_table_skips_none_table():
     assert c.logged == [] and c.deleted == []
 
 
-# --- GWU-47 Lane B: one-time cleanup of retired traces (round + coarse) ---
+# --- : one-time cleanup of retired traces (round + coarse) ---
 
 class _FakeCleanupClient:
     def __init__(self, traces):

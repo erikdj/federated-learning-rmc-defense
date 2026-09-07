@@ -1,7 +1,7 @@
 """Runtime provenance in the result JSON (Stage-F).
 
 The result-JSON provenance historically recorded runner_commit="unknown" (the
-container bakes the repo WITHOUT .git) and carried no image digest or host CPU
+container bakes the repo WITHOUT.git) and carried no image digest or host CPU
 context, so a reproducibility claim could not be tied to a commit/image/host.
 These tests pin the best-effort helpers: env-sourced commit/digest, /proc CPU
 model, logical CPU count, torch thread count, and their never-crash fallbacks.
@@ -104,7 +104,7 @@ def test_summarize_attack_recall_none_when_absent():
 def test_summarize_attack_recall_all_absent_require_raises():
     # require=True: this runner's own image always emits per-class eval lines, so
     # a fully-absent non-empty trajectory means the parse chain failed (prereg
-    # completeness assertion, PR #32).
+    # completeness assertion, ).
     traj = [{"round": 0, "f1": 0.9}, {"round": 1, "f1": 0.9}]
     with pytest.raises(ValueError):
         summarize_attack_recall(traj, require=True)

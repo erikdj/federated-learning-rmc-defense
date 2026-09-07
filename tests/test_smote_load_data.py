@@ -1,4 +1,4 @@
-"""Integration tests for SMOTE wired into the FL data pipeline (GWU-59).
+"""Integration tests for SMOTE wired into the FL data pipeline.
 
 Covers the two load-bearing safety properties:
   1. OFF (flag false/absent) is bit-identical to the incumbent load_data output.

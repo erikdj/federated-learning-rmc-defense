@@ -1,4 +1,4 @@
-"""TGE′ runner config + provenance + plumbing (GWU-53, two-leg bank).
+"""TGE′ runner config + provenance + plumbing (two-leg bank).
 
 Mirrors tests/test_krumtge_config.py and the provenance section of
 tests/test_tge_ramp_governance.py for the TGE′ bank configs. The deployed TGE′
@@ -212,7 +212,7 @@ def test_extra_key_hyphenation_maps_tgeprime_keys():
 
 def test_signal_record_includes_tge_ema_score_field():
     """scenario_strategy.py must emit tge_ema_score in the per-client record so
-    the bank min() is reconstructable offline."""
+    the bank min is reconstructable offline."""
     src = (PROJECT_ROOT / "flowerfl" / "scenario_strategy.py").read_text()
     assert '"tge_ema_score": tge_details.get("ema_score")' in src
 

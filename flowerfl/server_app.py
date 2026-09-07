@@ -101,7 +101,7 @@ def _maybe_create_signal_logger(
 
     Default: ON. Disable with `signal-log=0` in run_config.
     Log directory: `signals/` under project root (v23 Phase 1 P1.2).
-    Filename comes from signal_log_path() (the single source shared with the
+    Filename comes from signal_log_path (the single source shared with the
     runner's stale-log rotation). Distinct filenames prevent the two exec modes'
     signal data from being mixed (2026-05-26 finding: bug #4).
     """
@@ -147,7 +147,7 @@ def _create_cs_plugin(model_path: str, k: int = 3, weighting: str = "linear"):
 # H3 fingerprint arm — registry construction and the PRE-LOCK posture
 # ===========================================================================
 # v1.10 § 5.1 gate (c) locks BOTH τ values in code before any H3 evaluation
-# scenario runs, and `fingerprint_registry.locked_tau()` / `locked_metric()`
+# scenario runs, and `fingerprint_registry.locked_tau` / `locked_metric`
 # raise `TauNotLockedError` until they are. But the acceptance smoke (EXP-049)
 # runs the FP arm BEFORE τ exists, and per EMISSION_CONTRACT § 6.2 what it must
 # still produce is: fingerprint emission at 100 % of client-rounds, both defense
@@ -188,7 +188,7 @@ class ObserveOnlyFingerprintRegistry(FingerprintRegistry):
     withheld **structurally**, two independent ways over:
 
     1. :meth:`_nearest_flagged` returns ``(None, inf)`` — no candidate parent is
-       ever considered, so ``matched = parent is not None and ...`` is False
+       ever considered, so ``matched = parent is not None and...`` is False
        before τ is even consulted. (This also avoids computing 10²³⁹-scale
        Mahalanobis distances under an uncalibrated Σ = I, which are meaningless.)
     2. ``self._tau`` is ``NaN`` — every ``min_d <= tau`` comparison is False by
@@ -465,7 +465,7 @@ def _create_fingerprint_plugin(run_config):
 def _holdout_disjoint_from_run_config(run_config) -> bool:
     """Coerce the ``holdout-disjoint`` run-config value to bool (default True).
 
-    Values arrive as native bools (runner) or strings (CLI/pyproject). GWU-61:
+    Values arrive as native bools (runner) or strings (CLI/pyproject). :
     the default is disjoint=True; only an explicit false-ish value opts back into
     the legacy overlapping holdout for prior-run reproduction.
     """
@@ -482,7 +482,7 @@ def _create_eval_manager(dataset: str, run_config=None):
     led to EXP-003 running 50 rounds with no eval trajectory, masquerading
     as success. Server-side eval is mandatory for trajectory parsing.
 
-    GWU-61: the holdout is disjoint from training by default (see FixedEvalManager).
+    : the holdout is disjoint from training by default (see FixedEvalManager).
     The train cap is read from the run's ``max-samples`` so the excluded rows
     match what load_data actually routed into training; 0/absent falls back to
     task.MAX_SAMPLES_PER_CLIENT (load_data's own fallback).
@@ -536,7 +536,7 @@ def _scenario_defense_keep(cohort: int, num_malicious: int) -> int:
     """Multi-Krum keep count for scenario-mode defenses: ``max(1, cohort - f - 2)``.
 
     ``cohort`` is the per-round client cohort declared by the scenario
-    (canonical RMC: 20 — NOT the 21 dataset partitions ``get_num_clients()``
+    (canonical RMC: 20 — NOT the 21 dataset partitions ``get_num_clients``
     returns for ``edge_full_20_rmc``), and ``num_malicious`` (f) is the
     scenario-declared sustained adversary count (canonical RMC: 9), giving
     keep = 20 - 9 - 2 = 9 — the documented deployed design.
@@ -602,7 +602,7 @@ def server_fn(context: Context) -> ServerAppComponents:
             f"{sorted(_H2P_OBSERVER_STRATEGIES)} (erratum B § B1)."
         )
 
-    # GWU-31: seed all RNGs from the experiment seed BEFORE building the initial
+    # seed all RNGs from the experiment seed BEFORE building the initial
     # global model. Prior to this the seed was logged but never reached torch's
     # RNG, so the initial model was drawn from OS entropy and identical-seed runs
     # diverged. Seeding here makes the broadcast round-0 model byte-reproducible.
@@ -622,8 +622,8 @@ def server_fn(context: Context) -> ServerAppComponents:
         "min_available_clients": num_clients,
         "evaluate_metrics_aggregation_fn": weighted_average,
         "fit_metrics_aggregation_fn": weighted_average,
-        # GWU-31 (PR #11 P2): thread the current round to clients via flwr's
-        # standard on_fit_config_fn hook so FlowerClient.fit() can derive its
+        # thread the current round to clients via flwr's
+        # standard on_fit_config_fn hook so FlowerClient.fit can derive its
         # per-(client, round) seed on NON-scenario strategy paths too (Krum,
         # FedTrimmedAvg, FedMedian, FedAvg, Plugin*). Without this, those paths
         # fell back to server_round=0 and replayed the same RNG stream every
@@ -730,7 +730,7 @@ def server_fn(context: Context) -> ServerAppComponents:
             # Static values are provenance + the full-cohort operating-point
             # cross-check; deployment sizing is per-round dynamic
             # f=ceil(n/2)-1 (April anchor formula) so S3/S4 disconnect rounds
-            # (n~11) stay computable (PR #12 P1). At the full cohort the two
+            # (n~11) stay computable. At the full cohort the two
             # coincide: ceil(20/2)-1 = 9 = num_malicious, keep = 9.
             num_to_keep = _scenario_defense_keep(cohort, num_malicious)
             plugin = KrumDefensePlugin(
@@ -748,7 +748,7 @@ def server_fn(context: Context) -> ServerAppComponents:
                 scenario_path=scenario_path,
                 eval_manager=eval_mgr, signal_logger=sig_logger,
             )
-            # Two distinct facts, labeled distinctly (PR #12 round-2 P2):
+            # Two distinct facts, labeled distinctly ( round-2 P2):
             # scenario_declared_adversaries = ground truth from the scenario
             # (provenance + guard + full-cohort cross-check); krum_f_policy =
             # what the deployed defense actually sizes with (threat-model-
@@ -777,7 +777,7 @@ def server_fn(context: Context) -> ServerAppComponents:
             from flowerfl.cold_start_plugin import ColdStartDefensePlugin
             num_to_keep = _scenario_defense_keep(cohort, num_malicious)
             # dynamic_f: per-round ceil(n/2)-1 sizing; statics = provenance
-            # (see ScenarioKrum branch comment; PR #12 P1).
+            # (see ScenarioKrum branch comment; ).
             krum_plugin = KrumDefensePlugin(
                 num_malicious=num_malicious,
                 num_to_keep=num_to_keep,
@@ -835,7 +835,7 @@ def server_fn(context: Context) -> ServerAppComponents:
         elif strategy_name == "ScenarioKrumTGE":
             # Krum layer: documented full-cohort operating point f=9 / keep-9
             # (cohort 20 - f 9 - 2); deployment sizing is per-round dynamic
-            # f=ceil(n/2)-1 (April anchor formula, PR #12 P1) so disconnect
+            # f=ceil(n/2)-1 (April anchor formula, ) so disconnect
             # rounds stay computable. Statics = provenance.
             num_to_keep = _scenario_defense_keep(cohort, num_malicious)
             krum_plugin = KrumDefensePlugin(
@@ -864,13 +864,13 @@ def server_fn(context: Context) -> ServerAppComponents:
                   f"(GBDT+LSTM, ramp_rounds={tge_ramp_rounds}, threshold-filter=0.7) + scenario scheduling")
 
         elif strategy_name == "ScenarioTGEPrime":
-            # TGE′ (GWU-53): FedAvg + TGEnsemblePlugin with the two-leg
+            # TGE′ : FedAvg + TGEnsemblePlugin with the two-leg
             # long-memory BANK (LSTM + EMA reputation, combined by min).
             # Identical wiring to ScenarioTGEnsemble; only long_memory_expert
             # differs. ramp/alpha are PROVISIONAL (amendment v1.7 pending).
             tge_ramp_rounds = int(run_config.get("tge-ramp-rounds", 8))  # provisional canonical (v1.6 § 2)
-            tge_ema_alpha = float(run_config.get("tge-ema-alpha", 0.9))   # ADOPTED from TrustScore (GWU-53)
-            # Honor the configured long-memory mode (GWU-53): the prime
+            tge_ema_alpha = float(run_config.get("tge-ema-alpha", 0.9))   # ADOPTED from TrustScore
+            # Honor the configured long-memory mode : the prime
             # token deploys "bank" by default, but an explicit
             # tge-long-memory-expert override (e.g. "ema" for component
             # isolation) must actually execute — and match what
@@ -891,7 +891,7 @@ def server_fn(context: Context) -> ServerAppComponents:
                   f"ramp_rounds={tge_ramp_rounds}, ema_alpha={tge_ema_alpha}, threshold-filter=0.7) + scenario scheduling")
 
         elif strategy_name == "ScenarioKrumTGEPrime":
-            # TGE′ composed behind Krum (GWU-53). Krum layer identical to
+            # TGE′ composed behind Krum. Krum layer identical to
             # ScenarioKrumTGE; the TGE layer uses the two-leg bank.
             num_to_keep = _scenario_defense_keep(cohort, num_malicious)
             krum_plugin = KrumDefensePlugin(
@@ -900,8 +900,8 @@ def server_fn(context: Context) -> ServerAppComponents:
                 dynamic_f=True,
             )
             tge_ramp_rounds = int(run_config.get("tge-ramp-rounds", 8))  # provisional canonical (v1.6 § 2)
-            tge_ema_alpha = float(run_config.get("tge-ema-alpha", 0.9))   # ADOPTED from TrustScore (GWU-53)
-            # Honor the configured long-memory mode (GWU-53) — see the
+            tge_ema_alpha = float(run_config.get("tge-ema-alpha", 0.9))   # ADOPTED from TrustScore
+            # Honor the configured long-memory mode — see the
             # ScenarioTGEPrime branch above.
             tge_long_memory = str(run_config.get("tge-long-memory-expert", "bank"))
             tge_plugin = TGEnsemblePlugin(

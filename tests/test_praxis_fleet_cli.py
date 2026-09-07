@@ -32,8 +32,26 @@ def test_launch_matrix_command_invokes_orchestrator():
     assert "EXP-005" in result.output and "100" in result.output
 
 
+def test_launch_matrix_forwards_branch_and_no_push():
+    runner = CliRunner()
+    with patch("praxis_exp.cli.launch_matrix") as ml:
+        ml.return_value = {
+            "exp_id": "EXP-005", "n_units": 2, "array_job_id": "job-1",
+            "manifest_key": "sweeps/EXP-005/manifest.json",
+        }
+        result = runner.invoke(
+            main,
+            ["exp", "launch-matrix", "EXP-005", "--image-digest", "sha256:x",
+             "--branch", "release", "--no-push"],
+        )
+
+    assert result.exit_code == 0, result.output
+    assert ml.call_args.kwargs["branch"] == "release"
+    assert ml.call_args.kwargs["_no_push"] is True
+
+
 def test_launch_matrix_refill_routes_to_refill_matrix():
-    """GWU-41: --refill routes to refill_matrix with the parsed --cells list."""
+    """: --refill routes to refill_matrix with the parsed --cells list."""
     runner = CliRunner()
     with patch("praxis_exp.cli.refill_matrix") as rm, patch("praxis_exp.cli.launch_matrix") as lm:
         rm.return_value = {"exp_id": "EXP-005", "serial": "r2", "n_refilled": 2,
@@ -43,12 +61,15 @@ def test_launch_matrix_refill_routes_to_refill_matrix():
                            "parent_run_id": "parent-orig"}
         result = runner.invoke(main, ["exp", "launch-matrix", "EXP-005",
                                       "--image-digest", "sha256:x",
-                                      "--refill", "--cells", "0,6"])
+                                      "--refill", "--cells", "0,6",
+                                      "--branch", "maintenance", "--no-push"])
     assert result.exit_code == 0, result.output
     rm.assert_called_once()
     lm.assert_not_called()
     assert rm.call_args.args[2] == ["0", "6"]  # parsed cell list
     assert rm.call_args.kwargs["image_digest"] == "sha256:x"
+    assert rm.call_args.kwargs["branch"] == "maintenance"
+    assert rm.call_args.kwargs["_no_push"] is True
     assert "Refilled EXP-005" in result.output and "r2" in result.output
 
 

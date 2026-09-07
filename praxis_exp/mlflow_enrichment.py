@@ -209,7 +209,7 @@ def unit_s3_tags(bucket: str, exp_id: str, unit_id: str, *, region: str = "us-ea
         "s3_done_uri": s3_uri(bucket, marker_key(exp_id, unit_id)),
         # exact=True: the console filter is a plain string-prefix over keys,
         # and the result is an OBJECT (`{unit_id}.json`), not a folder — a
-        # trailing slash would match nothing (PR #13 P2, comment 3566953651).
+        # trailing slash would match nothing.
         "s3_console_url": s3_console_url(
             bucket, f"{sweep_prefix(exp_id)}/results/{unit_id}", region=region, exact=True
         ),

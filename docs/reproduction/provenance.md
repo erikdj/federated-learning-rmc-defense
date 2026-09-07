@@ -1,14 +1,19 @@
 # Evidence provenance and limits
 
-The curated evidence was read from source commit
-`a8605f60b1d75c0b76f42a4aea4023533af3f54d`. No manuscript, working-paper,
+The evidence package records the source revision and content hashes for each
+artifact in [`provenance.json`](../../reproduction/evidence/provenance.json).
+The current H1 read uses development-frozen risk cuts and the H2′ read includes
+the window-aware leave-one-attack-out sensitivity. No manuscript, working-paper,
 private planning report, cloud identifier, or historical infrastructure
-configuration is part of the evidence package.
+configuration is part of the package.
 
-H1, H2, the H2 operating cuts, and H4 are byte-for-byte copies of the final JSON
-artifacts. H2′ retains every scientific and numerical field but replaces its
-historical bucket, custody-record path, and temporary assembly-map path with
-explicit non-distributed markers. H3 retains every result and run identity but
+H1 includes the current held-out read and its development-frozen thresholds.
+H2, the H2 operating cuts, and H4 are byte-for-byte copies of their final JSON
+artifacts. H2′ retains its primary P1/P2 values and verdict and adds the reported
+window-aware sensitivity. The public H2′ copy replaces its historical bucket,
+custody-record path, and temporary assembly-map path with
+explicit non-distributed markers and points its protocol reference at the public
+study guide. H3 retains every result and run identity but
 replaces ten local temporary paths with `results/<basename>`. The original and
 public hashes are recorded in
 [`provenance.json`](../../reproduction/evidence/provenance.json).
@@ -23,8 +28,7 @@ and the extraction details are recorded in
 and expected-output bytes remain unchanged. The scorer imports these files as
 protocol dependencies.
 
-The following inputs are absent from both the source Git checkout and this
-release:
+The following raw inputs are not distributed in this release:
 
 - the 25 H1 detector-training signal logs from EXP-041 and EXP-046;
 - 200 EXP-048 unit results and signal logs;
@@ -49,16 +53,28 @@ The threshold constants in that file are 18.639429816855873 for validation and
 SHA-256 of [`manifest_v2.json`](../../data/h4_serving/manifest_v2.json),
 `3bfeefb45700dff2e02a14acb0de4acfadcc717a7b82d6c246d44a8f44fa062c`.
 
-The local research tracking service was unavailable during release curation.
-The audit therefore could not independently enumerate historical backend runs
-or check for unregistered artifacts. Git-tracked final evidence, frozen model
-bytes, scorer inputs, experiment matrices, and committed custody statements
-were inspected; remote backend completeness remains outside this release's
-verifiable boundary.
+The H3 threshold and covariance are fitted on even-numbered partitions for the
+adjudicating cohort. Feature screening reads all 20 partitions, and the pre-lock
+homogeneity check also reads the odd partitions used for scoring. Fresh test
+seeds therefore test the fixed instrument on new runs of known partitions;
+they do not establish generalization to devices unseen during feature screening.
+
+The historical MLflow service is private. This release provides neither a public
+tracking server nor the complete historical raw run corpus. Its verification
+commands read the bundled evidence and instrument artifacts; they do not replay
+every historical run or establish remote backend completeness.
 
 The frozen H2′ golden gate did not reproduce its expected feature hash on the
-release-curation host across the available OpenBLAS core settings. Because that
-gate is mandatory, no H2′ live scoring was performed during curation and the
-gate was not weakened. The public evidence is the curated historical terminal
-artifact; a new raw H2′ score is valid only on a host where the unmodified
-golden test passes under the pinned NumPy and scikit-learn versions.
+release-preparation host across the available OpenBLAS core settings. The gate
+remains mandatory and unchanged. The bundled evidence contains the primary
+results and the reported window-aware sensitivity; producing a new raw H2′
+score requires a host where the unmodified golden test passes under the pinned
+NumPy and scikit-learn versions. Inspecting the evidence or passing the software
+suite alone does not establish that compatibility.
+
+Archived `source_path` and protocol-authority strings in provenance and frozen
+artifacts identify the original records; they are not links to distributed
+files. Frozen models, seed files, and protocol fixtures retain those strings
+where changing them would change their pinned bytes. The public
+[study guide](experiments.md) and [protocol helpers](../../reproduction/protocol/)
+provide the methods and executable definitions needed by the shipped scorers.

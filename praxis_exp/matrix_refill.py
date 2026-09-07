@@ -1,10 +1,8 @@
 """``praxis exp launch-matrix --refill EXP-NNN --cells …`` — re-run the missing
 cells of a prior sweep, in place, with full chain-of-custody hardening.
 
-GWU-41 re-enables refills (disabled 2026-07-12 in ``b3b3f09`` pending this
-design). The mechanism is the one validated across PR #13 rounds 2–8 and
-completed here with the round-9 P1 (terminal-array) and P2 (per-launch tag)
-guards that were never implemented:
+This module re-enables explicit refills while preserving terminal-array and
+per-launch provenance safeguards:
 
   A refill re-submits the FULL canonical array into the SAME namespace against
   the ORIGINAL (immutable) manifest. The container resolves each
@@ -256,6 +254,7 @@ def refill_matrix(
     _mlflow: Any,
     _git: Any = git_helper,
     _no_push: bool = False,
+    branch: str | None = None,
     allow_digest_mismatch: bool = False,
 ) -> dict[str, Any]:
     """Re-run the missing cells of a prior sweep (see module docstring).
@@ -284,8 +283,14 @@ def refill_matrix(
     if not _git.working_tree_clean(repo_root, ignore=_read_ignore(repo_root)):
         raise MatrixLaunchError("working tree has uncommitted changes; commit before refill")
     sha = _git.head_sha(repo_root)
+    push_branch = None
+    if not _no_push:
+        try:
+            push_branch = _git.resolve_push_branch(repo_root, branch)
+        except Exception as e:
+            raise MatrixLaunchError(f"cannot determine Git push branch: {e}") from e
 
-    # GWU-48 image guard applies to refills too — a refill on a stale job def is
+    # The image guard applies to refills too — a refill on a stale job definition is
     # the same silent-wrong-image hazard.
     _verify_job_def_image(_batch, doc.job_definition, image_digest, allow_mismatch=allow_digest_mismatch)
 
@@ -381,7 +386,7 @@ def refill_matrix(
     if not parent_run:
         print(
             f"[refill] WARNING: {exp_id}'s manifest records no parent_run_id (pre-dates "
-            "GWU-41 recording) — minting a NEW cross-linked refill parent run instead of "
+            "refill metadata) — minting a NEW cross-linked refill parent run instead of "
             "reusing the original. The refilled children will nest under it, not the "
             f"original sweep parent. AUDIT TRAIL: the new parent carries refill_of_exp="
             f"{exp_id} and refill_serial={serial} tags (and git_tag {launch_tag}) — walk "
@@ -418,7 +423,7 @@ def refill_matrix(
         "refilled_cells": target_ids,
         "launched_at": launched_at,
         "provenance_changed": provenance_change,
-        # GWU-59: a refill re-runs against the ORIGINAL manifest, so the
+        # A refill re-runs against the original manifest, so the
         # container reproduces the original run_extras (e.g. SMOTE) by
         # construction — never dropping it and corrupting the A/B. Copied into
         # the refill record for the audit trail so the record self-documents the
@@ -454,7 +459,7 @@ def refill_matrix(
         _git.create_annotated_tag(repo_root, launch_tag, tag_msg)
         created_tag = launch_tag
         if not _no_push:
-            _git.push_with_tags(repo_root)
+            _git.push_with_tags(repo_root, branch=push_branch)
     except Exception as e:
         leftover = _rollback_refill(
             _store=_store, _mlflow=_mlflow, _git=_git, repo_root=repo_root,
@@ -497,16 +502,16 @@ def refill_matrix(
             },
         )
     except Exception as e:
-        # The tag was already pushed — it stays as the record of the attempt;
-        # the refill record is deleted so a retry is clean.
+        # The launch tag stays as the record of the attempt; the refill record
+        # is deleted so a retry is clean.
         leftover = _rollback_refill(
             _store=_store, _mlflow=_mlflow, _git=_git, repo_root=repo_root,
-            record_key=record_key, created_tag=None,  # pushed tag stays
+            record_key=record_key, created_tag=None,  # launch tag stays
             parent_run=parent_run, terminate_parent=minted_parent,
         )
         raise MatrixLaunchError(
             f"Batch submit failed — refill rolled back (record deleted"
-            f"{', refill parent terminated FAILED' if minted_parent else ''}; pushed tag "
+            f"{', refill parent terminated FAILED' if minted_parent else ''}; launch tag "
             f"{launch_tag} remains): {e}{leftover}"
         ) from e
 

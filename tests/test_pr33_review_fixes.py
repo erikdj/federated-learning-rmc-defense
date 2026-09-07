@@ -8,7 +8,7 @@ P1-2 prewarm semantic key: resample_cache_path threads smote_semantic_target so
 P1-3 manifest durability: ScenarioStrategy collects the resampling_manifest fit
      metric server-side (deduped) and the runner writes it into the result JSON.
 P2-4 declared-config check: the production assertion passes `expected`, so a
-     client whose manifest disagrees with its declared arm raises in fit().
+     client whose manifest disagrees with its declared arm raises in fit.
 """
 import json
 import sys
@@ -149,7 +149,7 @@ DIM = 8
 
 def _fit_results_with_manifest(pids, *, steps=160):
     # update_match=True pins these fixtures to the update-matched regime, where
-    # the static-row gate compares actual_steps/max_steps strictly (GWU-70).
+    # the static-row gate compares actual_steps/max_steps strictly.
     out = []
     for p in pids:
         proxy = SimpleNamespace(cid=f"raw{p}")
@@ -260,9 +260,9 @@ def test_collector_identical_repeat_is_silent_noop(capsys):
 
 
 # ---------------------------------------------------------------------------
-# GWU-70 — static-row gate must not guard natural step counts (update-match OFF)
+# static-row gate must not guard natural step counts (update-match OFF)
 #
-# Root cause: train_label_flip() runs 1 natural pass vs 5 epochs on every other
+# Root cause: train_label_flip runs 1 natural pass vs 5 epochs on every other
 # path, so under update-match OFF a partition whose S4 lineage rotates into
 # label_flip legitimately reports a different actual_steps than its
 # first-recorded row. actual_steps is a per-round quantity in that regime, not
@@ -390,7 +390,7 @@ def test_collector_update_match_off_actual_steps_presence_mismatch_raises(prior_
 
 
 def test_collector_label_flip_lineage_natural_steps_accepted():
-    # (5) The GWU-70 scenario in miniature: an S4 partition first fits on the
+    # (5) The scenario in miniature: an S4 partition first fits on the
     # 5-epoch path (5 epochs x 160 steps), then its lineage rotates into
     # label_flip which runs 1 natural pass (160 steps), update-match OFF.
     # The second row must be accepted, first-recorded row retained.
@@ -464,7 +464,7 @@ def test_runner_gate_passes_on_complete_manifest_and_writes_sorted():
 
 
 # ---------------------------------------------------------------------------
-# P1 (PR #35) — discovery-round failure closure via unresolved dispatched cids
+# P1 — discovery-round failure closure via unresolved dispatched cids
 # ---------------------------------------------------------------------------
 
 def test_configure_fit_pre_mapping_records_dispatched_cids():
@@ -479,7 +479,7 @@ def test_unresolved_dispatched_cids_flags_discovery_failure():
     params = ndarrays_to_parameters([np.zeros(DIM, dtype=np.float32)])
     # Dispatch raw0/raw1/raw2 in the discovery round...
     strat.configure_fit(1, params, _CidClientManager(["raw0", "raw1", "raw2"]))
-    # ...but only raw0/raw1 return a successful fit (raw2 failed in discovery).
+    #...but only raw0/raw1 return a successful fit (raw2 failed in discovery).
     strat.aggregate_fit(1, _fit_results_with_manifest([0, 1]), failures=[])
     assert strat.unresolved_dispatched_cids() == {"raw2"}
 
@@ -539,7 +539,7 @@ def test_runner_omits_manifest_for_incumbent_runs():
 
 
 # ===========================================================================
-# P2-4 — declared-config compliance check fires in production fit()
+# P2-4 — declared-config compliance check fires in production fit
 # ===========================================================================
 
 def _off_prep_info(n=64):

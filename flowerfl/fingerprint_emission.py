@@ -235,7 +235,7 @@ def fingerprint_rng(
 
     Seeded through a ``SeedSequence`` on
     ``[derive_seed(base_seed, partition_id, server_round), FP_STREAM_ID]`` —
-    the existing GWU-31 training key **plus** the fingerprint domain tag, so the
+    the existing training key **plus** the fingerprint domain tag, so the
     two streams cannot become correlated. It is a fresh instance every call and
     NEVER touches the global NumPy or torch RNG.
     """

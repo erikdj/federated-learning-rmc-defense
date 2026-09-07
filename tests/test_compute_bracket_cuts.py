@@ -40,7 +40,7 @@ def _write_pool(path: Path, honest_scores, *, defense_token="tgensemble",
 
 def test_quantile_math_matches_frozen_procedure():
     """Bracket cuts equal select_threshold at each FPR = sorted[floor(fpr*n)]."""
-    pool = [i / 100 for i in range(100)]  # 0.00 .. 0.99, n=100
+    pool = [i / 100 for i in range(100)]  # 0.00.. 0.99, n=100
     for fpr, expected_idx in [(0.01, 1), (0.05, 5), (0.10, 10)]:
         assert select_threshold(pool, fpr) == pool[expected_idx]
 
@@ -169,7 +169,7 @@ def test_verify_against_frozen_json_mismatch_is_loud(tmp_path):
 
 
 # =============================================================================
-# v1.10 §3.3 parameterization (GWU-68): --source-root / per-pool overrides,
+# v1.10 §3.3 parameterization : --source-root / per-pool overrides,
 # frozen-snapshot write guard, and the value-identity regression gate.
 # =============================================================================
 
@@ -330,7 +330,7 @@ def _write_synthetic_tree(root: Path) -> None:
 
 @pytest.mark.skipif(not _DEFAULT_SOURCES_PRESENT, reason=_SOURCES_ABSENT_REASON)
 def test_main_end_to_end_with_source_root(tmp_path, monkeypatch):
-    """--source-root wires through main() with the REAL runtime identity gate —
+    """--source-root wires through main with the REAL runtime identity gate —
     NO stubbing: the gate first verifies the frozen
     snapshot from the default pools, then the overridden pools (engineered to
     reproduce the real frozen anchors) are read from the override tree and the
@@ -456,12 +456,12 @@ def test_value_identity_default_inputs_reproduce_frozen_snapshot():
     (lambda f: f["configs"]["krum"]["primary_s4"]["bracket_cuts"]["0.01"]
         .__setitem__("cut", 0.123456789),
      "configs.krum.primary_s4.bracket_cuts.0.01.cut"),
-    # ...a non-cut field: the comparison is the COMPLETE object, not a
+    #...a non-cut field: the comparison is the COMPLETE object, not a
     # spot-check of cut values...
     (lambda f: f["configs"]["tge"]["primary_s4"]["source_files"][0]
         .__setitem__("rows", 1),
      "configs.tge.primary_s4.source_files[0].rows"),
-    # ...and a strictly-compared _meta field: no blanket _meta allowlist
+    #...and a strictly-compared _meta field: no blanket _meta allowlist
     (lambda f: f["_meta"].__setitem__("procedure", "tampered"),
      "_meta.procedure"),
 ])
@@ -520,7 +520,7 @@ _FAKE_DIGEST = "sha256:d7fbee5b19c542e630e058c2a0d349a72adc0d4c50e3f0a58c0b898b5
 def _write_leakfree_provenance(sig: Path, *, normalize=True, digest=_FAKE_DIGEST,
                                omit: set | None = None) -> None:
     """Stage the regime-provenance manifest the leak-free mode requires. The
-    signal .jsonl rows carry NO regime field (verified against the real EXP-041
+    signal.jsonl rows carry NO regime field (verified against the real EXP-041
     logs), so provenance must come from a manifest built at staging time from the
     result JSONs."""
     omit = omit or set()
@@ -694,7 +694,7 @@ def test_degeneracy_flag_absent_on_well_spread_pool(tmp_path):
     assert all(f["reason"] is None for f in flags.values())
 
 
-# --- end-to-end through main(), real identity gate, no stubbing -------------
+# --- end-to-end through main, real identity gate, no stubbing -------------
 
 @pytest.mark.skipif(not _DEFAULT_SOURCES_PRESENT, reason=_SOURCES_ABSENT_REASON)
 def test_main_leakfree_end_to_end(tmp_path, monkeypatch):
@@ -767,7 +767,7 @@ def test_main_leakfree_hard_aborts_without_default_pools(tmp_path, monkeypatch):
 
 
 # =============================================================================
-# PR #49 auto-review fixes. Three findings, all of the silent-mislabeling class
+# auto-review fixes. Three findings, all of the silent-mislabeling class
 # this tooling exists to kill:
 #   R1 (P1) regime-provenance validation of the leak-free inputs
 #   R2 (P1) the complete {1,2,5,10}% bracket is mandatory in leak-free mode
@@ -779,7 +779,7 @@ def test_main_leakfree_hard_aborts_without_default_pools(tmp_path, monkeypatch):
 def test_signal_rows_carry_no_regime_field_so_manifest_is_required(tmp_path):
     """The premise of the manifest requirement, pinned: a signal row has no
     normalize_train_only (verified against the real EXP-041 logs, 1604 rows
-    sampled). is_dir() + a filename match is NOT provenance."""
+    sampled). is_dir + a filename match is NOT provenance."""
     sig = tmp_path / "sig"
     _write_leakfree_tree(sig)
     row = json.loads(next(iter(

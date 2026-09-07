@@ -58,19 +58,26 @@ def cmd_launch(exp_id):
 @click.option("--image-digest", required=True,
               help="Pinned container image digest (sha256:...) recorded for chain of custody.")
 @click.option("--allow-digest-mismatch", is_flag=True, default=False,
-              help="Override the GWU-48 guard when the job def's image != --image-digest "
+              help="Override the job-definition image guard when its image != --image-digest "
                    "(logs LOUDLY; use only when you know the job def is correct).")
 @click.option("--refill", is_flag=True, default=False,
-              help="Refill mode (GWU-41): re-run the missing cells of EXP_ID's prior launch "
+              help="Refill mode: re-run the missing cells of EXP_ID's prior launch "
                    "in place (done cells skip on their markers). Use with --cells.")
 @click.option("--cells", default=None,
               help="Refill only: comma-separated cells to refill (array indices or unit_ids). "
                    "Must name exactly the missing set. Omit to refill ALL missing cells.")
-def cmd_launch_matrix(exp_id, image_digest, allow_digest_mismatch, refill, cells):
+@click.option("--branch", default=None, metavar="NAME",
+              help="Remote branch to receive the committed launch HEAD. Defaults to the "
+                   "current branch; required for a detached HEAD.")
+@click.option("--no-push", is_flag=True, default=False,
+              help="Create the local custody tag without pushing commits or tags.")
+def cmd_launch_matrix(
+    exp_id, image_digest, allow_digest_mismatch, refill, cells, branch, no_push,
+):
     """Fan a sweep matrix out to AWS Batch (one EXP owns the matrix).
 
     With --refill, re-run only the missing cells of a prior launch (chain-of-
-    custody-hardened refill; see GWU-41).
+    custody-preserving refill).
     """
     import boto3
     if cells and not refill:
@@ -96,6 +103,7 @@ def cmd_launch_matrix(exp_id, image_digest, allow_digest_mismatch, refill, cells
                 container_tracking_uri=cfg.container_tracking_uri,
                 _store=store, _batch=batch, _mlflow=mlflow_client,
                 allow_digest_mismatch=allow_digest_mismatch,
+                branch=branch, _no_push=no_push,
             )
             click.echo(
                 f"Refilled {out['exp_id']} ({out['serial']}): {out['n_refilled']} cell(s) "
@@ -109,6 +117,7 @@ def cmd_launch_matrix(exp_id, image_digest, allow_digest_mismatch, refill, cells
             container_tracking_uri=cfg.container_tracking_uri,
             _store=store, _batch=batch, _mlflow=mlflow_client,
             allow_digest_mismatch=allow_digest_mismatch,
+            branch=branch, _no_push=no_push,
         )
     except Exception as e:
         click.echo(f"ERROR: {e}", err=True)
@@ -218,7 +227,7 @@ def cmd_timeline(exp_id):
 def cmd_cleanup_traces(exp_id):
     """One-time removal of RETIRED MLflow traces for a completed sweep — both the
     per-round fl_training__* traces and the coarse run_phase4_flower/persist_unit
-    spans. Traces were retired in GWU-47 (an FL run has no call tree). Idempotent."""
+    spans. These traces were retired because an FL run has no call tree. Idempotent."""
     try:
         cfg = Config()
         client = PraxisMlflowClient(tracking_uri=cfg.tracking_uri)
@@ -234,7 +243,7 @@ def cmd_cleanup_traces(exp_id):
 def cmd_promote_models(exp_id):
     """Set sweep-scoped champion__/challenger__ registry aliases on each defense's
     model (praxis-{defense_token}), ranked by final_f1. Best-effort, idempotent
-    (GWU-47 Lane D). Applies only to sweeps whose models were logged in-container."""
+    operation. Applies only to sweeps whose models were logged in-container."""
     import boto3
     try:
         cfg = Config()

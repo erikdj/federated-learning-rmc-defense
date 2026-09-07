@@ -1,11 +1,11 @@
-"""SMOTE provenance + governance-canary tests (GWU-59).
+"""SMOTE provenance + governance-canary tests.
 
 Mirrors the tge-ramp governance pattern (tests/test_tge_ramp_governance.py):
 the runner emits a provenance field for every run declaring its SMOTE status,
 and the pyproject default is OFF so a bare `flwr run` is the incumbent.
 
 Per-client application records (director follow-up, closes DESIGN.md Stage-D
-provenance list): load_data emits ONE structured `[SMOTE] ...` line per client
+provenance list): load_data emits ONE structured `[SMOTE]...` line per client
 at data prep; the runner parses them into per-client counts + the run-level
 skip flag + the reproducibility seed component.
 """

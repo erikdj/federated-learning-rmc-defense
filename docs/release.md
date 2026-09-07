@@ -1,4 +1,4 @@
-# Public release 0.1.0
+# Public release 0.1.1
 
 This is a new source repository assembled from the final research implementation
 and selected evidence. It has a new Git history. The private working repository,
@@ -16,11 +16,19 @@ files, and intermediate outputs are not distributed.
 
 ## Changes for public use
 
-Scientific numeric parameters and scoring constructions are retained. Release
-changes include packaging all three runtime packages, explicit data/resource
+H1 uses development-frozen upper-tail risk thresholds, with primary and
+secondary results recorded separately. H2′ includes the window-aware
+leave-one-attack-out sensitivity alongside unchanged primary P1/P2 results.
+The study guides document the implemented calibration, scenario schedules,
+aggregation rules and evaluation limits.
+
+Release changes include packaging all three runtime packages, explicit data/resource
 configuration, AWS region resolution, committed-source image builds, removing
 import-time log-directory creation, and making software tests independent of
-private infrastructure.
+private infrastructure. Matrix launches detect the current Git branch, accept
+an explicit branch and support `--no-push`. Experiment scaffolding includes a
+complete public template. The default software suite excludes the separate
+mandatory H2′ golden protocol gate.
 
 Obsolete standalone PoCs, historical tuning/fork analyses, one-off probes,
 baseline-copy wrappers and unused fitted variants are excluded. Operational
@@ -34,6 +42,19 @@ files and are unchanged. The H3 registry binds the public calibration checksum.
 The active H4 v2 serving model, feature list, cuts and manifest retain their
 original bytes. Final evidence provenance is documented
 [separately](reproduction/provenance.md).
+
+## Dataset notices
+
+The processed dataset's [DataCite DOI metadata](https://api.datacite.org/dois/10.21227/mbc1-1h68)
+names CC BY 4.0. The [IEEE DataPort page](https://ieee-dataport.org/documents/edge-iiotset-new-comprehensive-realistic-cyber-security-dataset-iot-and-iiot-applications)
+also grants academic research use indefinitely and asks commercial users to
+obtain permission from the lead author. Both notices are recorded in
+[DATASET_LICENSE.md](../data/DATASET_LICENSE.md). This release does not resolve
+their differing commercial-use conditions or claim separate permission.
+
+The v2 data archive embeds the updated notice. All 23 research-data members
+(Parquet files, feature manifest and metadata) are byte-identical to v1.
+The software remains MIT licensed.
 
 ## Verification and limits
 
@@ -69,7 +90,7 @@ checks; full raw-to-verdict reproduction requires new fleets or the correspondin
 raw artifacts. The exact dataset, scientific matrices, runtime, calibrated
 instruments and scorer entry points are supplied for that purpose.
 
-H1's operating-point mismatch, H3's simulated identity construct and small honest
-sample, and unresolved task-row overlap for utility interpretation are described
-in the study guides. H4′ remains proposed and unrun. This release does not revise
-any recorded hypothesis verdict.
+H1's criteria remain unmet at the development-frozen cuts. H3's simulated
+identity construct, all-device screening and small honest sample, and unresolved
+task-row overlap for utility interpretation are described in the study guides.
+H4′ remains proposed and unrun.

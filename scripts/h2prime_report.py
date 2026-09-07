@@ -147,6 +147,41 @@ def render_verdict_block(report: dict) -> str:
             st2 = si["p2_sign_test_strict_identity"]
             L.append(f"  P2 sign count under strict identity: {st2['positive']} positive / "
                      f"{st2['negative']} negative / {st2['zero']} zero")
+    wa = sec.get("window_aware_loao_sensitivity")
+    if wa:
+        L.append("--- SECONDARY (reported, no pass/fail): window-aware LOAO ---------")
+        L.append("  rule         : fit also drops rows whose derived window saw "
+                 "the held-out family")
+        for s, c in wa["corpus_census"].items():
+            share = c["share_of_malicious_rows_with_a_foreign_family"]
+            L.append(f"    {s:<3} {c['n_malicious_rows_with_a_FOREIGN_family_in_window']}"
+                     f"/{c['n_malicious_rows']} malicious rows carry a foreign "
+                     f"family in-window ({_fmt(share, 3) if share is not None else 'n/a'})")
+        if wa.get("status", "").startswith("UNDEFINED"):
+            L.append(f"  STATUS       : {wa['status']}")
+            for A_, why in wa.get("degenerate_folds", {}).items():
+                L.append(f"    fold {A_:<15}: {why}")
+            L.append("  " + wa["finding"].replace("\n", " "))
+            L.append("  The PRIMARY adjudication above is unaffected.")
+        else:
+            q1 = wa["p1_quantity"]
+            L.append(f"  rows dropped : {wa['n_window_excluded_rows_total']} beyond the "
+                     "current-label rule, summed over folds")
+            L.append(f"  {P1_SLICE} blend     : primary "
+                     f"{_fmt(q1['primary']['mean_recall'])} vs window-aware "
+                     f"{_fmt(q1['window_aware']['mean_recall'])} "
+                     f"(delta {q1['delta_mean_recall']:+.4f}) at realized FPR "
+                     f"{_fmt(q1['window_aware']['realized_blended_fpr'])}")
+            q2 = wa["p2_quantity"]
+            L.append(f"  P2 sign count: primary {q2['primary_sign_test']['positive']} "
+                     f"positive vs window-aware "
+                     f"{q2['window_aware_sign_test']['positive']} positive "
+                     f"(delta {q2['delta_n_strictly_positive']:+d})")
+            deltas = wa["per_scenario_blended_recall"]
+            L.append("  per-scenario blend delta (window − primary): " + ", ".join(
+                f"{s}={v['delta_window_minus_primary']:+.3f}"
+                for s, v in deltas.items()
+                if v["delta_window_minus_primary"] is not None))
     L.append("")
     L.append("=" * 78)
     L.append(f"OVERALL (P1 ∧ P2) : {v['conjunction']}")

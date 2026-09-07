@@ -1,20 +1,21 @@
 {
   "schema_version": 1,
   "release": {
-    "tag": "v0.1.0",
-    "asset_name": "edge-iiot-rmc-inputs-v1.tar.gz",
-    "download_url": "https://github.com/erikdj/federated-learning-rmc-defense/releases/download/v0.1.0/edge-iiot-rmc-inputs-v1.tar.gz",
+    "tag": "v0.1.1",
+    "asset_name": "edge-iiot-rmc-inputs-v2.tar.gz",
+    "download_url": "https://github.com/erikdj/federated-learning-rmc-defense/releases/download/v0.1.1/edge-iiot-rmc-inputs-v2.tar.gz",
     "archive_format": "tar+gzip",
     "extraction_root": "data/edge_full_20",
-    "byte_size": 289722799,
-    "sha256": "dc90d9560a29f04aeb7eb9a16ce10183f624246e1903865ba4d5679ac9b5de8e",
+    "byte_size": 289809085,
+    "sha256": "f2b0e2a6aa3a72d6bbe6e01108bf22b7e8170fc6fd19680888d68fac3b6faa4d",
     "deterministic_archive": {
       "member_mtime": 0,
       "uid": 0,
       "gid": 0,
       "mode": "0644",
       "gzip_mtime": 0
-    }
+    },
+    "revision_note": "The embedded dataset notice is updated; every Parquet, feature manifest and metadata byte matches the v1 archive."
   },
   "dataset": {
     "title": "Edge-IIoTset: A New Comprehensive Realistic Cyber Security Dataset of IoT and IIoT Applications: Centralized and Federated Learning",
@@ -28,7 +29,9 @@
     "doi": "10.21227/mbc1-1h68",
     "license": "CC-BY-4.0",
     "license_url": "https://creativecommons.org/licenses/by/4.0/legalcode",
-    "adaptation_notice": "See data/DATASET_LICENSE.md and the copy embedded in the archive."
+    "adaptation_notice": "See data/DATASET_LICENSE.md and the copy embedded in the archive.",
+    "license_metadata_source": "DataCite DOI record, verified 2026-09-07",
+    "additional_upstream_use_notice": "IEEE DataPort grants academic research use indefinitely and requests lead-author permission for commercial use; see data/DATASET_LICENSE.md. The relationship to the CC BY 4.0 DOI metadata is unresolved."
   },
   "content": {
     "unique_partition_count": 20,
@@ -403,8 +406,8 @@
     {
       "path": "data/edge_full_20/DATASET_LICENSE.md",
       "kind": "license_notice",
-      "byte_size": 2202,
-      "sha256": "ebfe7a1ea0252da8bda1cd58178d1973dd3c77cd2f944de1e3f72090e73646f1",
+      "byte_size": 3470,
+      "sha256": "b178de66a72db38a19fc93c958591239f7b2a729c42c6c95218165c6e2410ddd",
       "preserved_from_source_byte_for_byte": false
     }
   ]

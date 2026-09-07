@@ -122,7 +122,7 @@ def test_find_run_by_unit_returns_run_id_or_none():
 
 def test_find_parent_run_returns_newest_non_failed():
     """find_parent_run returns the current launch's parent — the newest
-    non-FAILED run tagged exp_id (aborted launches are FAILED) (PR #15)."""
+    non-FAILED run tagged exp_id (aborted launches are FAILED) ."""
     from praxis_exp.mlflow_client import PraxisMlflowClient
     fake_client = MagicMock()
     failed = MagicMock(); failed.info.run_id = "p-old"; failed.info.status = "FAILED"
@@ -138,7 +138,7 @@ def test_find_parent_run_returns_newest_non_failed():
 
 def test_find_runs_by_unit_scopes_to_parent_when_given():
     """find_runs_by_unit adds a mlflow.parentRunId filter when a parent is given,
-    so only the launch's children are returned (PR #15, mlflow_client.py:93)."""
+    so only the launch's children are returned (mlflow_client.py:93)."""
     from praxis_exp.mlflow_client import PraxisMlflowClient
     fake_client = MagicMock()
     r1 = MagicMock(); r1.info.run_id = "c1"
@@ -154,13 +154,13 @@ def test_find_runs_by_unit_scopes_to_parent_when_given():
     assert "parentRunId" not in fake_client.search_runs.call_args.kwargs["filter_string"]
 
 
-# --- GWU-47 Lane A: signal dataset-by-source + artifact passthroughs ---
+# --- : signal dataset-by-source + artifact passthroughs ---
 
 def test_build_signal_dataset_resolves_s3_signal_source_offline():
-    """GWU-47 Lane A: the signal log is referenced as a dataset-by-source (no
+    """: the signal log is referenced as a dataset-by-source (no
     byte copy). Source resolves to S3ArtifactDatasetSource at the storage
     signal_key; default digest is a deterministic hash of that key (dedups on
-    re-log). Assert via type().__name__ — the source class is NOT importable."""
+    re-log). Assert via type.__name__ — the source class is NOT importable."""
     import hashlib
     from praxis_exp.mlflow_client import build_signal_dataset
     from praxis_exp import storage
@@ -211,7 +211,7 @@ def test_delete_artifact_uses_run_artifact_repository():
 
 
 def test_log_table_delegates():
-    """GWU-47 Lane B: log_table passthrough (renders as a table in the 3.14 UI).
+    """: log_table passthrough (renders as a table in the 3.14 UI).
     It APPENDS, so emit_round_table refreshes first — tested there."""
     from praxis_exp.mlflow_client import PraxisMlflowClient
     fake_client = MagicMock()
@@ -224,7 +224,7 @@ def test_log_table_delegates():
 
 
 def test_set_model_alias_delegates():
-    """GWU-47 Lane D: sweep-scoped champion__/challenger__ alias assignment."""
+    """: sweep-scoped champion__/challenger__ alias assignment."""
     from praxis_exp.mlflow_client import PraxisMlflowClient
     fc = MagicMock()
     pc = PraxisMlflowClient(tracking_uri="http://test", _client=fc)
@@ -242,13 +242,13 @@ def test_search_model_versions_forwards_filter_string():
     fc.search_model_versions.assert_called_once_with("name='praxis-krum'")
 
 
-# --- GWU-45 Lane B/C: raw-search passthroughs for the self-heal finalizer/reaper ---
+# --- C: raw-search passthroughs for the self-heal finalizer/reaper ---
 
 def test_search_runs_passthrough_forwards_query():
     """The self-heal finalizer/reaper locate parent runs by batch_array_job_id /
     exp_id tags and enumerate a parent's children — they need the raw Run
     objects (status, start_time, experiment_id, tags), so search_runs is a thin
-    passthrough that forwards the query verbatim (GWU-45 Lanes B/C)."""
+    passthrough that forwards the query verbatim ( Lanes B/C)."""
     from praxis_exp.mlflow_client import PraxisMlflowClient
     fc = MagicMock()
     run = MagicMock(); run.info.run_id = "r1"
@@ -269,7 +269,7 @@ def test_search_runs_passthrough_forwards_query():
 def test_list_experiment_ids_enumerates_experiments():
     """The finalizer/reaper search parent runs by tag across EVERY experiment (the
     Batch event / schedule carries no experiment id), so they need the full id
-    list to pass to search_runs (GWU-45 Lanes B/C)."""
+    list to pass to search_runs ( Lanes B/C)."""
     from praxis_exp.mlflow_client import PraxisMlflowClient
     fc = MagicMock()
     e1 = MagicMock(); e1.experiment_id = "1"

@@ -132,7 +132,7 @@ def test_invalid_num_malicious_raises(light_server):
 
 @pytest.mark.unit
 def test_scenario_krum_branches_enable_dynamic_f(light_server):
-    """PR #12 P1: Scenario* Krum layers must use per-round dynamic f
+    """: Scenario* Krum layers must use per-round dynamic f
     (April formula ceil(n/2)-1) so S3/S4 disconnect rounds (n~11) stay
     computable; scenario-derived static values remain as provenance."""
     cfg = _config(**{"num-malicious": 9, "defense-cohort-size": 20})
@@ -155,7 +155,7 @@ def test_scenario_krum_branches_enable_dynamic_f(light_server):
 
 @pytest.mark.unit
 def test_noncanonical_declared_count_keeps_dynamic_policy(light_server, capsys):
-    """PR #12 round-2 P2 (labeling): with a non-canonical declared count
+    """ round-2 P2 (labeling): with a non-canonical declared count
     (intensity arms declare 1/3/5/7 adversaries), the deployed f policy is
     threat-model-constant — dynamic ceil(n/2)-1, NOT the declared count —
     while the declared value is preserved as provenance and the print labels
@@ -180,7 +180,7 @@ def test_noncanonical_declared_count_keeps_dynamic_policy(light_server, capsys):
 
 @pytest.mark.unit
 def test_legacy_scenario_caller_without_keys_f0_accepted(light_server):
-    """PR #12 P2: legacy scenario dev-scripts (e.g. run_rmc_flower.py) emit no
+    """: legacy scenario dev-scripts (e.g. run_rmc_flower.py) emit no
     sizing keys and default malicious-fraction=0.0 -> raw f=0. The validation
     must accept f=0 (only f<0 or f>=cohort-2 raise), and with dynamic_f=True
     the per-round sizing no longer depends on the static f."""

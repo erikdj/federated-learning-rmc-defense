@@ -1,6 +1,6 @@
 """Normalization-leak (m1) opt-in fix — fleet-reachable, default-OFF.
 
-A normalization audit confirmed a PRE-EXISTING, all-arms leak: load_data() fits the
+A normalization audit confirmed a PRE-EXISTING, all-arms leak: load_data fits the
 per-client Z-score on the FULL capped dataframe (train+val+test) BEFORE the
 80/10/10 split, so local val/test feature distributions influence the training
 transform. This module locks the fix behind ``--normalize-train-only`` /
@@ -283,7 +283,7 @@ def test_matrix_doc_normalize_train_only_full_chain_through_real_parser(tmp_path
 #    SAME resample cache key every Ray worker looks up. Omitting the mode
 #    would prime the LEAK-ON key while leak-free workers all miss and
 #    concurrently recompute the big train-only resample (EXP-020-class memory
-#    failure; same family as the PR #33 semantic-target prewarm bug). Mirrors
+# failure; same family as the semantic-target prewarm bug). Mirrors
 #    tests/test_pr33_review_fixes.py P1-2.
 # ===========================================================================
 
@@ -337,13 +337,13 @@ def test_resample_cache_path_threads_normalize_train_only_to_key():
 
 
 def test_prewarm_threads_normalize_train_only_to_both_calls():
-    """Guard against the exact PR #36 P1 regression: the prewarm must read the
-    normalize-train-only run-config key AND thread it into BOTH the load_data()
-    priming call and the resample_cache_path() durability pass."""
+    """Guard against the exact regression: the prewarm must read the
+    normalize-train-only run-config key AND thread it into BOTH the load_data
+    priming call and the resample_cache_path durability pass."""
     import inspect
     from run_phase4_flower import _prewarm_resample_cache
     src = inspect.getsource(_prewarm_resample_cache)
     assert "normalize-train-only" in src  # reads the run-config key
-    # threaded into both the load_data() prime and the resample_cache_path()
+    # threaded into both the load_data prime and the resample_cache_path
     # durability pass (two occurrences of the keyword-arg pass-through).
     assert src.count("normalize_train_only=normalize_train_only") == 2

@@ -5,8 +5,8 @@ title: "Federated Learning under Reconnecting Malicious Clients: Research Testbe
 authors:
   - family-names: Jones
     given-names: Erik
-version: 0.1.0
-date-released: 2026-09-06
+version: 0.1.1
+date-released: 2026-09-07
 repository-code: "https://github.com/erikdj/federated-learning-rmc-defense"
 license: MIT
 keywords:

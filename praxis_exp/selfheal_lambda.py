@@ -1,4 +1,4 @@
-"""AWS Lambda self-healing for the praxis fleet (GWU-45 Lanes B + C).
+"""AWS Lambda self-healing for the praxis fleet.
 
 This module is two of the three self-heal layers (design § 3), with **zero agent
 in the loop**:
@@ -23,7 +23,7 @@ two triggers (a Batch terminal event; a clock). Invariants (design § 4):
     deleted: enrich's duplicate/zombie handling seals superseded attempts FAILED,
     while the reaper's stale fallback seals a COMMITTED unit's run FINISHED (its S3
     done-marker proves durable success — FAILED would misrecord it).
-  - **No refills** (that is GWU-41): a Spot-exhausted cell is made *loud* (parent
+  - **No refills**: a Spot-exhausted cell is made *loud* (parent
     annotation), never re-submitted.
 
 Credentials come from the Lambda **execution role** (``PRAXIS_USE_INSTANCE_ROLE``
@@ -213,7 +213,7 @@ def _annotate_incomplete_sweep(
     """Tag the parent run ``done_count`` / ``n_units``, and when any cell lacks a
     done-marker also ``missing_cells`` + ``sweep_incomplete=true`` (design § 5.6).
     A complete sweep gets ``done_count`` / ``n_units`` only — ``missing_cells`` and
-    ``sweep_incomplete`` stay ABSENT. It NEVER re-submits a cell (GWU-41 is out of scope).
+    ``sweep_incomplete`` stay ABSENT. It never re-submits a cell.
 
     Returns True iff the tags were written — OR there was legitimately nothing to
     annotate (no ``parent_run_id`` resolved: no parent means nothing to tag, a no-op,
@@ -222,12 +222,12 @@ def _annotate_incomplete_sweep(
     σ-safeguard: after a clean enrich the parent is sealed FINISHED, so a swallowed
     annotation failure would otherwise vanish (the reaper's open-parent scan never
     revisits a sealed sweep), silently losing exactly the incomplete-sweep signal
-    GWU-45 exists to guarantee."""
+    this finalizer exists to guarantee."""
     parent_run_id = parent_run_id or (summary or {}).get("parent_run_id")
     if not parent_run_id:
         return True  # nothing to annotate (no parent) -> legitimate no-op, not a failure
     try:
-        # Shared with the CLI enrich seal path (GWU-41): recomputes completeness
+        # Shared with the CLI enrich seal path: recomputes completeness
         # and, for a refilled sweep that is now complete, clears the stale
         # sweep_incomplete/missing_cells while preserving refill_history.
         reconcile_sweep_tags(client, store, exp_id, parent_run_id)

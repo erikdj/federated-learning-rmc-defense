@@ -4,6 +4,10 @@ import subprocess
 from typing import Iterable
 
 
+class GitBranchError(RuntimeError):
+    """Raised when a safe remote branch destination cannot be determined."""
+
+
 def _run(cmd: list[str], cwd: Path) -> str:
     return subprocess.check_output(cmd, cwd=str(cwd), text=True).strip()
 
@@ -51,12 +55,41 @@ def current_branch(repo: Path) -> str:
     return _run(["git", "rev-parse", "--abbrev-ref", "HEAD"], repo)
 
 
+def resolve_push_branch(repo: Path, branch: str | None = None) -> str:
+    """Return the remote branch that should receive the current ``HEAD``.
+
+    An explicit branch is also the escape hatch for detached checkouts. Without
+    one, a detached ``HEAD`` has no unambiguous remote destination and fails
+    before launch-side services are changed.
+    """
+    if branch is not None:
+        resolved = branch.strip()
+        if not resolved:
+            raise GitBranchError("--branch must name a non-empty Git branch")
+    else:
+        resolved = current_branch(repo)
+        if resolved == "HEAD":
+            raise GitBranchError(
+                "repository is at a detached HEAD; pass --branch NAME to choose "
+                "the remote branch that should receive this committed HEAD"
+            )
+
+    check = subprocess.run(
+        ["git", "check-ref-format", "--branch", resolved],
+        cwd=str(repo), capture_output=True, text=True,
+    )
+    if check.returncode != 0:
+        detail = check.stderr.strip() or check.stdout.strip() or "invalid branch name"
+        raise GitBranchError(f"invalid push branch {resolved!r}: {detail}")
+    return resolved
+
+
 def tag_target_sha(repo: Path, tag_name: str) -> str | None:
     """The COMMIT sha a tag points at (dereferenced through the annotated-tag
     object via ``^{commit}``), or None if the tag does not exist.
 
-    Added for PR #13 P2 (comment 3566953649): relaunches of the same EXP-NNN
-    need to inspect existing ``exp/`` tags — which are immutable
+    Relaunches of the same EXP-NNN need to inspect existing ``exp/`` tags,
+    which are immutable
     chain-of-custody anchors and must never be force-moved — to decide
     whether to reuse the tag (same sha) or mint a serial-suffixed one
     (different sha).
@@ -77,9 +110,20 @@ def create_annotated_tag(repo: Path, tag_name: str, message: str) -> None:
     )
 
 
-def push_with_tags(repo: Path, remote: str = "origin", branch: str = "master") -> None:
+def push_with_tags(
+    repo: Path, remote: str = "origin", branch: str | None = None,
+) -> None:
+    """Push committed ``HEAD`` and reachable annotated tags to ``branch``.
+
+    ``HEAD:<branch>`` keeps provenance exact when an operator intentionally
+    launches from a detached commit with an explicit destination branch.
+    """
+    destination = resolve_push_branch(repo, branch)
     subprocess.check_call(
-        ["git", "push", "--follow-tags", remote, branch],
+        [
+            "git", "push", "--follow-tags", remote,
+            f"HEAD:refs/heads/{destination}",
+        ],
         cwd=str(repo),
     )
 
@@ -95,9 +139,12 @@ def fetch(repo: Path, remote: str = "origin") -> None:
     subprocess.check_call(["git", "fetch", remote], cwd=str(repo))
 
 
-def local_matches_remote(repo: Path, remote: str = "origin", branch: str = "master") -> bool:
+def local_matches_remote(
+    repo: Path, remote: str = "origin", branch: str | None = None,
+) -> bool:
     """Return True iff HEAD == origin/branch after a fetch."""
+    destination = resolve_push_branch(repo, branch)
     fetch(repo, remote)
     local = head_sha(repo)
-    remote_sha = _run(["git", "rev-parse", f"{remote}/{branch}"], repo)
+    remote_sha = _run(["git", "rev-parse", f"{remote}/{destination}"], repo)
     return local == remote_sha

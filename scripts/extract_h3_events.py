@@ -96,7 +96,7 @@ from scripts.analyze_h3_relink import (  # noqa: E402
 SUPPORTED_SCHEMA_VERSION: int = SIGNAL_LOG_SCHEMA_VERSION
 
 #: The v5 field whose absence identifies a v4 log in the refusal message — the
-#: load-bearing GWU-9 quantity the H3 rejoin rule is defined on.
+#: load-bearing quantity the H3 rejoin rule is defined on.
 V5_MARKER_FIELD = "aggregation_coefficient"
 
 #: The row-level field carrying the config's defense token, which becomes the

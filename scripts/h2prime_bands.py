@@ -484,6 +484,168 @@ def strict_identity_block(rows: list[dict], primary: dict, strict: dict,
     return block
 
 
+WINDOW_AWARE_RULE = (
+    "for held-out family F, the FIT population additionally drops every row "
+    "whose derived window touched F (F in the row's `_window_families`); the "
+    "rule subsumes the § 2.2a current-label exclusion. Calibration and test "
+    "populations are untouched, and the baselines are unchanged."
+)
+
+
+def window_aware_block(rows: list[dict], primary: dict, window: dict,
+                       profile: Profile,
+                       registered_seeds: list[int] | None = None) -> dict:
+    """Window-aware LOAO sensitivity — REPORTED, adjudicates nothing.
+
+    The § 2.2a fit exclusion is a ROW-LABEL rule, but four of the nine frozen
+    features are window statistics: `derive_window_feats` computes them over a
+    trailing window of up to three rows per (logical_cid, tenure-episode). In
+    S2 the same identity switches family without a tenure reset, so the first
+    rows of a retained family carry values computed partly from held-out-family
+    rows. This arm re-runs the whole § 2.2a construction with those rows also
+    held out of the fit and reports both arms side by side.
+
+    It is a sensitivity, not a correction: the primary arm is the pre-registered
+    one and is unchanged. No pass/fail is attached to anything here.
+    """
+    # ---- corpus census: how much of the corpus the rule can even touch ------
+    census: dict[str, dict] = {}
+    for scen in SCENARIOS:
+        mal = [r for r in rows
+               if r["_scen"] == scen and r["malicious_gt"] and r.get("attack_type")]
+        crossing = [r for r in mal
+                    if any(f != r["attack_type"]
+                           for f in r.get("_window_families") or [])]
+        pairs: dict[str, int] = {}
+        for r in crossing:
+            for f in r.get("_window_families") or []:
+                if f != r["attack_type"]:
+                    pairs[f"{r['attack_type']}<-{f}"] = (
+                        pairs.get(f"{r['attack_type']}<-{f}", 0) + 1)
+        census[scen] = {
+            "n_malicious_rows": len(mal),
+            "n_malicious_rows_with_a_FOREIGN_family_in_window": len(crossing),
+            "share_of_malicious_rows_with_a_foreign_family": (
+                len(crossing) / len(mal) if mal else None),
+            # Directed counts, own_family<-foreign_family. A scenario where the
+            # switch coincides with a reconnect (S3/S4, new logical_cid) has no
+            # cross-family window at all, and that zero is the finding for it.
+            "foreign_family_pairs": dict(sorted(pairs.items())),
+        }
+
+    block = {
+        "_note": ("REPORTED, NON-ADJUDICATING sensitivity arm. The primary "
+                  "§ 2.2a exclusion is a row-label rule; this arm additionally "
+                  "excludes rows whose DERIVED WINDOW saw the held-out family. "
+                  "No band, floor or sign rule is evaluated on it."),
+        "window_rule": WINDOW_AWARE_RULE,
+        "window_length_rounds": R.WINDOW,
+        "window_key": ("h2prime_corpus.annotate_window_families — the frozen "
+                       "builder's (logical_cid, tenure-episode) grouping, "
+                       "transcribed, not re-derived"),
+        "corpus_census": census,
+    }
+
+    degen = window.get("degenerate") or {}
+    if degen:
+        block["status"] = "UNDEFINED — the window exclusion emptied a fit population"
+        block["degenerate_folds"] = degen
+        block["finding"] = (
+            "Excluding every row whose window touched the held-out family "
+            "removed the entire positive class from at least one fold, so no "
+            "detector could be fit and the arm produces no comparable quantity. "
+            "That is reported as the outcome; no fallback exclusion grain is "
+            "invented here and the primary arm is unaffected."
+        )
+        block["primary_arm_unaffected"] = True
+        return block
+
+    # ---- per-scenario blended recall, both arms ----------------------------
+    per_scen: dict[str, dict] = {}
+    for scen in SCENARIOS:
+        rec_p = _slice_by_seed(primary["blend"], scen, "recall")
+        rec_w = _slice_by_seed(window["blend"], scen, "recall")
+        if not rec_p and not rec_w:
+            continue
+        shared = sorted(set(rec_p) & set(rec_w))
+        per_scen[scen] = {
+            "primary_mean": mean(rec_p.values()) if rec_p else None,
+            "window_aware_mean": mean(rec_w.values()) if rec_w else None,
+            "delta_window_minus_primary": (
+                mean(rec_w.values()) - mean(rec_p.values())
+                if rec_p and rec_w else None),
+            "primary_per_seed": {str(s): rec_p[s] for s in sorted(rec_p)},
+            "window_aware_per_seed": {str(s): rec_w[s] for s in sorted(rec_w)},
+            "per_seed_delta": {str(s): rec_w[s] - rec_p[s] for s in shared},
+            "n_paired_seeds": len(shared),
+        }
+    block["per_scenario_blended_recall"] = per_scen
+
+    # ---- P1's quantity on both arms ----------------------------------------
+    # Computed by `adjudicate_p1` itself, not re-derived here: the point of the
+    # arm is that the SAME arithmetic sees a different fit population. The
+    # verdict fields are deliberately not carried over — this arm adjudicates
+    # nothing, and a copied verdict would read as a second one.
+    def p1_quantities(scored: dict) -> dict:
+        r = adjudicate_p1(scored, profile, registered_seeds)
+        return {
+            "slice": r["slice"],
+            "mean_recall": r["mean_recall"],
+            "per_seed_recall": r["per_seed_recall"],
+            "realized_blended_fpr": r["realized_blended_fpr"],
+            "per_seed_realized_blended_fpr": r["per_seed_realized_blended_fpr"],
+            "ci95_student_t": r["ci95_student_t"],
+        }
+
+    p1_p, p1_w = p1_quantities(primary), p1_quantities(window)
+    block["p1_quantity"] = {
+        "_note": ("the P1 estimand recomputed on this arm, WITHOUT its verdict: "
+                  "no floor is applied and no band is decided here"),
+        "floor_for_reference_only": P1_FLOOR,
+        "primary": p1_p,
+        "window_aware": p1_w,
+        "delta_mean_recall": (
+            None if p1_p["mean_recall"] is None or p1_w["mean_recall"] is None
+            else p1_w["mean_recall"] - p1_p["mean_recall"]),
+        "delta_realized_blended_fpr": (
+            None if p1_p["realized_blended_fpr"] is None
+            or p1_w["realized_blended_fpr"] is None
+            else p1_w["realized_blended_fpr"] - p1_p["realized_blended_fpr"]),
+    }
+
+    # ---- P2's quantity on both arms ----------------------------------------
+    p2_p = adjudicate_p2(primary, profile, registered_seeds)
+    p2_w = adjudicate_p2(window, profile, registered_seeds)
+    d_p = p2_p["per_seed_diff"]
+    d_w = p2_w["per_seed_diff"]
+    block["p2_quantity"] = {
+        "_note": ("the P2 sign count recomputed on this arm, WITHOUT its "
+                  "verdict: the ≥ n-of-N rule is not applied here"),
+        "required_strictly_positive_for_reference_only": profile.p2_min_positive,
+        "primary_sign_test": p2_p["sign_test"],
+        "window_aware_sign_test": p2_w["sign_test"],
+        "delta_n_strictly_positive": (
+            p2_w["sign_test"]["positive"] - p2_p["sign_test"]["positive"]),
+        "primary_per_seed_margin": d_p,
+        "window_aware_per_seed_margin": d_w,
+        "per_seed_margin_delta": {
+            s: d_w[s] - d_p[s] for s in sorted(set(d_p) & set(d_w))},
+    }
+
+    # ---- the arm's own fit census ------------------------------------------
+    # Carried in the block as well as at `fit_census_window_aware`, so the
+    # sensitivity can be read without cross-referencing the document root.
+    block["fit_census"] = window["fit_census"]
+    block["n_window_excluded_rows_total"] = sum(
+        fold.get("n_window_excluded_rows", 0)
+        for rot in window["fit_census"] for fold in rot["per_fold"].values())
+    block["status"] = "COMPUTED"
+    block["divergence_is_itself_the_finding"] = (
+        "§ 3.2: 'If the two arms diverge materially, that divergence is itself "
+        "the finding and is reported as such.'")
+    return block
+
+
 def overall_verdict(p1: dict, p2: dict) -> dict:
     """P1 ∧ P2. A failing band falsifies (§ 4.1); INCONCLUSIVE blocks a verdict."""
     verdicts = [p1["verdict"], p2["verdict"]]

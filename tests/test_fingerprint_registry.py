@@ -4,7 +4,7 @@ Design authority: v1.10 § 5.1 (the 180-dim fingerprint, Mahalanobis matching,
 the EMA α=0.1 registry update, identity binding, and the two-stage τ-calibration
 procedure are unchanged from base spec § 6.3; τ **and** the covariance are
 calibrated per-cohort — all partitions for VALIDATION, even partitions only for
-the ADJUDICATING device hold-out, D9 axis (ii)); `docs/PHASE7_DESIGN.md`
+the ADJUDICATING device hold-out, D9 axis (ii)); `docs/harness/architecture.md`
 ("Server-side registry", "Mahalanobis distance", "Threshold τ calibration").
 
 Property tests demanded by the execution plan's Step-3 validation column:
@@ -111,7 +111,7 @@ def test_metric_from_population_whitens_anisotropic_data():
     d_wide = metric.distance(centre + np.array([100.0, 0.0]), centre)
     d_narrow = metric.distance(centre + np.array([0.0, 0.01]), centre)
     assert 0.5 < d_wide / d_narrow < 2.0
-    # ...whereas Euclidean distance would differ by four orders of magnitude.
+    #...whereas Euclidean distance would differ by four orders of magnitude.
     assert np.linalg.norm([100.0, 0.0]) / np.linalg.norm([0.0, 0.01]) > 1e3
 
 
@@ -502,7 +502,7 @@ SELECTED_METRIC_EXPECTED = {
 def test_tau_is_locked_and_pinned_to_the_exp050_calibration(cohort):
     """Gate (c): τ committed to code BEFORE any eval run — now LOCKED.
 
-    locked_tau() also verifies the calibration artifact's SHA-256 against the
+    locked_tau also verifies the calibration artifact's SHA-256 against the
     in-module pin, so this test transitively asserts artifact integrity.
     """
     assert locked_tau(cohort) == TAU_LOCKED_EXPECTED[cohort]
@@ -537,7 +537,7 @@ def test_both_locked_accessors_refuse_a_missing_artifact(
 
 
 def test_integrity_failures_are_not_catchable_as_not_locked():
-    """The load-bearing taxonomy split (PR #52 round-2 P1).
+    """The load-bearing taxonomy split ( round-2 P1).
 
     `build_fingerprint_registry` downgrades `TauNotLockedError` to an
     observe-only registry. If `TauLockIntegrityError` were a subclass, a
@@ -602,7 +602,7 @@ def test_registry_refuses_a_non_positive_tau():
 # THRESHOLD_GROUNDING_20260808 § 5 A.6: the schema-v5 re-entry row carries
 # `asserted_match` / `asserted_parent_logical_id` / `min_d` / `tau` but NOT the
 # 180-dim vector, so the A.5(a) naive-Euclidean comparator is only computable
-# offline "if the vector is persisted ... before the validation run launches".
+# offline "if the vector is persisted... before the validation run launches".
 # The registry sees every observed vector, so it is where they are retained.
 # These tests pin the two properties the comparator depends on — the log is
 # AS-OBSERVED (not the EMA state) and bit-exact — plus the property the
@@ -763,7 +763,7 @@ def test_observation_log_max_rows_must_be_positive():
 #
 # The observation log alone does not close A.5(a). The registry's own flag
 # lifecycle records only the FIRST flag: `FingerprintDefensePlugin.score_updates`
-# calls `flag()` under `if not entry.flag_status`, so once an entry has been
+# calls `flag` under `if not entry.flag_status`, so once an entry has been
 # INHERITED-flagged by the Mahalanobis matcher, every later upstream rejection of
 # it is invisible. The A.5(a) Euclidean counterfactual needs exactly those
 # rejections — an entry Mahalanobis inherited-flagged might not be flagged at all
@@ -789,7 +789,7 @@ def test_upstream_rejections_are_logged_with_round_and_session_key():
 def test_upstream_rejection_log_records_rejections_of_an_ALREADY_flagged_entry():
     """The gap this log exists to close.
 
-    `flag()` is gated on `not entry.flag_status` at the call site and preserves
+    `flag` is gated on `not entry.flag_status` at the call site and preserves
     an existing `flag_round`, so the entry lifecycle cannot express "rejected
     again at round 5". The rejection log can, and must.
     """
@@ -818,7 +818,7 @@ def test_upstream_rejection_log_does_not_flag_or_otherwise_touch_the_entry():
 def test_upstream_rejection_log_accepts_an_unknown_session_without_raising():
     """Observation-only: it must never become a second way to raise on a key.
 
-    `flag()` raises KeyError on an unknown session by design; this log is not a
+    `flag` raises KeyError on an unknown session by design; this log is not a
     lookup and must not add a new failure mode to the aggregation path.
     """
     reg = _registry()
@@ -1042,7 +1042,7 @@ def test_identity_only_tie_break_falls_back_to_entry_id_within_a_round():
 
 
 def test_identity_only_pool_is_invariant_to_insertion_order():
-    """A non-deterministic tie-break here would reproduce the GWU-51 defect
+    """A non-deterministic tie-break here would reproduce the defect
     inside the corrected H3 metric itself."""
     from flowerfl.fingerprint_registry import RegistryPolicy
 

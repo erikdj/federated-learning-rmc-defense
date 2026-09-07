@@ -6,7 +6,7 @@ every RMC experiment in the praxis (Chapter 3, hypotheses H1-H4): it is
 imported by flowerfl/client_app.py and flowerfl/server_app.py (the Flower
 ClientApp/ServerApp), by rmc/fixed_eval.py (the server's held-out evaluator,
 FixedEvalManager), and by non-Flower reproduction scripts (e.g.
-scripts/reproduce_szelag_v2_edge.py) so the same model/train/test code is
+the original baseline reproduction) so the same model/train/test code is
 exercised both inside and outside the Flower simulation harness.
 
 Contains:
@@ -61,7 +61,7 @@ except ImportError:  # pragma: no cover — non-POSIX: interprocess lock unavail
 #
 # Each entry describes one dataset partition layout: which parquet files
 # back each client, the label column name, and `malicious_order` — the
-# ordering used by get_malicious_clients() below to pick the first N clients
+# ordering used by get_malicious_clients below to pick the first N clients
 # as malicious for a given malicious_fraction (lower-slot convention, also
 # used by scripts/data/generate_scenarios.py's Design D scenario generators
 # for S0-S4, which hardcode client_0..client_8 as the 9 adversaries).
@@ -195,7 +195,7 @@ DATASET_CONFIGS = {
     },
 }
 
-# Memoizes detect_input_shape() results per dataset_name so repeated client
+# Memoizes detect_input_shape results per dataset_name so repeated client
 # instantiations within one process (e.g. 20 simulated clients) only read the
 # parquet schema once.
 _input_shape_cache = {}
@@ -218,7 +218,7 @@ class Net(nn.Module):
     identity is fixed across both exec modes (flower_reset and
     persistent_optimizer) per data/hparams_locked.json — only the optimizer
     hyperparameters differ between modes, not this architecture. `input_shape`
-    is dataset-dependent and resolved at runtime via detect_input_shape().
+    is dataset-dependent and resolved at runtime via detect_input_shape.
     """
 
     def __init__(self, input_shape: int):
@@ -395,11 +395,11 @@ def train_label_flip(net, trainloader, lr: float = 0.01, weight_decay: float = 3
                      *, epochs: int = 1):
     """Train with flipped labels (label poisoning attack) for `epochs` epochs.
 
-    Uses Adam(lr, weight_decay=3e-3) — same optimizer migration as train()
+    Uses Adam(lr, weight_decay=3e-3) — same optimizer migration as train
     in Phase 2 P2.0.
 
-    GWU-72 (director ruling 2026-08-04, methodology v1.36): honors `epochs`
-    exactly like train(). Historically this function ran a SINGLE natural pass
+    Honors `epochs`
+    exactly like train. Historically this function ran a SINGLE natural pass
     while every other path ran `for _ in range(epochs)` with local_epochs=5 —
     label_flip attackers under-trained 5x. `epochs` is KEYWORD-ONLY and
     appended after the legacy parameters, so every pre-change positional slot
@@ -410,7 +410,7 @@ def train_label_flip(net, trainloader, lr: float = 0.01, weight_decay: float = 3
     Per-batch attack semantics (which labels flip, loss, optimizer stepping)
     are unchanged — only the epoch count changed.
 
-    Update-matching (Stage-F §4): identical steps-driven cap as train(); when
+    Update-matching (Stage-F §4): identical steps-driven cap as train; when
     `max_steps` is set the epochs loop is bypassed and EXACTLY `max_steps`
     optimizer steps run, regardless of `epochs`.
     """
@@ -498,8 +498,8 @@ def test_detailed(net, testloader) -> dict:
 
     Returns a dict with the macro keys (loss, accuracy, precision, recall, f1)
     plus the per-class keys from ``_binary_per_class_prf``. The macro values
-    are computed exactly as the legacy ``test()`` did, so the macro trajectory
-    numbers are byte-identical; ``test()`` is a thin wrapper over this that
+    are computed exactly as the legacy ``test`` did, so the macro trajectory
+    numbers are byte-identical; ``test`` is a thin wrapper over this that
     extracts the 5-tuple its existing callers unpack.
     """
     criterion = nn.CrossEntropyLoss()
@@ -622,7 +622,7 @@ def train_brfss_label_flip(net, trainloader, lr: float = 0.01, weight_decay: flo
                            arm: "str | None" = None, metrics_out: "dict | None" = None):
     """Train SzelagNet with flipped labels (label poisoning for BRFSS).
 
-    Update-matching (Stage-F §4): identical steps-driven cap as train_brfss();
+    Update-matching (Stage-F §4): identical steps-driven cap as train_brfss;
     when `max_steps` is None the original single-pass loop runs byte-for-byte.
     """
     criterion = nn.BCEWithLogitsLoss()
@@ -734,7 +734,7 @@ def set_weights(net, parameters):
     """Load model parameters from a list of NumPy arrays (inverse of get_weights).
 
     Reconstructs the OrderedDict by zipping against the model's own
-    state_dict().keys(), so `parameters` must be in the same order get_weights
+    state_dict.keys, so `parameters` must be in the same order get_weights
     would have produced for this same model instance. strict=True ensures a
     shape/key mismatch (e.g. a stale checkpoint against a resized model)
     fails loudly rather than silently loading a partial state.
@@ -794,12 +794,12 @@ def detect_input_shape(dataset_name: str) -> int:
 
 
 # Default cap on rows sampled per client for the large "_full"/"_rmc" dataset
-# variants (stratified downsampling in load_data() below); keeps a single
+# variants (stratified downsampling in load_data below); keeps a single
 # simulated round tractable on full-scale Edge-IIoT/CIC-IoT2023 partitions.
 # NOTE: this module-level constant is intentionally mutable at runtime —
 # flowerfl/client_app.py overrides it (`task_module.MAX_SAMPLES_PER_CLIENT =
 # max_samples`) from the Flower run-config's "max-samples" key before calling
-# load_data(), so an experiment's actual per-client cap (e.g. 5,000 for a
+# load_data, so an experiment's actual per-client cap (e.g. 5,000 for a
 # smoke run or 2,000,000 for a full-data confirmatory run) is set per-run,
 # not by editing this default.
 MAX_SAMPLES_PER_CLIENT = 200_000
@@ -844,11 +844,11 @@ MAX_SAMPLES_PER_CLIENT = 200_000
 #     container — v9's own L1 reintroducing the very failure it fixed. cap=1
 #     bounds it to 32 x 1 x ~1.18 GB ≈ 38 GB (float32 X halves it to ~19 GB),
 #     comfortably under the container. A larger L1 buys little: np.load from a
-#     page-cache-warm node-local .npz is fast, and the OS page cache already
+#     page-cache-warm node-local.npz is fast, and the OS page cache already
 #     shares those bytes across actor processes WITHOUT per-process retention.
 #     RAM is now actor-count-independent per entry AND bounded to a single entry.
 #   * Driver PREWARM: scripts/run_phase4_flower.py populates L2 once, in the
-#     driver, before run_simulation() — so the worker hot path is 100% disk reads
+#     driver, before run_simulation — so the worker hot path is 100% disk reads
 #     — then RELEASES its own L1 before the simulation (does not sit resident).
 #
 # CATASTROPHIC failure mode: a cache keyed too
@@ -883,7 +883,7 @@ _resample_stale_temps_cleaned = 0
 _resample_disk_disabled_dirs: set = set()
 
 # Cache serialization/semantics version. Folded into the key so a change to the
-# resampler output or the .npz layout invalidates EVERY prior entry (a long-lived
+# resampler output or the.npz layout invalidates EVERY prior entry (a long-lived
 # container or a shared PRAXIS_RESAMPLE_CACHE_DIR must never serve an entry written
 # by a different code version). Bump on ANY resampler/serialization change.
 _RESAMPLE_CACHE_FORMAT_VERSION = 1
@@ -912,8 +912,8 @@ _RESAMPLE_DISK_TMP_PREFIX = ".praxis_resample_tmp_"
 # Default sized to comfortably hold ONE full-data run's working set so a single
 # run never evicts its own hot entries (which would reintroduce intra-run
 # thrash). Arithmetic (worst case, full-data confirmatory):
-#   MAX_SAMPLES_PER_CLIENT cap ......... 2,000,000 rows/client
-#   train split (0.8) .................. 1,600,000 train rows pre-resample
+#   MAX_SAMPLES_PER_CLIENT cap......... 2,000,000 rows/client
+#   train split (0.8).................. 1,600,000 train rows pre-resample
 #   SMOTE "balanced" -> minority grown to majority => <= 2x majority
 #                       => <= ~3,200,000 post-resample rows
 #   per artifact: X (<=3.2M x 45 feat x 8B f64 worst) + y (3.2M x 8B)
@@ -929,7 +929,7 @@ _RESAMPLE_DISK_CACHE_MAX_BYTES_DEFAULT = 32 * 1024**3  # 32 GiB
 # Filesystem free-space reserve. The configured budget is a
 # POLICY cap, not provisioned storage: on a host with less free space than the
 # budget, publishing up to the budget would fill the filesystem and starve Ray's
-# object-spill directory and other container writes BEFORE run_simulation() even
+# object-spill directory and other container writes BEFORE run_simulation even
 # starts — degrading or killing the very run the cache exists to speed up. So the
 # EFFECTIVE budget is min(configured, statvfs_free - reserve), recomputed at each
 # locked store (free space moves as others write). The reserve is headroom kept
@@ -982,7 +982,7 @@ def _resample_cache_dir() -> "str | None":
 
 
 def _resample_disk_path(key: tuple) -> "str | None":
-    """Deterministic .npz path for a cache key, or None if the disk layer is
+    """Deterministic.npz path for a cache key, or None if the disk layer is
     unavailable (best-effort dir setup failed)."""
     cache_dir = _resample_cache_dir()
     if cache_dir is None:
@@ -1054,7 +1054,7 @@ def resample_cache_path(
     smote_semantic_target: bool = False,
     normalize_train_only: bool = False,
 ) -> "str | None":
-    """The disk-cache .npz path a SMOTE resample WOULD occupy for these args, or
+    """The disk-cache.npz path a SMOTE resample WOULD occupy for these args, or
     None if the disk layer is unavailable. Lets the driver prewarm check which
     partitions are actually durable on disk NOW, independent of
     the cumulative per-store counters.
@@ -1396,7 +1396,7 @@ def enforce_resample_disk_budget() -> int:
 
 
 def _resample_disk_load(path: str):
-    """Load (X_res, y_res, skipped_reason) from an .npz, or None if unreadable.
+    """Load (X_res, y_res, skipped_reason) from an.npz, or None if unreadable.
 
     A cache READ failure of ANY kind is BY DEFINITION a miss: the
     except is intentionally broad. This is a PURE cache read — nothing about it
@@ -1426,7 +1426,7 @@ def _resample_disk_load(path: str):
 def _resample_disk_valid(path: str) -> bool:
     """Cheap STRUCTURAL validity check for a cache entry.
 
-    Opens the .npz as a zip and verifies the expected members exist via the
+    Opens the.npz as a zip and verifies the expected members exist via the
     central directory — NO CRC / data read, so it scales to many large entries at
     prewarm time (a full np.load of 21 x ~1 GB entries on the prewarm hot path is
     not acceptable). Used by the driver prewarm's durability pass so a
@@ -1528,7 +1528,7 @@ def _resample_disk_store(path: str, X_res, y_res, skipped_reason, *, overwrite: 
         nbytes_est = int(getattr(X_res, "nbytes", 0)) + int(getattr(y_res, "nbytes", 0))
 
         # Phase 0: an IMPOSSIBLE-to-fit artifact must never
-        # flush the cache. The true .npz is strictly larger than the raw arrays, so
+        # flush the cache. The true.npz is strictly larger than the raw arrays, so
         # if the raw bytes already exceed the max TOTAL size it can NEVER fit even
         # after evicting everything — skip WITHOUT evicting (existing entries live).
         if nbytes_est > budget:
@@ -1674,7 +1674,7 @@ def _resample_cached(X_tr, y_tr, *, key, variant, target, seed, attack_target_po
 
     Two-layer memo over the deterministic resampler:
       1. L1 (in-process LRU): a hit skips even the disk read.
-      2. L2 (node-local disk): a hit np.load()s the entry — this is the layer
+      2. L2 (node-local disk): a hit np.loads the entry — this is the layer
          that survives Ray's unpinned actor scheduling, because the file is
          visible to every actor process on the container.
       3. Miss: run the resampler, write-through to disk (atomic) AND L1.
@@ -1692,7 +1692,7 @@ def _resample_cached(X_tr, y_tr, *, key, variant, target, seed, attack_target_po
     disk hit, or a miss/L1-hit whose store succeeded); _resample_compute_only_count
     when the disk layer was unavailable or the store failed (every worker will
     recompute). An L1 hit is NOT assumed durable — Ray actors cannot see this
-    process's L1, and byte-budget eviction may have removed the .npz — so the
+    process's L1, and byte-budget eviction may have removed the.npz — so the
     disk entry is verified and RESTORED if missing before counting (P2-1, r4).
     """
     global _resample_cache_hits, _resample_cache_misses
@@ -1731,7 +1731,7 @@ def _resample_cached(X_tr, y_tr, *, key, variant, target, seed, attack_target_po
         attack_target_policy=attack_target_policy,
     )
     # Disk persistence is BEST-EFFORT: a store failure
-    # (ENOSPC, read-only fs, ...) OR an unavailable cache dir must NEVER lose the
+    # (ENOSPC, read-only fs,...) OR an unavailable cache dir must NEVER lose the
     # already-computed valid resample. If a store raised, the exception would
     # propagate into load_data's broad handler and SILENTLY substitute
     # generate_synthetic_data for the client's real partition. Warn loudly (NOT
@@ -1782,7 +1782,7 @@ def _account_l1_hit_durability(key, X_res, y_res, skipped_reason) -> None:
 
     An L1 hit means THIS process has the arrays, but Ray actors run in separate
     processes and cannot see this L1 — so the entry is only useful fleet-wide if
-    the .npz is on disk. Byte-budget eviction (or any external removal) may have
+    the.npz is on disk. Byte-budget eviction (or any external removal) may have
     deleted it. Verify (cheap os.path.exists) and RESTORE via the normal atomic
     store if missing; count persisted only when durable, else compute_only with a
     loud warning.
@@ -1930,7 +1930,7 @@ def load_data(
     client at MAX_SAMPLES_PER_CLIENT rows to keep training feasible while
     preserving class distribution.
 
-    SMOTE (GWU-59): when ``smote_enabled`` is True, the TRAINING split ONLY is
+    SMOTE : when ``smote_enabled`` is True, the TRAINING split ONLY is
     oversampled after the per-client cap and the fixed-seed train/val/test
     partition, so the val/test streams never contain synthetic rows. The knob
     is inert (byte-identical to the incumbent) when disabled. ``smote_seed`` is
@@ -2083,17 +2083,17 @@ def load_data(
             manifest_variant = None
             manifest_target = None
 
-            # GWU-31: shuffle=True with no explicit generator draws from torch's
+            # shuffle=True with no explicit generator draws from torch's
             # GLOBAL RNG at iteration time. That is intentional here: this loader
             # is built once per client at construction (load_data), before the
             # client knows the server round, so a per-(client, round) generator
-            # can't be pinned at this call site. Instead, FlowerClient.fit()
+            # can't be pinned at this call site. Instead, FlowerClient.fit
             # calls seed_everything(derive_seed(base_seed, partition_id,
-            # server_round)) immediately before iterating this loader in train(),
+            # server_round)) immediately before iterating this loader in train,
             # so the shuffle order is deterministic and derives from that
-            # fit()-scoped global seed. (num_workers=0, so the main-process global
+            # fit-scoped global seed. (num_workers=0, so the main-process global
             # RNG is authoritative — no worker-RNG divergence.)
-            # SMOTE (GWU-59): oversample the TRAINING split only. Kept strictly
+            # SMOTE : oversample the TRAINING split only. Kept strictly
             # gated so the disabled path is byte-identical to the incumbent
             # (train_set flows straight into the DataLoader below). val/test are
             # built from the untouched val_set/test_set, so no synthetic row can
@@ -2245,7 +2245,7 @@ def generate_synthetic_data(
 ):
     """Generate synthetic random data as a fallback when real data is unavailable.
 
-    Called by load_data() when the expected parquet file is missing or fails
+    Called by load_data when the expected parquet file is missing or fails
     to load. This exists so client code can be exercised (unit tests, smoke
     runs, CI without the gitignored data/ directory) without crashing —
     accuracy/F1 numbers from this path are meaningless and must never be
@@ -2288,7 +2288,7 @@ def get_malicious_clients(dataset_name: str, malicious_fraction: float) -> list:
 
     Takes the first `num_clients * malicious_fraction` entries from the
     dataset config's `malicious_order` list (lower-slot convention — for the
-    20-client Edge-IIoT RMC datasets this is simply [0, 1, ..., num_malicious-1],
+    20-client Edge-IIoT RMC datasets this is simply [0, 1,..., num_malicious-1],
     matching the client_0..client_8 adversary convention used throughout
     scripts/data/generate_scenarios.py's Design D scenarios). This function
     is used by non-scenario-driven experiments (e.g. reproduction scripts);

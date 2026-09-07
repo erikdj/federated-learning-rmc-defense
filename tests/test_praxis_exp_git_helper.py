@@ -85,7 +85,7 @@ def test_head_sha(tmp_git_repo):
 
 
 def test_tag_target_sha_none_when_tag_missing(tmp_git_repo):
-    """PR #13 P2 (comment 3566953649): relaunch support needs to inspect
+    """ : relaunch support needs to inspect
     existing exp/ tags without shelling git tag -f (custody anchors are
     immutable)."""
     from praxis_exp.git_helper import tag_target_sha
@@ -99,3 +99,56 @@ def test_tag_target_sha_returns_commit_sha_for_annotated_tag(tmp_git_repo):
     from praxis_exp.git_helper import create_annotated_tag, head_sha, tag_target_sha
     create_annotated_tag(tmp_git_repo, "exp/EXP-001", "msg")
     assert tag_target_sha(tmp_git_repo, "exp/EXP-001") == head_sha(tmp_git_repo)
+
+
+def test_resolve_push_branch_defaults_to_current_branch(tmp_git_repo):
+    """An adopter's checked-out branch, rather than a repository-specific
+    branch name, is the default push target."""
+    from praxis_exp.git_helper import resolve_push_branch
+
+    subprocess.run(
+        ["git", "branch", "-m", "main"], cwd=tmp_git_repo, check=True
+    )
+    assert resolve_push_branch(tmp_git_repo) == "main"
+
+
+def test_resolve_push_branch_requires_override_for_detached_head(tmp_git_repo):
+    from praxis_exp.git_helper import GitBranchError, resolve_push_branch
+
+    subprocess.run(
+        ["git", "checkout", "--detach", "-q"], cwd=tmp_git_repo, check=True
+    )
+    with pytest.raises(GitBranchError, match="detached HEAD.*--branch"):
+        resolve_push_branch(tmp_git_repo)
+
+    assert resolve_push_branch(tmp_git_repo, "release") == "release"
+
+
+def test_push_with_tags_pushes_detached_head_to_explicit_branch(tmp_git_repo, tmp_path):
+    """An explicit branch is a remote destination for the committed HEAD,
+    including in a detached checkout."""
+    from praxis_exp.git_helper import create_annotated_tag, head_sha, push_with_tags
+
+    remote = tmp_path / "remote.git"
+    subprocess.run(["git", "init", "--bare", "-q", str(remote)], check=True)
+    subprocess.run(
+        ["git", "remote", "add", "test-origin", str(remote)],
+        cwd=tmp_git_repo,
+        check=True,
+    )
+    create_annotated_tag(tmp_git_repo, "exp/EXP-001", "msg")
+    expected = head_sha(tmp_git_repo)
+    subprocess.run(
+        ["git", "checkout", "--detach", "-q"], cwd=tmp_git_repo, check=True
+    )
+
+    push_with_tags(tmp_git_repo, remote="test-origin", branch="release")
+
+    assert subprocess.check_output(
+        ["git", "--git-dir", str(remote), "rev-parse", "refs/heads/release"],
+        text=True,
+    ).strip() == expected
+    assert subprocess.check_output(
+        ["git", "--git-dir", str(remote), "tag", "-l", "exp/EXP-001"],
+        text=True,
+    ).strip() == "exp/EXP-001"

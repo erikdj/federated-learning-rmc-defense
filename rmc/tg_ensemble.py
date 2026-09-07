@@ -308,7 +308,7 @@ class GBDTColdStartExpert:
             # At pos=-1.5: 1.50/(1+exp(1.0)) ~ 0.55
             # At pos=-2.5: 1.50/(1+exp(2.0)) ~ 0.20
             shifted = -(pos + 0.5)  # 0 at boundary, positive for anomalous
-            # Clip to prevent overflow in exp() for extremely anomalous clients
+            # Clip to prevent overflow in exp for extremely anomalous clients
             shifted_clipped = min(shifted, 20.0)
             score = 1.50 / (1.0 + np.exp(1.0 * shifted_clipped))
 
@@ -567,7 +567,7 @@ class LSTMTemporalExpert:
             # At shifted=0: 1.60/(1+exp(0)) = 0.80 (continuous)
             # At shifted=0.5: ~0.60, shifted=1.0: ~0.43, shifted=2.0: ~0.19
             shifted = overshoot - OVERSHOOT_TOLERANCE
-            # Clip to prevent overflow in exp() for very large overshoot values
+            # Clip to prevent overflow in exp for very large overshoot values
             shifted_clipped = min(shifted, 20.0)
             score = 1.60 / (1.0 + np.exp(1.0 * shifted_clipped))
 
@@ -579,24 +579,24 @@ class LSTMTemporalExpert:
 # ============================================================================
 
 class EMAReputationExpert:
-    """EMA reputation expert — the SECOND long-memory leg of the TGE′ bank (GWU-53).
+    """EMA reputation expert — the SECOND long-memory leg of the TGE′ bank.
 
     Added ALONGSIDE the LSTM (which is unchanged); it does not replace it. The
     expert tracks one scalar reputation R per logical client, an exponential
     moving average of that client's per-round cold-start score with an
     absence-decay term:
 
-        R_init(join)     = r_init                        (0.85, on first join and
+        R_init(join) = r_init (0.85, on first join and
                                                           on every fresh logical id)
-        R <- R * absence_decay ** gap                    (gap = rounds missed)
-        R_t              = alpha * R + (1 - alpha) * s_cs(t)
+        R <- R * absence_decay ** gap (gap = rounds missed)
+        R_t = alpha * R + (1 - alpha) * s_cs(t)
 
     r_init is the ensemble's NEUTRAL "no evidence" value (0.85, the same value
     the LSTM/GBDT return before they can judge), NOT TrustScore's 0.5: a client
     with zero evidence must score neutral with respect to the 0.7 operational
     cutoff, so a fresh EMA leg never filters an honest client while its
     reputation matures. (TrustScore's 0.5 belonged to TrustScore's own threshold
-    semantics and does not transfer — GWU-53)
+    semantics and does not transfer)
 
     Convention (amendment v1.7 §2.1, = TrustScore's ``_ema_decay`` semantics in
     rmc/defenses.py): ``ema_alpha`` is the weight RETAINED on the prior
@@ -675,7 +675,7 @@ class EMAReputationExpert:
         not just the ones a downstream filter kept — so a client filtered by an
         upstream Krum layer still folds in its evidence and its
         ``_last_participated`` advances, and the gap reflects scenario
-        participation rather than TGE-survival (GWU-53).
+        participation rather than TGE-survival.
         """
         prev = self._reputation.get(client_id, self.r_init)
         last = self._last_participated.get(client_id)
@@ -801,10 +801,10 @@ class TGEnsembleModel:
     (flowerfl/byzantine_defense.py).
 
     Lifecycle per round:
-        1. extract_features() for each client
-        2. score_client() for each client -> trust score
-        3. after accept/reject decisions, call record_accepted() for accepted
-        4. call on_round_end() to trigger refitting if needed
+        1. extract_features for each client
+        2. score_client for each client -> trust score
+        3. after accept/reject decisions, call record_accepted for accepted
+        4. call on_round_end to trigger refitting if needed
     """
 
     def __init__(
@@ -828,7 +828,7 @@ class TGEnsembleModel:
             raise ValueError(
                 f"long_memory_expert ({long_memory_expert!r}) must be 'lstm' "
                 f"(incumbent TGE), 'ema' (EMA leg only — component isolation), "
-                f"or 'bank' (TGE′: min(LSTM, EMA), GWU-53)"
+                f"or 'bank' (TGE′: min(LSTM, EMA))"
             )
         # Validate ema_alpha loudly even in "lstm" mode (mirrors the ramp
         # governance canary): a bad alpha must never silently reach a run.
@@ -840,7 +840,7 @@ class TGEnsembleModel:
         self.warmup_rounds = warmup_rounds
         self.threshold = threshold
         self.seed = seed
-        # Long-memory mode (GWU-53). "lstm" is the incumbent and is bit-identical
+        # Long-memory mode. "lstm" is the incumbent and is bit-identical
         # (self.ema stays None; no new code path runs). "ema"/"bank" add the EMA
         # reputation leg; "bank" is the deployed TGE′ combiner min(LSTM, EMA).
         self.long_memory_expert = long_memory_expert
@@ -855,7 +855,7 @@ class TGEnsembleModel:
             seed=seed,
         )
         # The LSTM long-memory expert is ALWAYS present and unchanged (incumbent
-        # behavior). TGE′ (GWU-53) adds a SECOND long-memory leg — the EMA
+        # behavior). TGE′ adds a SECOND long-memory leg — the EMA
         # reputation expert — alongside it; the tenure gate consumes a single
         # long-memory score derived from these legs by `_long_memory_score`
         # according to `long_memory_expert`. In "lstm" mode self.ema is None and
@@ -994,7 +994,7 @@ class TGEnsembleModel:
 
         Args:
             client_id: Unique identifier for the client.
-            features: Geometric feature vector from extract_features().
+            features: Geometric feature vector from extract_features.
             server_round: Current FL round.
 
         Returns:
@@ -1044,12 +1044,12 @@ class TGEnsembleModel:
                 "phase": "pre_gbdt",
             }
 
-        # TGE′ EMA leg (ema/bank modes only — GWU-53). READ ONLY here: the
+        # TGE′ EMA leg (ema/bank modes only). READ ONLY here: the
         # reputation is updated cohort-wide by observe_ema (driven by the
         # plugin's observe_cohort hook / the standalone's cohort loop) BEFORE
         # scoring, for EVERY participant — so a Krum-filtered client still folds
         # in its evidence, and a survivor is updated exactly once (never
-        # double-counted, GWU-53). It is null until the EMA's
+        # double-counted, ). It is null until the EMA's
         # first post-forest-fit update. Kept wholly inside this guard so "lstm"
         # mode runs no new code and is bit-identical.
         ema_score: Optional[float] = None
@@ -1134,7 +1134,7 @@ class TGEnsembleModel:
 
         Only accepted clients' temporal sequences are used for LSTM training
         to keep the autoencoder focused on "normal" temporal patterns. The
-        GBDT is fed by record_scored() for all clients.
+        GBDT is fed by record_scored for all clients.
 
         During warmup, an additional geometric check is applied: clients
         whose last recorded features had a low geometric score are excluded
@@ -1153,7 +1153,7 @@ class TGEnsembleModel:
     def observe_ema(self, client_id: str, features: np.ndarray, server_round: int):
         """Fold one participant's cold-start evidence into its EMA reputation.
 
-        The cohort-observation path (GWU-53): the plugin's
+        The cohort-observation path : the plugin's
         observe_cohort hook / the standalone's cohort loop call this for EVERY
         participant this round — BEFORE scoring — so a client filtered by an
         upstream Krum layer still has its reputation evolve (once-per-
@@ -1164,7 +1164,7 @@ class TGEnsembleModel:
         the IsolationForest training buffer (record_scored), the LSTM history
         (record_features), the tenure counters (_ensure_first_seen), or
         _last_details — so the signal-log scored-row population and every other
-        expert are byte-identical to not running it. gbdt.score() is
+        expert are byte-identical to not running it. gbdt.score is
         side-effect-free (no accumulation). No-op in lstm mode or before the
         forest fits (s_cs would be the neutral placeholder — the pre-fit window
         is gbdt-covered, EMA stays null).

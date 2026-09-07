@@ -1,8 +1,7 @@
 """Reconcile a sweep parent run's §5.6 completeness tags after a refill.
 
-GWU-41 required addition (director ruling 2026-07-24): when a refill completes
-previously-missing cells, the ORIGINAL parent run's §5.6 seal tags
-(``sweep_incomplete`` / ``missing_cells``, set by the self-heal finalizer) must
+When a refill completes previously missing cells, the original parent run's
+seal tags (``sweep_incomplete`` / ``missing_cells``, set by the self-heal finalizer) must
 be updated to reflect the post-refill state — otherwise the parent claims
 incomplete forever. This must be automatic (not operator-remembered) and must
 NEVER delete the historical record: a ``refill_history`` tag records what was
@@ -16,7 +15,7 @@ both paths that evaluate sweep completeness:
 
 so a refilled sweep reconciles on whichever runs next.
 
-Invariant preserved from the pre-GWU-41 behavior: a PRISTINE complete sweep (one
+Invariant: a pristine complete sweep (one
 that never had a refill) still gets ``done_count`` / ``n_units`` only —
 ``sweep_incomplete`` / ``missing_cells`` stay ABSENT (never ``"false"``). Only a
 sweep that actually has refill records reconciles its stale incompleteness tags.

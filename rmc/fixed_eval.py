@@ -35,7 +35,7 @@ class FixedEvalManager:
     ):
         """Server-side fixed global holdout.
 
-        disjoint (GWU-61): exclude each eval file's corresponding
+        disjoint : exclude each eval file's corresponding
         training-partition TRAIN row indices from the sampling pool before the
         stratified draw, so the reported holdout accuracy is a generalization
         number rather than one optimistically inflated by 77.5% train/holdout
@@ -201,7 +201,7 @@ class FixedEvalManager:
             # Disjoint mode: exclude the UNION of TRAIN row positions over EVERY
             # training partition backing this eval file — the direct partition
             # plus any byte-duplicate partition (e.g. client_20 backing client_19)
-            # whose capped draw differs at sub-file caps (GWU-61). Each backer is reconstructed from the TRAINING config's data_dir
+            # whose capped draw differs at sub-file caps. Each backer is reconstructed from the TRAINING config's data_dir
             # with its own ordinal seed. Legacy mode: empty set -> byte-identical
             # to master.
             exclude = set()
@@ -316,7 +316,7 @@ class FixedEvalManager:
         self.holdout_size = int(total)
         self.per_class_counts = {0: int(total - pos), 1: int(pos)}
         print(f"[FixedEval] Built holdout: {total} samples ({pos} positive, {total - pos} negative)")
-        # one-line provenance record (GWU-61): disjoint flag + rows excluded, so
+        # one-line provenance record : disjoint flag + rows excluded, so
         # a reader can tell a disjoint holdout from a legacy overlapping one.
         print(f"[FixedEval] holdout_disjoint={'true' if self.disjoint else 'false'} "
               f"size={total} pos={pos} neg={total - pos} "

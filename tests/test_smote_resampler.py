@@ -1,4 +1,4 @@
-"""Unit tests for flowerfl/smote_resampler.py (GWU-59 SMOTE study).
+"""Unit tests for flowerfl/smote_resampler.py ( SMOTE study).
 
 The resampler is a flag-gated, per-client training-split oversampler. These
 tests exercise the pure library in isolation (no FL run, no network, synthetic

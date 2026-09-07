@@ -110,7 +110,7 @@ def test_provenance_reports_true_lstm_state_for_tge():
 
 
 def test_provenance_gate_settings_track_code_not_copies():
-    """GWU-8 acceptance: result metadata carries expert type, min tenure, and
+    """ acceptance: result metadata carries expert type, min tenure, and
     operational threshold — sourced from the plugin/rule signatures so the
     provenance cannot drift from the deployed defaults."""
     from run_phase4_flower import tge_provenance_fields

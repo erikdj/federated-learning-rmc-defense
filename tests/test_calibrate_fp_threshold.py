@@ -8,7 +8,7 @@ Design authority:
 * v1.10 § 5.1 — "**BOTH τ values locked in code** (all-device validation-τ AND
   even-device adjudicating-τ, both derived from the calibration logs **before
   any eval scenario runs**, gate (c))"; D9 axis (ii) device hold-out.
-* `docs/PHASE7_DESIGN.md` "Threshold τ calibration" — within-vs-across
+* `docs/harness/architecture.md` "Threshold τ calibration" — within-vs-across
   distributions, τ at the dev-FPR=1% point, then LOCKED.
 
 The allowlist refusal is a **pre-registration property**, not a convenience
@@ -1113,7 +1113,7 @@ def test_the_gate_runs_for_devices_the_cohort_scores_but_never_calibrates_on():
         calibration_partitions,
         CalibrationCohort.ADJUDICATING,
     )
-    # ...and the new one is not.
+    #...and the new one is not.
     with pytest.raises(CalibrationRefusal, match="within-device scatter"):
         build_cohort_calibration(observations, CalibrationCohort.ADJUDICATING)
 

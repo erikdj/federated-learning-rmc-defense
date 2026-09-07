@@ -1,4 +1,4 @@
-"""Per-defense run-to-run variance-envelope reduction (GWU-44 Lane C).
+"""Per-defense run-to-run variance-envelope reduction.
 
 Quantifies the run-to-run variance envelope of the FL pipeline per defense, to
 GATE the H2 dev-sweep sizing decision (how many replicates the confirmatory
@@ -8,8 +8,8 @@ enforced on BOTH inputs of every unit as a chain-of-custody gate), over the
 four defenses {krum, trustscore, tge, krum_tge}, across two sibling EXP
 matrices reduced JOINTLY here:
 
-    Arm A : seed 42 x R repeats per defense  -> pure run-to-run noise sigma_run
-    Arm B : 5 dev seeds x 1 each per defense -> sigma_total = sigma_seed (+) run
+    Arm A : seed 42 x R repeats per defense -> pure run-to-run noise sigma_run
+    Arm B : 5 dev seeds x 1 each per defense -> sigma_total = sigma_seed  run
     Decomposition: sigma_seed^2 = sigma_total^2 - sigma_run^2.
 
 This script is FIXTURE-DRIVEN: it consumes a manifest of local per-unit result
@@ -18,7 +18,7 @@ fixtures before the real AWS study exists.
 
 METRICS
 -------
-PRIMARY   recall_coldstart  : recall@10%FPR of malicious-client detection, in
+PRIMARY recall_coldstart : recall@10%FPR of malicious-client detection, in
                               the cold-start scope (tenure in [1, k], v1.3 F6),
                               scored against a FIXED PROVISIONAL per-defense
                               threshold supplied via --thresholds. The cut is
@@ -31,24 +31,24 @@ PRIMARY   recall_coldstart  : recall@10%FPR of malicious-client detection, in
                               analysis nor any threshold-SELECTION helper — a
                               guard test pins the literal absence of those
                               module names from this source.)
-secondary recall_allrounds  : same metric over all rounds.
-x-check   auc_coldstart /    : threshold-FREE per-replicate AUC of the trust
-          auc_allrounds        score vs malicious ground truth (and its SD),
+secondary recall_allrounds : same metric over all rounds.
+x-check auc_coldstart / : threshold-FREE per-replicate AUC of the trust
+          auc_allrounds score vs malicious ground truth (and its SD),
                                so the reported SD is shown NOT to be an artifact
                                of the chosen cut.
-secondary final_accuracy /   : finals from the result JSON (continuity with
-          final_f1             EXP-005c/e).
+secondary final_accuracy / : finals from the result JSON (continuity with
+          final_f1 EXP-005c/e).
 
 SCORE DIRECTION (the Szelag-traceback landmine — verified against the emitting
 code, not assumed). Every praxis defense exposes a TRUST score (HIGHER = kept);
 a malicious client is DETECTED when its score is BELOW the cut
 (flag = score < threshold):
 
-    defense    score field   direction  source (flowerfl/)
-    krum       krum_score    trust      byzantine_defense.py:303-316
-    trustscore trust_score   trust      byzantine_defense.py:464-481
-    tge        tge_score     trust      byzantine_defense.py:533; scenario_strategy.py:636-639
-    krum_tge   tge_score     trust      composed chain final decision (byzantine_defense.py:842-893
+    defense score field direction source (flowerfl/)
+    krum krum_score trust byzantine_defense.py:303-316
+    trustscore trust_score trust byzantine_defense.py:464-481
+    tge tge_score trust byzantine_defense.py:533; scenario_strategy.py:636-639
+    krum_tge tge_score trust composed chain final decision (byzantine_defense.py:842-893
                                         sequential; TGE last plugin). Krum-filtered rows carry a
                                         null tge_score and drop out of the population (the
                                         is_tge_scored null-passthrough convention; ramp-selection
@@ -127,7 +127,7 @@ class DefenseScoreSpec:
     so a swapped-defense artifact (e.g. tge logs under a krum_tge unit — both
     carry tge_score rows, so the score field alone cannot discriminate) is
     rejected. Crucially the signal-row token is the STRATEGY CLASS name lowered
-    (server_app.py:78: strategy_name.replace("Scenario","").lower()), NOT the
+    (server_app.py:78: strategy_name.replace("Scenario","").lower), NOT the
     config label — so tge -> "tgensemble" and krum_tge -> "krumtge", not the
     naive config tokens."""
     defense: str
@@ -484,7 +484,7 @@ def _canonicalize_defense_keys(mapping: dict[str, float], what: str) -> dict[str
     the same defense id with DISAGREEING values -> VarianceEnvelopeError naming
     both originals; equal values collapse to one. Unknown keys pass through
     unchanged (thresholds: harmlessly ignored by the membership check; anchors:
-    still caught by analyze()'s fail-fast on unknown defenses)."""
+    still caught by analyze's fail-fast on unknown defenses)."""
     out: dict[str, float] = {}
     origin: dict[str, str] = {}  # canonical id -> original key that set it
     for key, val in mapping.items():
@@ -611,7 +611,7 @@ def load_manifest(path: Path) -> list[UnitSpec]:
             # canonicalize config-label defense keys (launch-side matrix docs
             # list defenses as "Krum"/"TGE"/... ) to defense ids, reusing the R7
             # helper; accepts the launch-side `config` key; unknown values pass
-            # through to analyze()'s fail-fast
+            # through to analyze's fail-fast
             defense = _unit_defense(u, i)
             seed = int(u["seed"])
             replicate = _replicate_ordinal(u, i)
@@ -972,7 +972,7 @@ def analyze(units: Sequence[UnitSpec], thresholds: dict[str, float], *,
             decomposition[defense][metric] = dec.as_dict()
 
     meta = {
-        "study": "GWU-44 Lane C per-defense variance envelope",
+        "study": "per-defense variance envelope",
         "scenario_scope": expected_stem,  # validated registered-scenario stem
         "primary_metric": PRIMARY_METRIC,
         "metrics": list(METRICS),
@@ -1032,7 +1032,7 @@ def _fmt(v: Optional[float]) -> str:
 def format_report(report: dict[str, Any]) -> str:
     meta = report["meta"]
     lines: list[str] = [
-        "# Per-defense variance envelope (GWU-44 Lane C)",
+        "# Per-defense variance envelope",
         f"scenario={meta['scenario_scope']}  coldstart_k={meta['coldstart_k']}  "
         f"target_fpr={meta['target_fpr']}  bootstrap_n={meta['bootstrap_n']}  "
         f"arms={','.join(meta['arms_present']) or 'none'}",

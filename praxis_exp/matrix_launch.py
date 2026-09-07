@@ -6,16 +6,9 @@ tested without AWS. The container (SP3) creates per-unit MLflow runs and does
 the idempotent-skip; this function creates the experiment, writes the manifest,
 tags the launch, and submits the array.
 
-ONE LAUNCH PER EXP ID (PR #13 round 9, comments 3567144111/3567144113 —
-director decision): relaunch/refill support is DISABLED pending the dedicated
-hardening ticket GWU-41. Review iterations established that safe refills need
-at least: prior⊆new subset + full unit-spec identity, launch-provenance
-history (prior_launches chain), array_index stability, a terminal-prior-array
-requirement (a RUNNABLE old child can win the done-marker race under old
-provenance), and per-launch tag annotations. Rather than carry that machinery
-half-hardened in the launch path, a prior manifest in the namespace now
-refuses outright with a recovery runbook; git history and GWU-41 preserve the
-refill design.
+The initial launch path permits one launch per EXP ID. A prior manifest routes
+operators to the explicit ``--refill`` workflow, which verifies the original
+matrix and provenance before resubmitting missing cells.
 """
 from __future__ import annotations
 
@@ -66,8 +59,8 @@ def _read_prior_manifest(
     store: ObjectStore, exp_id: str,
 ) -> tuple[dict[str, Any], list[Unit]] | None:
     """The prior launch's (meta, units) if a manifest exists in the namespace,
-    None if genuinely absent. The probe is UNCONDITIONAL (PR #13, comment
-    3567066894): it is never gated on done-marker counts.
+    None if genuinely absent. The probe is unconditional: it is never gated on
+    done-marker counts.
 
     A manifest that exists but cannot be parsed refuses outright: an
     unreadable registry over a possibly-populated namespace is unaccountable
@@ -98,7 +91,7 @@ def _verify_job_def_image(
     _batch: BatchSubmitter, job_definition: str, image_digest: str,
     *, allow_mismatch: bool,
 ) -> None:
-    """GWU-48: fail fast when the job definition's container image does not
+    """Fail fast when the job definition's container image does not
     match the requested ``--image-digest``.
 
     ``--image-digest`` is provenance-only — it is recorded in tags/env but does
@@ -164,8 +157,7 @@ _MAX_TAG_SERIAL = 100
 
 
 def _resolve_launch_tag(_git: Any, repo_root: Path, exp_id: str) -> str:
-    """Pick the git tag THIS launch will create (PR #13 P2, comments
-    3566953649, 3567094770, 3567144113).
+    """Pick the immutable git tag this launch will create.
 
     Existing ``exp/`` tags are immutable chain-of-custody anchors — never
     force-moved — and their annotations embed launch-specific facts (parent
@@ -192,8 +184,7 @@ def _rollback_launch(
     _git: Any = None, repo_root: Path | None = None,
     parent_run: str | None = None, created_tag: str | None = None,
 ) -> str:
-    """Best-effort rollback of everything THIS launch created (PR #13 P2,
-    comment 3567167519 — rollback symmetry).
+    """Best-effort rollback of everything this launch created.
 
     Order: terminate parent FAILED -> delete the tag this launch created ->
     delete this launch's manifest. Deleting the manifest is safe by
@@ -251,7 +242,8 @@ def launch_matrix(
     _mlflow: Any,
     _git: Any = git_helper,
     _no_push: bool = False,
-    # GWU-48: override the job-def-image digest guard (logs LOUDLY, never silent).
+    branch: str | None = None,
+    # Override the job-definition image-digest guard (logs loudly, never silently).
     allow_digest_mismatch: bool = False,
 ) -> dict[str, Any]:
     repo_root = Path(repo_root)
@@ -275,6 +267,12 @@ def launch_matrix(
         raise MatrixLaunchError("working tree has uncommitted changes; commit before launch")
 
     sha = _git.head_sha(repo_root)
+    push_branch = None
+    if not _no_push:
+        try:
+            push_branch = _git.resolve_push_branch(repo_root, branch)
+        except Exception as e:
+            raise MatrixLaunchError(f"cannot determine Git push branch: {e}") from e
 
     units = expand_matrix(
         doc.defenses, doc.scenarios, doc.seeds, doc.mode, doc.max_per_client,
@@ -287,7 +285,7 @@ def launch_matrix(
             "Use `praxis exp launch` for a single-unit run."
         )
 
-    # GWU-48: the job def, not --image-digest, selects the image AWS Batch
+    # The job definition, not --image-digest, selects the image AWS Batch
     # runs — verify they agree BEFORE any side effect so a stale job def fails
     # fast instead of silently running the wrong image.
     _verify_job_def_image(
@@ -295,23 +293,23 @@ def launch_matrix(
     )
 
     # Namespace pre-flight, BEFORE any side effect. ONE LAUNCH PER EXP ID
-    # (PR #13 round 9, comments 3567144111/3567144113 — see module
-    # docstring): any prior manifest refuses; done-markers without a
+    # (see module docstring): any prior manifest refuses; done-markers without a
     # readable manifest are unaccountable state and also refuse.
     if _read_prior_manifest(_store, exp_id) is not None:
         raise MatrixLaunchError(
             f"{exp_id} already has a launch manifest ({manifest_key(exp_id)}) — "
-            "relaunch/refill is disabled: one launch per EXP id "
-            "[GWU-41 (refill support disabled pending hardening)]. Recovery: "
-            "(a) normal case — register a NEW EXP id and launch that; "
-            "(b) hard-crash debris ONLY (transient failures roll their own "
+            "a normal launch remains one launch per EXP id. Use "
+            f"`praxis exp launch-matrix {exp_id} --refill` to resubmit the "
+            "missing cells under the existing manifest, optionally with --cells. "
+            "For a changed matrix, register a NEW EXP id. For hard-crash "
+            "debris only (transient failures roll their own "
             "manifest back — a leftover manifest means the process was killed "
             "before rollback could run): verify the parent run is FAILED or "
             f"absent and no Batch array exists for {exp_id}, then archive and "
             f"clear the ENTIRE sweeps/{exp_id}/ prefix (not just manifest.json) "
             "and relaunch."
         )
-    # NAMESPACE-emptiness check (PR #13 P2, comment 3567187757): the old
+    # Namespace-emptiness check: the old
     # probe asked is_done only for the NEW expansion's unit_ids — after a
     # manual manifest removal with a changed matrix, old markers/results
     # under OTHER unit ids evaded it and artifacts would mix. "No object
@@ -336,13 +334,13 @@ def launch_matrix(
         "git_sha": sha,
         "n_units": len(units),
         "launched_at": datetime.utcnow().isoformat() + "Z",
-        # GWU-59: experiment-level run-config overrides (e.g. SMOTE). Carried in
+        # Experiment-level run-config overrides (e.g. SMOTE). Carried in
         # the manifest so docker/entrypoint.py::runner_argv can turn them into
         # runner CLI flags for every unit; {} keeps the argv byte-identical to
         # the incumbent when the doc declares no run_extras.
         "run_extras": doc.run_extras,
     }
-    # Rollback contract (PR #13 P2, comment 3567167519): the manifest is
+    # Rollback contract: the manifest is
     # written first, and from here to the Batch submit EVERY failure path
     # rolls back what this launch created (parent run FAILED -> created tag
     # -> manifest) via _rollback_launch — a transient error leaves a clean
@@ -352,7 +350,7 @@ def launch_matrix(
     # construction: write_manifest below is this function's ONLY store
     # write pre-submit (everything else is a read or the rollback delete),
     # so a rolled-back launch also passes the namespace-emptiness check
-    # above on retry (comment 3567187757).
+    # above on retry.
     write_manifest(_store, exp_id, units, meta)
 
     exp_name = doc.slug
@@ -420,7 +418,7 @@ def launch_matrix(
         _git.create_annotated_tag(repo_root, launch_tag, tag_msg)
         created_tag = launch_tag
         if not _no_push:
-            _git.push_with_tags(repo_root)
+            _git.push_with_tags(repo_root, branch=push_branch)
     except Exception as e:
         # Roll back only what this launch created; pre-existing exp/ tags
         # are other launches' custody anchors and are never touched.
@@ -466,8 +464,7 @@ def launch_matrix(
             },
         )
     except Exception as e:
-        # The tag was already pushed — it stays as the record of the attempt
-        # (deleting only the local copy would desync from the remote); the
+        # The launch tag stays as the record of the attempt; the
         # manifest is deleted so a retry passes the one-launch-per-EXP guard
         # (a subsequent launch mints the next serial tag).
         leftover = _rollback_launch(
@@ -475,7 +472,7 @@ def launch_matrix(
         )
         raise MatrixLaunchError(
             f"Batch submit failed — rolled back (parent run {parent_run} terminated "
-            f"FAILED, this launch's manifest deleted; pushed tag {launch_tag} "
+            f"FAILED, this launch's manifest deleted; launch tag {launch_tag} "
             f"remains): {e}{leftover}"
         ) from e
     _mlflow.set_tag(parent_run, "batch_array_job_id", array_job_id)

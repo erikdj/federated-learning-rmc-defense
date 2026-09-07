@@ -2,7 +2,7 @@
 
 environment-aws.yml is the ONLY dependency source in docker/Dockerfile
 (pyproject deps are never installed in the image), and entrypoint.py imports
-boto3/mlflow lazily inside main() so unit tests import cleanly — which also
+boto3/mlflow lazily inside main so unit tests import cleanly — which also
 means no test ever exercised those imports. This contract test keeps the
 locked env honest without building the image.
 """
@@ -30,7 +30,7 @@ def _pinned_pip_versions() -> dict[str, str]:
 # parquet read, :637-642 seeded groupby/sample shape the training data). pyarrow is
 # deliberately EXCLUDED: it is the one allowed mover (24.0.0 -> <=23.x under full
 # mlflow's `pyarrow<24`), guarded instead by the data-load equivalence gate
-# (GWU-46 Task 5a), not a fixed version bound.
+# ( Task 5a), not a fixed version bound.
 FL_CRITICAL_PINS: dict[str, str] = {
     "torch": "2.11.0+cpu",
     "numpy": "2.2.6",
@@ -58,7 +58,7 @@ def test_entrypoint_runtime_deps_are_pinned_in_aws_env():
     # (docker/entrypoint.py::log_native_model); mlflow-skinny lacks it. pyarrow
     # is NOT a training-numerics pin — it is pandas' parquet read engine
     # (flowerfl/task.py:571,625), so its full-mlflow downgrade (24.0.0 -> <=23.x)
-    # is guarded by the data-load equivalence gate (GWU-46 Task 5a), not a version
+    # is guarded by the data-load equivalence gate ( Task 5a), not a version
     # bound. The has_mlflow OR stays correct — bare `mlflow` is now pinned too.
     has_mlflow = "mlflow" in pins or "mlflow-skinny" in pins
     assert "boto3" in pins and has_mlflow, (
@@ -68,13 +68,13 @@ def test_entrypoint_runtime_deps_are_pinned_in_aws_env():
 
 
 def test_fl_critical_pins_locked():
-    # FL-pin-invariance gate (GWU-46): the FL-numerics pins + pandas must stay
+    # FL-pin-invariance gate : the FL-numerics pins + pandas must stay
     # byte-identical across images, or cross-image result comparisons are invalid.
     versions = _pinned_pip_versions()
     for pkg, expected in FL_CRITICAL_PINS.items():
         assert versions.get(pkg) == expected, (
             f"FL-critical pin moved: {pkg} {versions.get(pkg)} != {expected} "
-            "— breaks cross-image result comparability (GWU-46 FL-pin-invariance gate)"
+            "— breaks cross-image result comparability (FL-pin-invariance gate)"
         )
 
 

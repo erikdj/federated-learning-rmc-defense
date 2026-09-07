@@ -224,7 +224,7 @@ def main() -> int:
 
     out = {
         "_meta": {
-            "read": "GWU-26 — genuine TreeExplainer SHAP on the H1 signal-family detectors",
+            "read": " TreeExplainer SHAP on the H1 signal-family detectors",
             "method_shap": "shap.TreeExplainer (exact), positive-class (malicious) log-odds margin",
             "method_permutation": (
                 f"sklearn.inspection.permutation_importance "
@@ -252,7 +252,7 @@ def main() -> int:
     out_json.write_text(json.dumps(out, indent=2, allow_nan=False))
 
     # --- console summary --------------------------------------------------
-    print("== GWU-26 H1 SHAP (TreeExplainer, ramp-3 closed-loop Krum+TGE dev) ==")
+    print("== H1 SHAP (TreeExplainer, ramp-3 closed-loop Krum+TGE dev) ==")
     for fam in FAMILIES:
         fo = families_out[fam]
         print(f"  family {fam}: {fo['n_rows']} rows "

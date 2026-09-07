@@ -30,8 +30,8 @@ DEFAULT_MLFLOW_URI = "http://localhost:5001"
 
 
 class GateStore(ObjectStore, Protocol):
-    """praxis_exp.storage.ObjectStore's head()/size() intentionally don't
-    surface a timestamp. S3's head_object() response DOES carry one
+    """praxis_exp.storage.ObjectStore's head/size intentionally don't
+    surface a timestamp. S3's head_object response DOES carry one
     ("LastModified"), but the shared interface doesn't expose it -- the gate
     needs write ORDER (done-marker committed last, integrity.py's contract),
     so this extends the interface here rather than editing the shared
@@ -44,7 +44,7 @@ class FakeGateStore(InMemoryObjectStore):
     """Test double for GateStore. Assigns a strictly increasing counter as a
     fake timestamp on every write, in call order -- praxis_exp.integrity.persist_unit
     (imported by tests, not reimplemented) writes result -> signal -> marker in
-    that exact order, so building fixtures via persist_unit() produces a
+    that exact order, so building fixtures via persist_unit produces a
     correct, deterministic ordering for free."""
 
     def __init__(self) -> None:
@@ -69,9 +69,9 @@ class FakeGateStore(InMemoryObjectStore):
 
 
 class S3GateStore(storage.S3ObjectStore):
-    """Production GateStore: praxis_exp.storage.S3ObjectStore + last_modified()
-    via head_object()'s "LastModified" field. boto3 client is injected by the
-    caller (main()); this class itself never constructs one."""
+    """Production GateStore: praxis_exp.storage.S3ObjectStore + last_modified
+    via head_object's "LastModified" field. boto3 client is injected by the
+    caller (main); this class itself never constructs one."""
 
     _NOT_FOUND = {"NoSuchKey", "404"}  # mirrors praxis_exp/storage.py's _NOT_FOUND
 
@@ -237,7 +237,7 @@ def materialize_s3_artifacts(
     store: GateStore, exp_id: str, unit: UnitRef, tmpdir: Path
 ) -> tuple[Path | None, Path | None]:
     """Download the raw result JSON + signal log bytes to tmpdir so
-    audit_run_instrumentation.audit() (which opens real file paths) can be
+    audit_run_instrumentation.audit (which opens real file paths) can be
     reused unmodified. Deliberately does NOT parse: a truncated/corrupt S3
     object raising out of json.loads here aborted run_gate_s3 before the
     report rendered and left the remaining units unaudited -- parsing happens in the runner, where a
@@ -286,7 +286,7 @@ def _input_value(
     params: dict[str, str], tags: dict[str, str],
     params_keys: tuple[str, ...], tags_keys: tuple[str, ...],
 ) -> str | None:
-    """First present value across ``params_keys`` (preferred — the PR #15
+    """First present value across ``params_keys`` (preferred — the
     canonical location for experiment inputs) then ``tags_keys`` (legacy
     fallback so pre-enrichment runs, which carried inputs as tags, still audit)."""
     for k in params_keys:
@@ -404,9 +404,9 @@ def check_mlflow_runs(
             continue
         tags = _tags_dict(done[0])
         params = _params_dict(done[0])
-        # PR #15 param/tag isolation: experiment INPUTS live in PARAMS now
+        # param/tag isolation: experiment INPUTS live in PARAMS now
         # (config label -> PARAM 'defense', plus scenario/seed); only metadata
-        # (unit_id, image_digest, unit_status, defense_token, ...) stays in
+        # (unit_id, image_digest, unit_status, defense_token,...) stays in
         # TAGS. Read inputs from params with a legacy tag/param fallback so
         # pre-enrichment runs (inputs as tags, 'config' param) still audit.
         # image_digest/unit_status remain tags. methodology_version/git_sha are

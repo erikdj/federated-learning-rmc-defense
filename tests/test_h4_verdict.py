@@ -174,8 +174,8 @@ def test_one_execution_output_gate(env, capsys):
     # the terminal artifact is untouched
     assert out.read_bytes() == sealed_bytes
 
-    # forced re-read: ROUTED to the .diagnostic sibling; the sealed
-    # artifact (and its memo) are byte-identical afterwards (PR #66 P1)
+    # forced re-read: ROUTED to the.diagnostic sibling; the sealed
+    # artifact (and its memo) are byte-identical afterwards
     rc3, _out, report3 = _run(env, paths, extra=["--force-diagnostic"])
     assert rc3 == 0
     assert out.read_bytes() == sealed_bytes            # inviolable

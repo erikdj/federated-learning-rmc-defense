@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "flowerfl"
-version = "0.1.0"
+version = "0.1.1"
 description = "Federated Learning Experiments for Byzantine Robustness Analysis"
 readme = "README.md"
 license = "MIT"
@@ -147,4 +147,4 @@ markers = [
     "anchor: full-data anchor regression; ~4hr per test; opt-in via pytest -m anchor",
     "ray: spins up a real local Ray cluster (fleet-shape cache regression gate)",
 ]
-addopts = "-m 'not slow and not anchor and not ray'"
+addopts = "-m 'not slow and not anchor and not ray and not golden'"

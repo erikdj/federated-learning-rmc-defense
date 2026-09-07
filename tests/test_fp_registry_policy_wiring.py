@@ -6,7 +6,7 @@ candidate pool THE H3 instrument, while the deployed flag-gated pool stays for
 H4's composition arms. That choice has to be a DECLARED FACT OF THE RUN,
 readable off the result artifact, and it has to be expressible from a design
 doc — a mode reachable only in-process is a mode the fleet cannot launch
-(image-update checklist item 7, the GWU-59 silent-default class).
+(image-update checklist item 7, the silent-default class).
 
 Asserts the same chain tests/test_fp_cohort_wiring.py asserts for `fp_cohort`:
 

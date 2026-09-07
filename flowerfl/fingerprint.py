@@ -11,13 +11,13 @@ Design authority
   are unchanged from base spec § 6.3; the 45-feature set (G4) "must be verified
   recoverable/reproducible from the current parquet, including the 14-column
   transmission-timing subset, as the top silent-failure risk."
-* `docs/PHASE7_DESIGN.md` — 45 protocol features × 4 statistical moments
+* `docs/harness/architecture.md` — 45 protocol features × 4 statistical moments
   (mean, std, skew, kurtosis) = 180 dimensions, computed CLIENT-SIDE over the
   client's full local data and transported in `FitRes.metrics["fingerprint"]`.
 
 Reused seed
 -----------
-The moment computation is a port of `compute_client_signature()` in
+The moment computation is a port of `compute_client_signature` in
 `scripts/fingerprint_feasibility.py` (the Phase-0 research script) — the same
 per-column ``mean/std/skew/kurtosis`` in the same order.
 
@@ -47,7 +47,7 @@ columns (asserted to 1e-10 in `tests/test_fingerprint_features.py`). They are
 
 Every substitution and omission is recorded in `SanitizationReport` with a
 per-feature count and kind — see that class for the exhaustive list of what is
-counted. `compute_fingerprint()` always returns a finite vector, a hard
+counted. `compute_fingerprint` always returns a finite vector, a hard
 requirement of the Mahalanobis matcher.
 
 Nothing in this module reads sealed material, touches the signal-log schema,

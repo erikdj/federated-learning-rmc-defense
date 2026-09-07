@@ -59,7 +59,7 @@ def test_sizing_helper_direct_s4():
 
 @pytest.mark.unit
 def test_defense_provenance_fields_krum_policy():
-    """PR #12 round-2 P2 (labeling): result provenance must carry BOTH facts
+    """ round-2 P2 (labeling): result provenance must carry BOTH facts
     separately — the scenario-declared adversary count (ground truth) and the
     deployed Krum f policy (threat-model-constant dynamic ceil(n/2)-1) — so
     the audit can never conflate declared intensity with deployed f."""

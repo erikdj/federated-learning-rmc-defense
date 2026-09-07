@@ -6,7 +6,7 @@ package metadata deliberately excludes Python 3.11 and later.
 ```bash
 git clone https://github.com/erikdj/federated-learning-rmc-defense.git
 cd federated-learning-rmc-defense
-git checkout v0.1.0
+git switch -c my-experiments v0.1.1
 ```
 
 ## Reference environment
@@ -70,11 +70,11 @@ python -m pip install -e . --no-deps
 
 ## Verification
 
-The default pytest configuration excludes tests marked `slow`, `anchor`, and
-`ray`. The software suite also separates the strict numerical protocol checks:
+The default pytest configuration excludes tests marked `slow`, `anchor`, `ray`,
+and `golden`. Run the software suite with:
 
 ```bash
-python -m pytest -q -m 'not slow and not anchor and not ray and not golden'
+python -m pytest -q
 ```
 
 Tests that launch Ray, full-data anchors, AWS deployments, and experiment

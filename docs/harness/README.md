@@ -14,3 +14,13 @@ The deployment files live under [`scripts/aws/`](../../scripts/aws/). They
 contain no account-specific resource identifiers and never store AWS or database
 credentials.
 
+Matrix launches and refills push committed `HEAD` and the annotated launch tag
+to the current branch by default. Use `--branch NAME` for an explicit remote
+destination, including from a detached checkout. For a local checkout without
+push access, `--no-push` retains the local launch tag and skips the Git push.
+It still runs the AWS experiment and preserves the committed-source checks.
+
+Use `praxis exp new NAME` to create an experiment document from the included
+template, then fill in its hypothesis, parameters and decision criteria before
+launch. The [study guide](../reproduction/experiments.md) shows how to render the
+supplied reproduction matrices into launchable documents.

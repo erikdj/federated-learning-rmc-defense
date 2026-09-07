@@ -1,4 +1,4 @@
-"""Flag-gated per-client oversampling for the FL training split (GWU-59).
+"""Flag-gated per-client oversampling for the FL training split.
 
 SMOTE study knob. This module is a pure, deterministic resampler applied to a
 single client's TRAINING split only (see flowerfl/task.py::load_data), after
@@ -160,8 +160,8 @@ def semantic_attack_target_count(f: float, n_benign: int) -> int:
     LEAST ``f``. Solving ``n_a / (n_a + n_benign) >= f`` for ``n_a`` gives
     ``n_a >= f/(1-f) * n_benign``; ``math.ceil`` (never ``round``) is what makes
     the realized fraction ``>= f`` — the ``round`` counterexample ``f=.47,
-    n_benign=5`` rounds down to ``4/9 = .444 < .47`` while ``ceil`` gives
-    ``5/10 = .50``. Proof and a 10^5-case exhaustive check are in DESIGN §6.
+    n_benign=5`` rounds down to ``4/9 =.444 <.47`` while ``ceil`` gives
+    ``5/10 =.50``. Proof and a 10^5-case exhaustive check are in DESIGN §6.
 
     ``f`` must be a proper fraction in (0, 1); ``f >= 1`` is not a rebalancing
     target (it would divide by zero / demand an all-attack split) and raises.

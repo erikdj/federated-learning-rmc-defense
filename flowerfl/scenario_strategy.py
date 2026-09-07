@@ -8,9 +8,9 @@ scenario files used by the standalone rmc/ simulation.
 Architecture:
     ScenarioStrategy
         - Extends PluggableStrategy
-        - Overrides configure_fit() to filter clients per schedule
+        - Overrides configure_fit to filter clients per schedule
         - Injects attack_type/attack_sigma into FitIns.config
-        - Overrides evaluate() for fixed holdout evaluation
+        - Overrides evaluate for fixed holdout evaluation
 
 CID Mapping:
     Flower 1.25 simulation assigns random 64-bit node IDs as cids.
@@ -58,7 +58,7 @@ from flowerfl.signal_logger import (
 logger = logging.getLogger(__name__)
 
 # Sentinel distinguishing an ABSENT manifest key from a present None in the
-# static-row repeat comparison (GWU-70).
+# static-row repeat comparison.
 _MISSING = object()
 
 # The REGISTRY half of the schema-v5 re-entry contract (v1.10 § 5.1). The
@@ -77,7 +77,7 @@ REGISTRY_HALF_FIELDS = (
 
 #: The registry fields the join must carry BEYOND the frozen v1.10 table: the
 #: additive nearest-candidate pair (signal_logger.REENTRY_NEAREST_FIELDS,
-#: PR #57). Kept as a separate tuple so REGISTRY_HALF_FIELDS stays the frozen
+#: ). Kept as a separate tuple so REGISTRY_HALF_FIELDS stays the frozen
 #: six verbatim. EXP-057 smoke finding (2026-08-15): the registry recorded the
 #: pair unconditionally and the plugin row carried it, but this module's
 #: projection dropped it — every fleet row logged nearest_* as null, and an
@@ -182,7 +182,7 @@ class ScenarioStrategy(PluggableStrategy):
 
         # Defense overhead instrumentation (Task 4c.4): wall-clock per round
         # for the base aggregation call (typically Krum). Measures only the
-        # super().aggregate_fit() call, not plugin scoring (which lives in
+        # super.aggregate_fit call, not plugin scoring (which lives in
         # each plugin's own _timing_per_round list).
         self._krum_timing_per_round: list[float] = []
         self._tenure_first_seen: dict = {}
@@ -201,7 +201,7 @@ class ScenarioStrategy(PluggableStrategy):
         # producing incomplete per-client evidence. Derived from the dispatch
         # path (not get_num_clients): participation is scenario-driven.
         self._dispatched_partitions: set[int] = set()
-        # PR #35 P1: cids dispatched BEFORE the cid->partition mapping is ready
+        # cids dispatched BEFORE the cid->partition mapping is ready
         # (the discovery round). Flower cids are opaque until fit metrics
         # arrive, so a discovery-round client that FAILS never resolves to a
         # partition and would silently vanish from BOTH the collected manifest
@@ -315,8 +315,8 @@ class ScenarioStrategy(PluggableStrategy):
         # Get base configs (all clients)
         base_configs = self._base.configure_fit(server_round, parameters, client_manager)
 
-        # GWU-31: thread the current server round into every client's FitIns.config
-        # so the client can derive a per-(client, round) RNG seed in fit(). Done at
+        # thread the current server round into every client's FitIns.config
+        # so the client can derive a per-(client, round) RNG seed in fit. Done at
         # this single point so all downstream branches (discovery, filtered,
         # no-schedule) inherit it via their `dict(fit_ins.config)` copies.
         base_configs = [
@@ -328,7 +328,7 @@ class ScenarioStrategy(PluggableStrategy):
             for client_proxy, fit_ins in base_configs
         ]
 
-        # PR #35 P1: while the cid->partition mapping is not yet ready (the
+        # while the cid->partition mapping is not yet ready (the
         # discovery round + any pre-scenario path), EVERY client in base_configs
         # is dispatched but its partition is still unknowable. Record the
         # dispatched cids so the gate can later flag any that never resolved to
@@ -451,12 +451,12 @@ class ScenarioStrategy(PluggableStrategy):
         # Canonicalize arrival order ONCE at this OUTER entry, BEFORE any branching
         # (drift-investigation scoped fix). This is the single consumption point:
         # the discovery-round base aggregation (below), the plugin path via
-        # super().aggregate_fit, the ALIE server-side replacement, the identity
+        # super.aggregate_fit, the ALIE server-side replacement, the identity
         # map, AND _maybe_log_signals all read this SAME ordered list. If the pin
-        # lived only in super() (PluggableStrategy), the plugins' positional
+        # lived only in super (PluggableStrategy), the plugins' positional
         # _round_scores (in sorted order) would be joined against _maybe_log_signals
         # iterating the arrival-ordered caller list — silent cross-client
-        # misattribution (the v1.17 bug class), corrupting recall@FPR. super()'s own
+        # misattribution (the v1.17 bug class), corrupting recall@FPR. super's own
         # canonicalize is then an idempotent no-op; empty results pass through.
         if results:
             results = canonicalize_result_order(results, server_round)
@@ -525,7 +525,7 @@ class ScenarioStrategy(PluggableStrategy):
         return aggregated
 
     def unresolved_dispatched_cids(self) -> "set[str]":
-        """Cids dispatched pre-mapping that never resolved to a partition (PR #35 P1).
+        """Cids dispatched pre-mapping that never resolved to a partition.
 
         These are discovery-round clients that were dispatched but never
         returned a successful fit (so their partition was never learned). The
@@ -555,7 +555,7 @@ class ScenarioStrategy(PluggableStrategy):
         client that emits NO manifest metric is left to the unit-level
         completeness gate (missing coverage), not raised here.
 
-        GWU-70 — the static-row equality is regime-aware on the natural step
+        the static-row equality is regime-aware on the natural step
         count. When the incoming row's own ``update_match`` field is falsey
         (False or absent) AND ``actual_steps`` is present in BOTH rows, its
         VALUE is excluded from the comparison; presence mismatches ALWAYS
@@ -568,7 +568,7 @@ class ScenarioStrategy(PluggableStrategy):
         sparse repeat row still raises. Rationale:
         under update-match OFF, natural step counts are legitimate per-round
         quantities, not per-unit invariants — ``train_label_flip`` runs 1
-        natural pass vs 5 epochs on every other training path (GWU-72 tracks
+        natural pass vs 5 epochs on every other training path ( tracks
         that asymmetry as a separate decision), so an S4 partition whose
         lineage rotates into label_flip legitimately reports a different
         natural ``actual_steps`` than its first-recorded row.
@@ -603,7 +603,7 @@ class ScenarioStrategy(PluggableStrategy):
                 compared = set(prior) | set(row)
                 if (not row.get("update_match")
                         and "actual_steps" in prior and "actual_steps" in row):
-                    # GWU-70: update-match OFF (row-declared) — the natural
+                    # update-match OFF (row-declared) — the natural
                     # step count is per-round, not static; tolerate VALUE
                     # drift only when the field is present in BOTH rows. A
                     # presence mismatch stays a custody error (round-3
@@ -1033,11 +1033,11 @@ class ScenarioStrategy(PluggableStrategy):
                     f"misattribute scores (methodology v1.17)"
                 )
 
-        # H3 schema v5 (GWU-9): this round's POST-`filter_updates`, round-
+        # H3 schema v5 : this round's POST-`filter_updates`, round-
         # normalized aggregation coefficients, keyed by RAW cid. `None` when the
         # round bypassed the plugin path or the base is not FedAvg — in which
         # case the field is logged null, never a value that is not the
-        # coefficient. See PluggableStrategy.aggregation_coefficients().
+        # coefficient. See PluggableStrategy.aggregation_coefficients.
         coefficients = self.aggregation_coefficients(server_round)
         run_uid = getattr(self._signal_logger, "run_uid", None)
         missing_coefficient_cids: list[str] = []
@@ -1100,7 +1100,7 @@ class ScenarioStrategy(PluggableStrategy):
                 # v4 readers depend on exactly this. The post-defense quantity
                 # H3 scores on is `aggregation_coefficient` below.
                 "effective_weight": float(fit_res.num_examples),
-                # Schema v5 (GWU-9 / v1.10 § 5.1): the post-`filter_updates`,
+                # Schema v5 (v1.10 § 5.1): the post-`filter_updates`,
                 # round-normalized FedAvg coefficient — 0.0 for a hard-dropped
                 # client, summing to 1.0 over the round's survivors. This is
                 # what data/h3_constants.json's rejoin-success rule is defined
@@ -1110,7 +1110,7 @@ class ScenarioStrategy(PluggableStrategy):
                 "tge_score": tge_score,
                 "tge_gbdt_score": tge_details.get("gbdt_score"),
                 "tge_lstm_score": tge_details.get("lstm_score"),
-                # TGE′ second long-memory leg (GWU-53): EMA reputation. Null in
+                # TGE′ second long-memory leg : EMA reputation. Null in
                 # incumbent LSTM runs and until the EMA has ≥1 update; in bank
                 # mode the gate's long-memory leg = min(tge_lstm_score,
                 # tge_ema_score), reconstructable offline from these two fields.

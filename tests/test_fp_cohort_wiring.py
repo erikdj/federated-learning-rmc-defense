@@ -1,12 +1,12 @@
 """fp-cohort fleet reachability — the H3 post-τ-lock cohort declaration.
 
-PR #52 locked both τ/Σ pairs and made server_app hard-refuse a post-lock FP-arm
+ locked both τ/Σ pairs and made server_app hard-refuse a post-lock FP-arm
 run that does not declare WHICH cohort scores it (`run_config["fp-cohort"]`).
 That refusal is only useful if the fleet path can actually make the
 declaration: without this wiring, `fp-cohort` was expressible in-process (the
 wiring tests drive run_config directly) but NOT from a design doc, so the
 post-lock S3 re-entry rehearsal and both H3 cohorts could not launch at all
-(image-update checklist item 7 — the GWU-59 silent-default class, except loud).
+(image-update checklist item 7 — the silent-default class, except loud).
 
 Asserts the reachability chain end-to-end, mirroring
 tests/test_normalization_leak.py section 3-4:

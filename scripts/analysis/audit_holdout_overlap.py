@@ -22,7 +22,7 @@ read ONLY the label column — faithful and memory-frugal, one client at a time)
     them at the 2M cap: stratified cap sampling via groupby(label).sample(
     random_state=42+client_idx) + concat + reset_index (only for the 3 clients whose
     row count exceeds 2M), then random_split into train/val/test with
-    torch.Generator().manual_seed(42). torch.random_split takes the first
+    torch.Generator.manual_seed(42). torch.random_split takes the first
     ``train_size`` entries of randperm(total, generator=g); we reproduce that and
     map the capped-frame positions back to original parquet row positions.
 
@@ -142,7 +142,7 @@ def reconstruct_train_indices(
     The keyword args default to this module's audited constants (2M cap, 0.8/0.1
     split, TRAIN_DATASET) so the audit's own call sites are byte-identical;
     rmc/fixed_eval.py passes the ACTIVE run's cap/split/dataset when it reuses
-    this reconstruction to build a disjoint holdout (GWU-61), so the excluded
+    this reconstruction to build a disjoint holdout, so the excluded
     rows match what load_data actually routed into training for THAT run.
 
     ``client_idx`` is the ORDINAL position of the partition in the config's

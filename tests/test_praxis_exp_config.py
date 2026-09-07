@@ -83,8 +83,8 @@ def test_raises_without_env_or_site_defaults(monkeypatch):
 
 
 def test_config_role_mode_allows_absent_profile(monkeypatch):
-    """GWU-45 Lane B: a Lambda authenticates via its execution role (boto default
-    chain), so PRAXIS_USE_INSTANCE_ROLE=1 makes aws_profile optional — Config()
+    """: a Lambda authenticates via its execution role (boto default
+    chain), so PRAXIS_USE_INSTANCE_ROLE=1 makes aws_profile optional — Config
     constructs with NO AWS_PROFILE and leaves aws_profile empty. The artifact
     bucket stays REQUIRED even in role mode (design § 5.5)."""
     import sys

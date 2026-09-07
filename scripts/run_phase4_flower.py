@@ -38,12 +38,12 @@ Configurations (see SUPPORTED_CONFIGS / build_strategy_for_config below):
                                              the ONLY configs that emit
                                              `FitRes.metrics["fingerprint"]`)
 
-Output schema (one JSON per run, see `result` dict in run_one() below):
+Output schema (one JSON per run, see `result` dict in run_one below):
     config, strategy, seed, return_code, elapsed_seconds, trajectory
     (per-round f1/accuracy/loss), alie_rounds, mean/final accuracy + f1,
     post_reconnect_accuracy, provenance (runner_version/commit, scenario_path,
-    optimizer_state, flwr_version, ...), plus convergence / defense_overhead /
-    confounder_control blocks appended post-hoc by _enrich_result_with_metrics().
+    optimizer_state, flwr_version,...), plus convergence / defense_overhead /
+    confounder_control blocks appended post-hoc by _enrich_result_with_metrics.
     Per-round F1 trajectory is parsed from captured stdout (ScenarioStrategy's
     eval print lines), not read from a structured Flower API.
 
@@ -73,7 +73,7 @@ import sys
 import time
 from pathlib import Path
 
-# Local import path bootstrap so `from flowerfl.result_metrics import ...`
+# Local import path bootstrap so `from flowerfl.result_metrics import...`
 # resolves regardless of CWD.
 _THIS_FILE = Path(__file__).resolve()
 _PROJECT_ROOT_BOOT = _THIS_FILE.parent.parent
@@ -275,7 +275,7 @@ def _enrich_result_with_metrics(result: dict, scenario_path: str, strategy_obj) 
     result["convergence"] = compute_convergence_metrics(trajectory)
 
     # Defense overhead — Krum aggregation timing from the strategy itself,
-    # plus per-plugin scoring timing where available. Each getattr() chain
+    # plus per-plugin scoring timing where available. Each getattr chain
     # safely returns [] when the plugin/attribute is absent, so configs
     # without TGE or CS still produce a structurally-valid block.
     krum_ms = list(getattr(strategy_obj, "_krum_timing_per_round", []) or [])
@@ -343,7 +343,7 @@ def _enrich_result_with_metrics(result: dict, scenario_path: str, strategy_obj) 
         from flowerfl.resampling_manifest import assert_manifest_complete
 
         expected = set(getattr(strategy_obj, "_dispatched_partitions") or set())
-        # PR #35 P1: also flag discovery-round clients that never resolved to a
+        # also flag discovery-round clients that never resolved to a
         # partition (a discovery failure that would vanish from the evidence).
         # Strategies that expose the two gate attrs but not this method still
         # gate on the original three classes.
@@ -396,7 +396,7 @@ CONFIGS = [
     ("TrustScore+CS", "ScenarioTrustScoreCS", True),
 ]
 
-# Ray backend configuration passed to flwr.simulation.run_simulation().
+# Ray backend configuration passed to flwr.simulation.run_simulation.
 #
 # Caps Ray's actor pool at 8 workers (instead of the implicit nproc default),
 # disables the Ray dashboard process (saves ~150MB + a TCP port), and silences
@@ -421,13 +421,13 @@ _BACKEND_CONFIG: dict = {
         # log_to_driver stays False for LOG VOLUME: at 21 supernodes x ~41
         # client constructions/round x N rounds, forwarding every actor's stdout
         # to the driver floods CloudWatch and the captured buffer. Kept False in
-        # image v9. CONSEQUENCE (diagnosed 2026-07-27): actor-side print() —
+        # image v9. CONSEQUENCE (diagnosed 2026-07-27): actor-side print —
         # including every worker [SMOTE] provenance line — never reaches the
         # driver, so the fleet could not surface a single [SMOTE] record for the
         # entire EXP-018/019/020/021 era. v9 no longer DEPENDS on actor stdout for
         # provenance: the DRIVER-side prewarm (_prewarm_resample_cache) emits the
         # per-client [SMOTE] records from the driver process (whose stdout DOES
-        # reach CloudWatch) before run_simulation(), and folds them into the
+        # reach CloudWatch) before run_simulation, and folds them into the
         # parsed output. Worker [SMOTE] prints remain a local-only backstop.
         "log_to_driver": False,
         "include_dashboard": False,
@@ -439,7 +439,7 @@ _BACKEND_CONFIG: dict = {
 }
 
 # Configs supported by this runner. Adding new configs requires also wiring them
-# into build_strategy_for_config() below.
+# into build_strategy_for_config below.
 SUPPORTED_CONFIGS = [
     "Krum",
     "Krum+CS",
@@ -447,15 +447,15 @@ SUPPORTED_CONFIGS = [
     "TrustScore+CS",
     "TGE",      # FedAvg + TGEnsemblePlugin (GBDT + LSTM tenure-gated ensemble, ramp_rounds=8 provisional per v1.6)
     "Krum+TGE", # Krum geometric filter + TGEnsemblePlugin (deployed primary defense, spec § 6.1)
-    "TGEprime",      # FedAvg + TGEnsemblePlugin with the EMA-reputation long-memory expert (TGE′, GWU-53; PROVISIONAL)
-    "Krum+TGEprime", # Krum geometric filter + TGE′ EMA-reputation ensemble (GWU-53; PROVISIONAL)
+    "TGEprime",      # FedAvg + TGEnsemblePlugin with the EMA-reputation long-memory expert (TGE′,; PROVISIONAL)
+    "Krum+TGEprime", # Krum geometric filter + TGE′ EMA-reputation ensemble (; PROVISIONAL)
     "FedMedian",     # coordinate-wise median (utility baseline; H4 runs deferred)
     "FedTrimmedAvg", # trimmed mean beta=0.4 (utility baseline; H4 runs deferred)
     "TGE+FP",        # TGE + FingerprintDefensePlugin — the H3 scored arm (v1.10 § 5.1)
     "Krum+TGE+FP",   # Krum + TGE + FingerprintDefensePlugin — the H4-composable arm
     # ---- H4 composition arms (spec 2026-08-16 § 2 + erratum-A; v1.51/v1.52).
     # Unit-id tokens follow the existing config->filename rule
-    # (label.replace('+','_').lower()): h2p_fp_krum / h2p_fp / h2p_krum /
+    # (label.replace('+','_').lower): h2p_fp_krum / h2p_fp / h2p_krum /
     # h2p_fp_ts / h2p_ts / fedavg — the BUILD_CONTRACT arm tokens.
     "H2P+FP+Krum",   # arm 1 ADJUDICATING treatment: detect -> identity -> Krum
     "H2P+FP",        # arm 3: detect -> identity -> FedAvg
@@ -577,7 +577,7 @@ def build_strategy_for_config(config_name: str):
     if config_name == "TGEprime":
         return (ScenarioTGEPrime, {
             "cs_enabled": True,
-            # TGE′ (GWU-53): the incumbent LSTM is kept and a SECOND long-memory
+            # TGE′ : the incumbent LSTM is kept and a SECOND long-memory
             # leg — an EMA reputation over the cold-start score — is added
             # alongside it; the gate's long-memory leg = min(LSTM, EMA) (the
             # "bank" combiner). PROVISIONAL pending amendment v1.7 ratification.
@@ -592,7 +592,7 @@ def build_strategy_for_config(config_name: str):
     if config_name == "Krum+TGEprime":
         return (ScenarioKrumTGEPrime, {
             "cs_enabled": False,
-            # TGE′ (GWU-53) — PROVISIONAL; ramp 3 INHERITED; see TGEprime above.
+            # TGE′ — PROVISIONAL; ramp 3 INHERITED; see TGEprime above.
             "tge_long_memory_expert": "bank",
             "tge_ema_alpha": 0.9,
             "tge_ramp_rounds": 3,
@@ -608,7 +608,7 @@ def build_strategy_for_config(config_name: str):
     #
     # `fingerprint-enabled` is already the hyphenated Flower run-config key
     # `flowerfl/client_app.py` reads (`_as_bool(run_config.get(
-    # "fingerprint-enabled", False))`), so it is forwarded VERBATIM by main()'s
+    # "fingerprint-enabled", False))`), so it is forwarded VERBATIM by main's
     # extras pass-through — it is deliberately NOT an underscore key routed
     # through `_hyphenate_tge_extra`, which is the TGE knob map. Emitting it
     # here, keyed off the config label, is what makes emission reachable ONLY
@@ -716,7 +716,7 @@ def tge_provenance_fields(strategy: str, run_config: dict, rounds: int) -> dict:
     run-config key is absent, mirroring server_app.py's default. Gate
     settings not exposed via run-config (min_tenure, operational threshold,
     warmup) are read from the plugin/rule signatures so provenance cannot
-    drift from the code (GWU-8 acceptance criteria). TGE has no serialized
+    drift from the code ( acceptance criteria). TGE has no serialized
     model artifact — both experts fit online within the run — so there is no
     artifact reference.
     """
@@ -726,18 +726,18 @@ def tge_provenance_fields(strategy: str, run_config: dict, rounds: int) -> dict:
     from flowerfl.byzantine_defense import TGEnsemblePlugin
     from rmc.tg_ensemble import TenureGatedDecisionRule
     ramp = int(run_config.get("tge-ramp-rounds", 8))
-    # Long-memory expert identity (GWU-53). Defaults to the incumbent "lstm"
+    # Long-memory expert identity. Defaults to the incumbent "lstm"
     # when the run-config key is absent, mirroring server_app.py / the plugin
     # default, so every pre-TGE′ result records "lstm" with a null alpha.
     # Default matches the server's construction default for the strategy: prime
-    # tokens deploy "bank", incumbent TGE tokens "lstm" (GWU-53 — server
+    # tokens deploy "bank", incumbent TGE tokens "lstm" (server
     # and provenance must agree even when the run-config key is absent).
     _default_expert = "bank" if "Prime" in strategy else "lstm"
     long_memory_expert = str(run_config.get("tge-long-memory-expert", _default_expert))
     # ema_alpha applies to the ema/bank legs; None for the incumbent lstm. When
     # the run-config key is absent the server constructs the EMA with the
     # plugin default, so provenance must record that same default, not None
-    # (GWU-53). Read the default from the
+    #. Read the default from the
     # plugin signature so it can never drift from the deployed value.
     _default_ema_alpha = inspect.signature(
         TGEnsemblePlugin.__init__).parameters["ema_alpha"].default
@@ -747,7 +747,7 @@ def tge_provenance_fields(strategy: str, run_config: dict, rounds: int) -> dict:
         else None
     )
     # Combiner identity for the gate's long-memory leg: "min" in bank mode,
-    # else the single leg's name (GWU-53).
+    # else the single leg's name.
     long_memory_combiner = "min" if long_memory_expert == "bank" else long_memory_expert
     warmup = inspect.signature(
         TGEnsemblePlugin.__init__).parameters["warmup_rounds"].default
@@ -760,7 +760,7 @@ def tge_provenance_fields(strategy: str, run_config: dict, rounds: int) -> dict:
     # rounds + 1 >= warmup + 3. The pure-LSTM gate is INCLUSIVE
     # (tenure >= ramp), so the regime is reachable iff ramp <= rounds.
     lstm_first_scoring_round = warmup + 3
-    # Gate the legacy LSTM provenance on the EFFECTIVE mode (GWU-53,
+    # Gate the legacy LSTM provenance on the EFFECTIVE mode (,
     # run_phase4_flower.py:391). In "ema" component-isolation the LSTM is built
     # but never feeds the gate (_resolve_long_memory ignores it), so reporting
     # it enabled/reachable is internally contradictory. lstm/bank both use the
@@ -775,7 +775,7 @@ def tge_provenance_fields(strategy: str, run_config: dict, rounds: int) -> dict:
         "tge_lstm_state": tge_lstm_state,
         "tge_pure_lstm_reach": tge_pure_lstm_reach,
         "tge_ramp_rounds": ramp,
-        # Long-memory bank identity (GWU-53). TGE′ keeps the LSTM and adds an
+        # Long-memory bank identity. TGE′ keeps the LSTM and adds an
         # EMA reputation leg; tge_long_memory_expert is lstm | ema | bank, and
         # tge_long_memory_combiner is the combiner the gate's long-memory leg
         # uses ("min" in bank mode). tge_ema_alpha is the EMA retention weight
@@ -815,7 +815,7 @@ _SMOTE_INT_FIELDS = frozenset(
 
 
 def parse_smote_records(full_output: str) -> list:
-    """Parse the per-client ``[SMOTE] ...`` records from captured run stdout.
+    """Parse the per-client ``[SMOTE]...`` records from captured run stdout.
 
     Returns a list of dicts (one per client that ran the SMOTE path), with the
     numeric fields coerced to int. Empty list when SMOTE was off or emitted no
@@ -910,7 +910,7 @@ def _smote_run_summary(records: list) -> dict:
 
 
 def smote_provenance_fields(run_config: dict, records: "list | None" = None) -> dict:
-    """SMOTE study-knob provenance for the result JSON (GWU-59).
+    """SMOTE study-knob provenance for the result JSON.
 
     Every run declares its SMOTE status: ``smote_enabled`` is always present so
     a reader never has to distinguish "absent" from "off". When enabled, the
@@ -994,9 +994,9 @@ def _smote_enabled_in_run_config(run_config: dict) -> bool:
 def _prewarm_resample_cache(run_config: dict) -> "tuple[str, dict]":
     """Driver-side prewarm of the node-local resample DISK cache (image v9).
 
-    Runs BEFORE run_simulation(). When SMOTE is enabled, iterate every client
+    Runs BEFORE run_simulation. When SMOTE is enabled, iterate every client
     partition ONCE in the driver process, populating the container-local disk
-    cache (flowerfl/task.py) so every Ray worker's load_data() becomes a 100%
+    cache (flowerfl/task.py) so every Ray worker's load_data becomes a 100%
     disk read (0% resample compute). This is the structural fix for the v8
     failure: Flower 1.29's ActorPool has no client->actor affinity, so a
     per-process in-RAM LRU missed ~84% of the time at fleet shape (32 actors >
@@ -1004,7 +1004,7 @@ def _prewarm_resample_cache(run_config: dict) -> "tuple[str, dict]":
     which one the scheduler hands a client.
 
     It ALSO closes the provenance-emission gap. run_phase4_flower sets
-    ``log_to_driver=False`` (log-volume control), so a worker's [SMOTE] print()
+    ``log_to_driver=False`` (log-volume control), so a worker's [SMOTE] print
     never reaches the driver stdout / CloudWatch — the entire EXP-018/019/020/021
     fleet era could not surface a single [SMOTE] line. The prewarm emits the
     per-client records from the DRIVER process (whose stdout DOES reach
@@ -1203,12 +1203,12 @@ def _resample_prewarm_provenance(prewarm_summary: dict) -> "dict | None":
 
 
 def add_smote_cli_args(parser: "argparse.ArgumentParser") -> None:
-    """Register the SMOTE study flags (GWU-59). Defaults preserve OFF exactly so
+    """Register the SMOTE study flags. Defaults preserve OFF exactly so
     a bare invocation is byte-identical to the incumbent. docker/entrypoint.py
     appends these from the manifest run_extras so the fleet path can reach the
     knob (it lived only on the pyproject/flwr-run path before)."""
     parser.add_argument("--smote-enabled", action="store_true",
-                        help="Enable per-client training-split oversampling (GWU-59). "
+                        help="Enable per-client training-split oversampling. "
                              "Default OFF; experiment-relevant, so inert unless set.")
     parser.add_argument("--smote-variant", default="smote",
                         help="Resampler: 'smote' (interpolation) | 'random_over' "
@@ -1687,7 +1687,7 @@ def _stage_f_cache_reusable(existing: dict, extra_run_config: "dict | None") -> 
 
 def _holdout_disjoint_provenance(run_config: dict) -> bool:
     """Coerce the ``holdout-disjoint`` run-config value to bool for the result
-    JSON provenance (GWU-61). Default True; only an explicit false-ish value
+    JSON provenance. Default True; only an explicit false-ish value
     records the legacy overlapping holdout. Mirrors server_app's coercion so the
     provenance and the manager can't disagree."""
     val = run_config.get("holdout-disjoint", True)
@@ -1697,7 +1697,7 @@ def _holdout_disjoint_provenance(run_config: dict) -> bool:
 
 
 def _holdout_provenance_fields(run_config: dict, eval_manager=None) -> dict:
-    """Holdout provenance for the result JSON (GWU-61 + drift-investigation r-fix).
+    """Holdout provenance for the result JSON ( + drift-investigation r-fix).
 
     Prefer the ACTUAL FixedEvalManager's durable record — holdout_rows_excluded,
     size, per-class counts — because the ``[FixedEval] holdout_disjoint=...``
@@ -2209,7 +2209,7 @@ def _scenario_declared_malicious_per_round(scenario_dict: dict) -> dict[int, int
 
     Canonical scenario JSON shape (see existing rmc/scenarios/*.json):
 
-        {"schedule": [{"rounds": [start, end], "attacks": {cid: {"type": ...}}}, ...]}
+        {"schedule": [{"rounds": [start, end], "attacks": {cid: {"type":...}}},...]}
 
     `rounds` is a 2-element inclusive range, not a list of individual rounds.
     Each block's `attacks` maps logical_id -> {"type": str, "params": dict};
@@ -2240,7 +2240,7 @@ def _scenario_defense_sizing(scenario_path: str) -> "tuple[int, int] | None":
 
     - ``num_malicious`` = peak per-round declared adversary count — the
       canonical RMC sustained count (9 for S0-S4). Disconnect/discovery rounds
-      declare fewer. NOTE (PR #12 P1): these values are PROVENANCE plus the
+      declare fewer. NOTE : these values are PROVENANCE plus the
       loud misconfiguration guard and the full-cohort operating-point
       cross-check (ceil(20/2)-1 == 9); per-round sizing in the deployed
       KrumDefensePlugin is DYNAMIC (``dynamic_f=True``, April anchor formula
@@ -2249,7 +2249,7 @@ def _scenario_defense_sizing(scenario_path: str) -> "tuple[int, int] | None":
       fallback under a static f=9.
     - ``defense_cohort`` = peak per-round declared participant count — the
       20-client per-round cohort (NOT the 21 dataset partitions
-      ``get_num_clients()`` returns for edge_full_20_rmc).
+      ``get_num_clients`` returns for edge_full_20_rmc).
 
     Both are read via the same schedule-parsing helpers the A4 / A3 integrity
     assertions use (``_scenario_declared_malicious_per_round`` /
@@ -2277,7 +2277,7 @@ def _scenario_defense_sizing(scenario_path: str) -> "tuple[int, int] | None":
     return num_malicious, defense_cohort
 
 
-# Deployed Krum f policy string recorded in provenance (PR #12 round 2).
+# Deployed Krum f policy string recorded in provenance ( round 2).
 # Scenario-mode KrumDefensePlugin sizes f per round as ceil(n/2)-1 (April
 # anchor formula, reproduce_szelag.py:388,739) regardless of the scenario's
 # DECLARED adversary count — a deployed server has no oracle knowledge of the
@@ -2287,7 +2287,7 @@ KRUM_F_POLICY = "dynamic ceil(n/2)-1"
 
 
 def _defense_provenance_fields(strategy: str, run_config: dict) -> dict:
-    """Defense-sizing provenance for the result JSON (PR #12 round-2 P2).
+    """Defense-sizing provenance for the result JSON ( round-2 P2).
 
     Records BOTH facts separately so the instrumentation audit can never
     conflate them:
@@ -2355,7 +2355,7 @@ def _assert_signal_log_filename(
     # Normalize the defense token to match the signal logger's filename convention.
     # The runner call site passes the raw strategy class name (e.g. "ScenarioTGEnsemble",
     # "ScenarioKrum"); server_app.py:76 writes the file using
-    # strategy_name.replace("Scenario", "").lower() (-> "tgensemble", "krum").
+    # strategy_name.replace("Scenario", "").lower (-> "tgensemble", "krum").
     # Without this, A5 mismatches on EVERY real run (B4, caught by S0 TGE smoke 2026-06-05).
     defense_token = defense.replace("Scenario", "").lower()
     expected_name = f"{expected_mode}__{scenario_name}__{defense_token}__seed{seed}.jsonl"
@@ -2422,7 +2422,7 @@ def _runner_commit() -> str:
 
     The container bakes the repo WITHOUT ``.git`` (docker/Dockerfile via
     .dockerignore), so an in-container ``git rev-parse`` fails and the legacy
-    ``_git_rev()`` returned a bare ``"unknown"``. Prefer ``PRAXIS_RUNNER_COMMIT``
+    ``_git_rev`` returned a bare ``"unknown"``. Prefer ``PRAXIS_RUNNER_COMMIT``
     — now baked into the image at build time by the Dockerfile ``--build-arg``
     (scripts/aws/ecr/build_push.sh passes the repo SHA being built), NOT set by
     launch — fall back to the local git HEAD for dev runs, and record an
@@ -2456,7 +2456,7 @@ def _image_digest() -> str:
 
     ``PRAXIS_IMAGE_DIGEST`` is set by matrix_launch/matrix_refill and reaches
     this runner subprocess because docker/entrypoint.py launches it with
-    ``env=dict(os.environ, ...)``. Absent (e.g. a local dev run) => an explicit
+    ``env=dict(os.environ,...)``. Absent (e.g. a local dev run) => an explicit
     unavailable marker rather than a silent empty string.
     """
     return (os.environ.get("PRAXIS_IMAGE_DIGEST", "").strip()
@@ -2537,7 +2537,7 @@ def summarize_attack_recall(trajectory: list[dict], *, require: bool = False) ->
 
 # Cache provenance values at import time — the git HEAD SHA, launch env vars,
 # installed Flower version, and host CPU context cannot change mid-process, so
-# running these in every run_one() call is wasted subprocess/metadata overhead.
+# running these in every run_one call is wasted subprocess/metadata overhead.
 _RUNNER_COMMIT = _runner_commit()
 _LAUNCH_COMMIT = _launch_commit()
 _IMAGE_DIGEST = _image_digest()
@@ -2550,7 +2550,7 @@ def parse_eval_trajectory(output: str) -> list[dict]:
 
     F1/Acc/Loss are always present. Prec/Rec are appended by the new-image eval
     line and captured when present (older logs omit them) so the trajectory
-    carries all five live-contract metrics for the fallback replay ().
+    carries all five live-contract metrics for the fallback replay .
 
     Per-class benign/attack metrics (AttP/AttR/AttF1/BenP/BenR/BenF1) are a
     further optional suffix (Stage-F). Both optional groups are
@@ -2672,7 +2672,7 @@ def run_one(
 
     Builds a run_config dict (see _build_run_config), runs the two integrity
     assertions that can be checked before launch (A1 lr-drift, A2
-    optimizer_state self-consistency), then calls flwr.simulation.run_simulation()
+    optimizer_state self-consistency), then calls flwr.simulation.run_simulation
     IN-PROCESS (not via subprocess/CLI) with stdout captured for trajectory
     parsing. After the run, checks the remaining integrity assertions (A3,
     A3.b, A4, A5, A6 — see module docstring), streams metrics to MLflow if
@@ -2689,7 +2689,7 @@ def run_one(
         seed: RNG seed for this run.
         rounds: Number of server rounds.
         timeout: NOT CURRENTLY ENFORCED — accepted for interface
-            compatibility but unused in the body below. run_simulation()
+            compatibility but unused in the body below. run_simulation
             is called directly in-process (see comment further down), not
             via a subprocess, so there is no watchdog that would kill a
             hung simulation at this timeout. A genuinely hung run must be
@@ -2768,7 +2768,7 @@ def run_one(
     # SMOTE-enabled run; injected into whichever result dict is written below.
     resample_prewarm_block = _resample_prewarm_provenance(prewarm_summary)
 
-    # Call run_simulation() directly — blocks until completion in Flower 1.29.
+    # Call run_simulation directly — blocks until completion in Flower 1.29.
     # We create a closure-based ServerApp that injects run_config_dict into the
     # Context it receives, overriding whatever defaults came from pyproject.toml.
     # The ClientApp also needs run_config; we wrap it similarly.
@@ -2781,7 +2781,7 @@ def run_one(
 
     _rc = run_config_dict  # capture in closure
     # Mutable container so the runner can retrieve the ScenarioStrategy
-    # instance after run_simulation() completes. Needed for post-hoc
+    # instance after run_simulation completes. Needed for post-hoc
     # extraction of defense_overhead / confounder_control metrics
     # (Tasks 4c.3 / 4c.4 / 4c.5).
     _strategy_holder: dict[str, object] = {}
@@ -2860,7 +2860,7 @@ def run_one(
     log_path.parent.mkdir(parents=True, exist_ok=True)
     log_path.write_text(full_output, encoding="utf-8", errors="replace")
 
-    # SMOTE (GWU-59): lift the per-client application records from the captured
+    # SMOTE : lift the per-client application records from the captured
     # data-prep stdout into per-client provenance counts + the run-level skip
     # flag + the reproducibility seed component (DESIGN.md Stage-D list).
     smote_records = parse_smote_records(full_output)
@@ -2918,7 +2918,7 @@ def run_one(
             # logger dropped on a transient error would be lost. Replaying the
             # full trajectory from the in-memory result keeps per-round metrics
             # complete (idempotent: re-logging an already-live round is a
-            # harmless duplicate point; , run_phase4_flower.py:1145).
+            # harmless duplicate point;, run_phase4_flower.py:1145).
             for entry in trajectory:
                 r = entry.get("round")
                 if r is None:
@@ -2932,7 +2932,7 @@ def run_one(
             for key in ("f1", "accuracy", "loss"):
                 if last.get(key) is not None:
                     client.log_metric(mlflow_run_id, f"final_{key}", float(last[key]))
-            # SMOTE study knob (GWU-59): surface the input params when enabled so
+            # SMOTE study knob : surface the input params when enabled so
             # a SMOTE run is filterable in MLflow (absent = incumbent).
             for pkey, pval in _smote_mlflow_params(run_config_dict, records=smote_records).items():
                 client.log_param(mlflow_run_id, pkey, pval)
@@ -2967,9 +2967,9 @@ def run_one(
         # true LSTM state + effective ramp (v1.6 § 2; replaces the Step-2-era
         # hardcoded "disabled" that wrote false provenance into every result)
         **tge_provenance_fields(strategy, run_config_dict, rounds),
-        # declared-vs-policy defense sizing, kept distinct (PR #12 round-2 P2)
+        # declared-vs-policy defense sizing, kept distinct ( round-2 P2)
         **_defense_provenance_fields(strategy, run_config_dict),
-        # SMOTE study knob (GWU-59): always declares status; absent-or-false = incumbent
+        # SMOTE study knob : always declares status; absent-or-false = incumbent
         **smote_provenance_fields(run_config_dict, records=smote_records),
         # Stage-F knobs: always declared so the cache-reuse
         # identity can tell a legacy arm from a semantic / update-matched / original-
@@ -3002,7 +3002,7 @@ def run_one(
         # Universal run identity (Lane C custody audit): present for ALL
         # arms; equals fingerprint_registry.run_uid on FP-bearing arms.
         **run_uid_provenance(_strategy_holder.get("strategy")),
-        # GWU-61 (v8 change 3): eval holdout row-disjoint from training (default
+        # (v8 change 3): eval holdout row-disjoint from training (default
         # True). Legacy overlapping holdout when --no-holdout-disjoint was set.
         # Durable holdout provenance (rows_excluded + size + per-class) is read
         # from the actual FixedEvalManager — the [FixedEval] stdout record never
@@ -3117,7 +3117,7 @@ def main() -> int:
     """CLI entry point: parse args, run every (config, seed) pair, write summary.
 
     Iterates configs in the outer loop and seeds in the inner loop, calling
-    run_one() for each pair and incrementally writing the partial summary
+    run_one for each pair and incrementally writing the partial summary
     JSON after every run (so a crash/interrupt partway through a sweep still
     leaves usable partial results on disk). Prints a final comparison table
     to stdout and writes the same data to
@@ -3156,14 +3156,14 @@ def main() -> int:
                         "(fresh optimizer each round); 'persistent' = Adam m/v survive "
                         "across rounds for the same flower_cid. If unspecified, falls "
                         "back to --modes alias (Flower→reset, persistent_optimizer→persistent).")
-    add_smote_cli_args(p)  # GWU-59: fleet-reachable SMOTE knob (default OFF)
-    add_stage_f_cli_args(p)  # GWU-59 Stage-F: update-match / weight-mode / semantic (default OFF)
+    add_smote_cli_args(p)  # fleet-reachable SMOTE knob (default OFF)
+    add_stage_f_cli_args(p)  # Stage-F: update-match / weight-mode / semantic (default OFF)
     add_leakage_cli_args(p)  # m1 leakage fix: --normalize-train-only (default OFF)
     add_fp_cohort_cli_args(p)  # H3 post-tau-lock cohort declaration (default: undeclared)
     add_fp_registry_policy_cli_args(p)  # H3 candidate pool (default: flag_gated incumbent)
     add_eval_split_cli_args(p)  # H4 sealed-test evaluator (erratum-A E4; default: legacy)
     add_h2p_cli_args(p)  # erratum-B observe-only + cuts-version (defaults: incumbent)
-    # GWU-61 (v8 change 3): server holdout is row-disjoint from training by
+    # (v8 change 3): server holdout is row-disjoint from training by
     # default; --no-holdout-disjoint restores the legacy overlapping holdout for
     # reproducing pre-v8 numbers.
     p.add_argument("--holdout-disjoint", action=argparse.BooleanOptionalAction,
@@ -3220,7 +3220,7 @@ def main() -> int:
         extra = {k: v for k, v in plugin_config.items() if k != "cs_enabled"}
         # Map underscore TGE/TGE′ keys -> hyphenated Flower run-config keys.
         extra = _hyphenate_tge_extra(extra)
-        # GWU-59: merge the SMOTE run-config overrides (empty dict when the flag
+        # merge the SMOTE run-config overrides (empty dict when the flag
         # is off, so extra is unchanged and the run is byte-identical to today).
         smote_extra = smote_run_config_from_cli(
             args.smote_enabled, args.smote_variant, args.smote_target
@@ -3283,7 +3283,7 @@ def main() -> int:
         )
         if h2p_extra:
             extra = {**extra, **h2p_extra}
-        # GWU-61: thread the disjoint-holdout flag into run-config so server_app
+        # thread the disjoint-holdout flag into run-config so server_app
         # builds the eval manager in the requested mode and the result JSON
         # provenance records it. Always present (default True).
         extra = {**extra, "holdout-disjoint": args.holdout_disjoint}

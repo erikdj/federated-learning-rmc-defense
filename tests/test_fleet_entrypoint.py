@@ -35,7 +35,7 @@ def test_defense_token_known_and_unknown():
     assert defense_token("Krum") == "krum"
     assert defense_token("Krum+TGE") == "krumtge"
     assert defense_token("TGE") == "tgensemble"
-    # TGE′ (GWU-53): strategy-class-lowered convention (server_app.py:78) —
+    # TGE′ : strategy-class-lowered convention (server_app.py:78) —
     # ScenarioTGEPrime -> "tgeprime", ScenarioKrumTGEPrime -> "krumtgeprime".
     # EXP-016 postmortem: these were missing from _DEFENSE_TOKEN, so both smoke
     # units trained 50 rounds then crashed in finalization (exit 1, 2026-07-25).
@@ -251,7 +251,7 @@ def test_build_unit_note_contains_summary_and_console_link():
 
 
 def test_main_skip_path_never_touches_mlflow(monkeypatch):
-    """PR #13 P2 (comment 3567094768): the enrichment moved MLflow contact
+    """ : the enrichment moved MLflow contact
     (set_tracking_uri / set_experiment / tracing) BEFORE the should_skip
     check — so a Batch retry of an already-committed unit would exit nonzero
     on a transient MLflow outage and retry pointlessly, even though its
@@ -282,7 +282,7 @@ def test_main_skip_path_never_touches_mlflow(monkeypatch):
 
 
 def test_runner_argv_includes_rounds_and_all_unit_fields():
-    """PR #13 P2 (comment 3567046864): the runner defaults --rounds to 50
+    """ : the runner defaults --rounds to 50
     (run_phase4_flower.py:1180), and the entrypoint's subprocess argv never
     passed it — a PRE-EXISTING omission (the pre-branch argv also lacked it)
     surfaced by the enrichment now logging unit.rounds as the run param:
@@ -332,7 +332,7 @@ class _FakeFluentMlflow:
 
 
 def test_post_persist_enrichment_swallows_mlflow_errors(tmp_path, capsys):
-    """PR #13 P2 (comment 3566978588): after persist_unit commits the
+    """ : after persist_unit commits the
     done-marker, MLflow decoration is best-effort — a transient MLflow
     failure must NOT raise (a nonzero exit triggers a Batch retry that
     no-ops on the done-marker, leaving a spurious failed attempt)."""
@@ -403,7 +403,7 @@ def test_post_persist_enrichment_logs_model_when_present(tmp_path):
 
 
 def test_build_unit_note_includes_rmc_params_and_verdict():
-    """GWU-47 Lane C: the note carries RMC params (mode/rounds/max) + criteria_ok."""
+    """: the note carries RMC params (mode/rounds/max) + criteria_ok."""
     from docker.entrypoint import build_unit_note
     note = build_unit_note(
         _unit(mode="persistent_optimizer"),
@@ -416,7 +416,7 @@ def test_build_unit_note_includes_rmc_params_and_verdict():
 
 
 def test_post_persist_enrichment_logs_signal_dataset(tmp_path):
-    """GWU-47 Lane A: the live container references the signal log as a
+    """: the live container references the signal log as a
     dataset-by-source (context "signal") — parity with the backfill path, no
     byte copy. unit_status=done still stays last."""
     from docker.entrypoint import post_persist_enrichment
@@ -468,7 +468,7 @@ class _Run:
 
 
 class _FullFakeMlflow:
-    """Full fluent-mlflow surface main() + the start-metadata helpers use."""
+    """Full fluent-mlflow surface main + the start-metadata helpers use."""
 
     def __init__(self, *, sysmetrics_fail=False, pytorch_fail=False, run_id="run-xyz",
                  experiment_id="exp-fake-1"):
@@ -488,14 +488,14 @@ class _FullFakeMlflow:
         self.calls.append(("set_tracking_uri", uri))
 
     def set_experiment(self, name):
-        # GWU-45 Lane A: main() now reads experiment.experiment_id off the return
+        # main now reads experiment.experiment_id off the return
         # value to scope the resume-by-unit lookup, so the fake returns an object
         # exposing it (fluent mlflow.set_experiment returns an Experiment).
         self.calls.append(("set_experiment", name))
         return type("_Exp", (), {"experiment_id": self._experiment_id})()
 
     def start_run(self, run_name=None, run_id=None):
-        # GWU-45 Lane A: main() resumes via start_run(run_id=...) or creates via
+        # main resumes via start_run(run_id=...) or creates via
         # start_run(run_name=...) — the fake accepts and records both.
         self.calls.append(("start_run", run_name, run_id))
         return _Run(run_id or self._run_id)
@@ -624,7 +624,7 @@ def test_set_start_metadata_sets_params_tags_links_and_dataset(monkeypatch, tmp_
 
 class _FakeTensor:
     """Minimal tensor stand-in for the signature forward-pass chain
-    (torch.from_numpy(x) -> model(x) -> .detach().numpy())."""
+    (torch.from_numpy(x) -> model(x) ->.detach.numpy)."""
     def __init__(self, arr):
         self._arr = arr
 
@@ -675,7 +675,7 @@ def test_log_native_model_reconstructs_state_dict_and_registers(tmp_path):
 
 
 def test_log_native_model_attaches_signature_and_links_model_id(tmp_path, monkeypatch):
-    """GWU-47 Lane D: the logged model carries a signature + deterministic
+    """: the logged model carries a signature + deterministic
     input_example, and final metrics link to it via model_id. The dataset
     metadata is created in the test so no machine-local data checkout is used."""
     from docker.entrypoint import log_native_model
@@ -739,7 +739,7 @@ def test_log_native_model_swallows_log_model_errors(tmp_path):
 
 
 def _setup_main(monkeypatch, tmp_path, *, rc=0, write_signal=True):
-    """Wire main() for an integration test: manifest in an in-memory store, env
+    """Wire main for an integration test: manifest in an in-memory store, env
     set, and subprocess.call faked to emulate the runner writing result+signal."""
     import docker.entrypoint as ep
     from praxis_exp.runner_paths import result_filename, signal_filename
@@ -777,7 +777,7 @@ def _setup_main(monkeypatch, tmp_path, *, rc=0, write_signal=True):
         return 0
 
     monkeypatch.setattr(ep.subprocess, "call", fake_call)
-    # GWU-45 Lane A: keep the main() integration tests hermetic — default the
+    # keep the main integration tests hermetic — default the
     # resume-by-unit seam to "no prior run" (the create path) so they never reach
     # a real mlflow.tracking.MlflowClient / tracking server. Tests that exercise
     # the resume path override this after calling _setup_main. raising=False so
@@ -824,7 +824,7 @@ def test_main_persist_failure_ends_failed_and_reraises(monkeypatch, tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# GWU-45 Lane A — resume-by-unit: _find_resumable_run_id seam + main() resume
+# resume-by-unit: _find_resumable_run_id seam + main resume
 # ---------------------------------------------------------------------------
 
 class _FakeResumeClient:
@@ -918,8 +918,8 @@ def test_find_resumable_run_id_default_client_path(monkeypatch):
 
 
 def test_main_resumes_existing_run_for_uncommitted_unit(monkeypatch, tmp_path):
-    """GWU-45 Lane A: when a prior (parent, unit) run exists (a reclaimed
-    attempt), main() RESUMES it via start_run(run_id=...) instead of minting a
+    """: when a prior (parent, unit) run exists (a reclaimed
+    attempt), main RESUMES it via start_run(run_id=...) instead of minting a
     new child with run_name=... — retries collapse into ONE run (no zombie)."""
     import docker.entrypoint as ep
     store, unit = _setup_main(monkeypatch, tmp_path, rc=0)
@@ -958,7 +958,7 @@ def test_main_creates_run_when_none_exists(monkeypatch, tmp_path):
 
 def test_main_sets_live_enrichment_complete_on_full_success(monkeypatch, tmp_path):
     """On a fully-enriched success (start-metadata OK AND the full post-persist
-    decoration block OK) main() sets ``live_enrichment=complete`` — the marker the
+    decoration block OK) main sets ``live_enrichment=complete`` — the marker the
     finalizer's skip-complete fast path requires before it may skip re-logging a
     run. unit_status=done alone is insufficient (it is guaranteed even on partial
     decoration), so the marker is the real proof of a fully-logged run."""
@@ -974,7 +974,7 @@ def test_main_sets_live_enrichment_complete_on_full_success(monkeypatch, tmp_pat
 def test_main_omits_live_enrichment_marker_when_decoration_fails(monkeypatch, tmp_path):
     """If the post-persist decoration block did NOT fully complete
     (post_persist_enrichment returns False), unit_status=done is STILL guaranteed
-    (PR #15) but ``live_enrichment=complete`` must be OMITTED — such a run is missing
+     but ``live_enrichment=complete`` must be OMITTED — such a run is missing
     decoration, so the finalizer must RE-LOG it, never skip it."""
     import docker.entrypoint as ep
     store, unit = _setup_main(monkeypatch, tmp_path, rc=0)
@@ -983,7 +983,7 @@ def test_main_omits_live_enrichment_marker_when_decoration_fails(monkeypatch, tm
     fake = _FullFakeMlflow()
     assert ep.main(_store=store, _mlflow=fake) == 0
     assert "live_enrichment" not in fake.tags       # marker OMITTED
-    assert fake.tags["unit_status"] == "done"       # PR #15 done-guarantee unchanged
+    assert fake.tags["unit_status"] == "done"       # done-guarantee unchanged
     assert fake.ended == ["FINISHED"]
 
 

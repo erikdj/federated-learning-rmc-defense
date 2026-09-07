@@ -1,4 +1,4 @@
-"""Determinism tests for the GWU-31 seeding fix.
+"""Determinism tests for the seeding fix.
 
 Root cause (confirmed): the experiment `seed` from run_config was recorded in
 filenames/logs but never wired into torch's global RNG, so the initial global
@@ -186,7 +186,7 @@ import pytest
 
 class _FakeClientManager:
     """Minimal stand-in satisfying what flwr strategies call in configure_fit:
-    num_available() and sample(). Returned proxies are never invoked."""
+    num_available and sample. Returned proxies are never invoked."""
 
     def __init__(self, n: int):
         from types import SimpleNamespace
@@ -224,7 +224,7 @@ def _build_strategy(strategy_name: str):
 )
 def test_non_scenario_strategy_delivers_server_round_in_fit_config(strategy_name):
     """RED pre-fix: legacy (non-Scenario*) strategies never sent server_round,
-    so FlowerClient.fit() derived the SAME seed every round on those paths."""
+    so FlowerClient.fit derived the SAME seed every round on those paths."""
     from flwr.common import ndarrays_to_parameters
 
     from flowerfl.seeding import seed_everything
@@ -263,7 +263,7 @@ def test_scenario_double_injection_is_harmless():
         min_fit_clients=4,
         min_available_clients=4,
         fraction_fit=1.0,
-        # Same hook server_fn installs via base_params (GWU-31 P2 fix).
+        # Same hook server_fn installs via base_params ( P2 fix).
         on_fit_config_fn=lambda server_round: {"server_round": server_round},
     )
     strategy = ScenarioStrategy(base, plugins=[], scenario_path=None)

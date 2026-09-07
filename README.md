@@ -21,7 +21,7 @@ This release contains software, frozen instruments, selected final numerical evi
 
 | Study | Question | Recorded outcome |
 |---|---|---|
-| H1 | Do combined early-life signal features clear the required improvements over individual feature families? | Criteria not met. Realized FPR was far above the nominal operating point; this is an instrument result, not a valid rejection at nominal 10% FPR. |
+| H1 | Do combined early-life signal features clear the required improvements over individual feature families? | Criteria not met at development-frozen cuts targeting 10% FPR (scenario-mean realized FPR 0.05–0.11). The combined family never gains 5 percentage points over the better single family in S2–S4. |
 | H2 | Does the tenure-gated ensemble meet the detection and comparison requirements under RMC? | Falsified in the tested regimes. Development and held-out results are reported separately. |
 | H2′ | Can a supervised detector generalize across held-out attack families? | Confirmed at its registered operating budget: held-out S4 recall 0.5020 at realized FPR 0.1026. Lower-FPR performance is reported separately. |
 | H3 | Can a transmission-feature fingerprint link a returning identity to its device? | Corrected instrument supported at ceiling: 80/80 malicious re-entry links in each of S3 and S4. This establishes linkage in the simulated partition setting. |

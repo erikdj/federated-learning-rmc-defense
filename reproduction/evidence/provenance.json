@@ -7,10 +7,28 @@
       "claim": "H1",
       "status": "NOT_MET",
       "public_path": "reproduction/evidence/h1-heldout.json",
-      "public_sha256": "a4f6ebe9f577da740e2c4bc06bd066a80b3226a720bbbb3ebabf652c7d9e7092",
-      "source_path": "results/20260809/exp048_heldout/h1_confirm_read.json",
-      "source_sha256": "a4f6ebe9f577da740e2c4bc06bd066a80b3226a720bbbb3ebabf652c7d9e7092",
-      "derivation": "byte-for-byte copy"
+      "public_sha256": "d5ef050af7094285542d6b65f099681a529039af9a36870603dfc954f500f978",
+      "source_path": "results/20260907/h1_corrected_read/h1_corrected_read.json",
+      "source_sha256": "977a2899a601e35a0af52d89ea9dbb65b198e9982f0d7096088e5369f4d8dbee",
+      "derivation": "JSON values preserved; only the listed location metadata is replaced by public references or explicit non-distributed markers.",
+      "source_commit": "351ff91439536adae8fce0acaadef1bfa83462c5",
+      "changed_metadata_fields": [
+        "_meta.heldout_signals_dir",
+        "_meta.dev_signals_dir"
+      ]
+    },
+    {
+      "claim": "H1 operating thresholds",
+      "status": "FROZEN",
+      "public_path": "reproduction/evidence/h1-thresholds-dev-frozen.json",
+      "public_sha256": "6da356dd870f75c250ed19d1e1c374719eb236e7951625e063b5ecb2dd817e99",
+      "source_path": "results/20260907/h1_corrected_read/thresholds_dev_frozen.json",
+      "source_sha256": "4cf2bed0abe4c62859312c7416deb738a696eab514a545d3700dc551ae5d28ad",
+      "source_commit": "351ff91439536adae8fce0acaadef1bfa83462c5",
+      "derivation": "JSON values preserved; only the listed location metadata is replaced by public references or explicit non-distributed markers.",
+      "changed_metadata_fields": [
+        "_meta.source_dir"
+      ]
     },
     {
       "claim": "H2",
@@ -34,10 +52,17 @@
       "claim": "H2-prime",
       "status": "CONFIRMED",
       "public_path": "reproduction/evidence/h2prime-confirmatory.json",
-      "public_sha256": "31068d721c115585f53de103c810e072b482bc5c061d5b2756c46eae5003bef9",
-      "source_path": "results/20260813/h2prime_read/H2PRIME_ADJUDICATION.json",
-      "source_sha256": "79d531baa1f4c831dc07401d61ca2a9edf7811a4d19d0e2aaa3439dca8ca2577",
-      "derivation": "JSON values preserved except private historical storage bucket, custody-record path, and temporary assembly-map path; those three fields carry explicit non-distributed markers"
+      "public_sha256": "2f95177f6d36d65e624474018df5422b43e59e11a5051e4de2d9339b38ca4702",
+      "source_path": "results/20260907/h2prime_window_sensitivity/H2PRIME_ADJUDICATION_window.json",
+      "source_sha256": "ae1251fbc95dbabfdb80c214f0d62baa375ae07ba08771dc62cfaf92798f1094",
+      "derivation": "JSON values preserved; only the listed location metadata is replaced by public references or explicit non-distributed markers.",
+      "source_commit": "351ff91439536adae8fce0acaadef1bfa83462c5",
+      "changed_metadata_fields": [
+        "_meta.map_meta.bucket",
+        "_meta.map_meta.decision_source",
+        "_meta.map_path",
+        "_meta.spec"
+      ]
     },
     {
       "claim": "H3",
@@ -130,7 +155,7 @@
   },
   "calibration_artifact": {
     "public_path": "data/fingerprint_tau_locked_v2.json",
-    "public_sha256": "2b0a23349c7d55916e165ad20e47cceb121cb57c1c69296016236aa203c28eee",
+    "public_sha256": "034ace2b1b85074d44e39c663f3345612996269a5f104b674a5d1a1f376f847f",
     "source_sha256": "8b94fe7fb2fd123b6fa1892e047720f37c2292282213d4efd1787c515a6712ed",
     "derivation": "private local-path metadata redacted; numerical calibration leaves unchanged",
     "code_pin": "flowerfl/fingerprint_registry.py:CALIBRATION_ARTIFACT_SHA256"
@@ -145,5 +170,6 @@
       "EXP-064 and EXP-065 per-unit result JSON"
     ],
     "implication": "the curated final artifacts permit numerical result inspection; raw-to-verdict regeneration requires a fresh fleet or separately released custody corpus"
-  }
+  },
+  "source_path_note": "source_path fields identify archived source artifacts for provenance; they are not links to files distributed in this public repository."
 }

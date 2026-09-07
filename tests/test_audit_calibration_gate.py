@@ -2,7 +2,7 @@
 
 Follows tests/test_analyze_ramp_selection.py's conventions: sys.path insert
 for scripts/, synthetic in-memory fixtures, loud-fail assertions (specific
-CheckResult.name / substrings in .detail, not just "did something fail").
+CheckResult.name / substrings in.detail, not just "did something fail").
 
 Post-merge expectations (PRs #11/#12 on master, methodology v1.19):
 - Multi-Krum keep is DYNAMIC per round: f = ceil(n/2)-1, keep = max(1, n-f-2)
@@ -170,7 +170,7 @@ def test_local_mode_null_signal_line_is_required_failure(
 
 def test_local_mode_non_dict_result_json_is_required_failure(tmp_path):
     """A top-level JSON array/string/null result must be a per-unit parse
-    failure naming the offending type, not a downstream .get(...) crash."""
+    failure naming the offending type, not a downstream.get(...) crash."""
     results_dir, signals_dir = _build_passing_local_fixture(tmp_path)
     uid = _uid("Krum")
     bad_path = results_dir / f"{uid}.json"
@@ -213,8 +213,8 @@ def test_non_object_provenance_is_required_failure(
 
 
 @pytest.mark.parametrize("field,bad_value,type_name", [
-    ("server_round", [], "list"),                  # round-7 named (3567232376)
-    ("logical_cid", {}, "dict"),                   # round-7 named (3567232376)
+    ("server_round", [], "list"),                  # round-7 named
+    ("logical_cid", {}, "dict"),                   # round-7 named
     ("scenario_round", [], "list"),                # sweep: declared.get(unhashable) TypeError
     ("signal_log_schema_version", [3], "list"),    # sweep: set-build TypeError
     ("run_started_at", [], "list"),                # sweep: contract uniformity
@@ -291,7 +291,7 @@ def test_non_numeric_final_accuracy_is_required_failure(tmp_path):
 
 def test_non_numeric_hparams_value_fails_not_crashes():
     """A non-numeric hparam value must be a loud mismatch failure in
-    check_provenance_hparams, not a float() ValueError crash."""
+    check_provenance_hparams, not a float ValueError crash."""
     unit = make_unit_ref("Krum")
     result = make_result("Krum", hparams_lr=None)
     result["hparams"]["lr"] = "abc"
@@ -303,7 +303,7 @@ def test_non_numeric_hparams_value_fails_not_crashes():
 
 def test_non_numeric_tge_threshold_fails_not_crashes():
     """A non-numeric tge_operational_threshold must be a loud provenance
-    failure, not a float() ValueError crash."""
+    failure, not a float ValueError crash."""
     unit = make_unit_ref("TGE")
     result = make_result("TGE", provenance_overrides={"tge_operational_threshold": "x"})
     check = gl.check_provenance_tge_fields(unit, result)  # must not raise
@@ -379,7 +379,7 @@ def test_cli_exits_2_on_wrong_exp_id_manifest(tmp_path, capsys):
 
 def test_local_mode_invalid_utf8_result_is_required_failure(
         tmp_path):
-    """Invalid UTF-8 raises UnicodeDecodeError from read_text() BEFORE
+    """Invalid UTF-8 raises UnicodeDecodeError from read_text BEFORE
     json.loads runs -- it must take the same per-unit required-failure path
     as JSON corruption, not abort the CLI."""
     results_dir, signals_dir = _build_passing_local_fixture(tmp_path)
@@ -465,7 +465,7 @@ def test_krumtge_all_rows_scored_is_positional_bug_signature(tmp_path):
 
 def test_missing_done_marker_fails_s3_integrity():
     """S3-mode-only check: done-marker missing must FAIL. Uses FakeGateStore +
-    the real persist_unit()/write_manifest() -- NOT reimplemented."""
+    the real persist_unit/write_manifest -- NOT reimplemented."""
     store = gs.FakeGateStore()
     units = expand_matrix(["Krum"], [SCENARIO], [SEED], MODE, 2_000_000, ROUNDS)
     write_manifest(store, EXP_ID, units, meta={"methodology_version": ACTIVE_METHODOLOGY, "image_digest": "sha256:abc"})
@@ -774,7 +774,7 @@ def test_unexpected_rounds_capped_listing():
 def test_mixed_schema_version_types_fail_cleanly(
         tmp_path):
     """Mixed incomparable schema_version values (missing-field -> None, a '2'
-    string, int 3) crashed the raw sorted() with TypeError BEFORE the intended
+    string, int 3) crashed the raw sorted with TypeError BEFORE the intended
     required failure was emitted, aborting the whole report. The check must
     emit the failure naming the observed values, and the report must render."""
     from _calibration_gate_report import render_report
@@ -1013,7 +1013,7 @@ def test_krumtge_spot_check_disconnect_round_expects_keep_4():
 
 
 def test_signal_hygiene_accepts_schema_v3_v4_and_v5():
-    """v4 (adds tge_ema_score, GWU-53) and v5 (adds the aggregation coefficient
+    """v4 (adds tge_ema_score, ) and v5 (adds the aggregation coefficient
     + the H3 re-entry event contract) must audit alongside historical v3 logs
     (e.g. EXP-011); an unsupported version still fails.
 
@@ -1054,7 +1054,7 @@ def test_krumtge_unscored_scheduled_round_fails(
     678-693) and TGEnsembleModel.score_client returns a NON-NULL final_score
     in every phase, warmup included (final_score=1.0, phase='warmup' --
     rmc/tg_ensemble.py:801-810; pre_gbdt fallback :817-826), while Krum's
-    keep = max(1, ...) always hands TGE >= 1 survivor."""
+    keep = max(1,...) always hands TGE >= 1 survivor."""
     unit = make_unit_ref("Krum+TGE")
     rows = _krumtge_rows_all_rounds(
         override_round=3, override_kwargs={"n_participants": 20, "n_scored": 0})
@@ -1158,7 +1158,7 @@ def test_krum_score_variance_applies_to_krumtge_unit_too(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Defense-sizing provenance (v1.19 / PR #12 round-2)
+# Defense-sizing provenance (v1.19 / round-2)
 # ---------------------------------------------------------------------------
 
 
@@ -1218,7 +1218,7 @@ def test_wrong_cohort_size_fails(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Rounds consistency (PR #13 --rounds passthrough recurrence guard)
+# Rounds consistency ( --rounds passthrough recurrence guard)
 # ---------------------------------------------------------------------------
 
 
@@ -1255,12 +1255,12 @@ def test_rounds_consistency_passes_on_full_coverage():
 
 
 # ---------------------------------------------------------------------------
-# Manifest meta tolerance (PR #13: prior_launches + launched_at)
+# Manifest meta tolerance (: prior_launches + launched_at)
 # ---------------------------------------------------------------------------
 
 
 def test_manifest_meta_tolerates_prior_launches_and_launched_at(tmp_path):
-    """PR #13 adds prior_launches / launched_at to the manifest meta block;
+    """ adds prior_launches / launched_at to the manifest meta block;
     the gate's manifest reads must tolerate unknown meta keys."""
     store = gs.FakeGateStore()
     units = expand_matrix(["Krum"], [SCENARIO], [SEED], MODE, 2_000_000, ROUNDS)
@@ -1425,7 +1425,7 @@ def _fake_experiment_and_runs(exp_id: str, units, meta, *, unit_status="done",
     runs = []
     for unit in units:
         if param_contract:
-            # PR #15 new-image contract: experiment inputs are PARAMS (config
+            # new-image contract: experiment inputs are PARAMS (config
             # label -> 'defense'); only metadata stays in tags.
             tags = {
                 "unit_id": unit.unit_id, "image_digest": meta["image_digest"],

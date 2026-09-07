@@ -22,7 +22,7 @@ def unit_id(config: str, scenario: str, mode: str, seed: int, repeat: int = 0) -
     """Deterministic, S3/filesystem-safe identifier for one matrix unit.
 
     ``repeat`` is a sentinel-guarded suffix for the same-seed replicate axis
-    (GWU-44 Lane B): repeat >= 1 appends ``__rep{repeat}``; repeat == 0 (the
+    repeat >= 1 appends ``__rep{repeat}``; repeat == 0 (the
     default, and the only value emitted when the repeats axis is inactive) is
     byte-for-byte the pre-axis id. This IFF is load-bearing — the id string is
     the chain-of-custody key for idempotent-skip markers, MLflow tags, and S3

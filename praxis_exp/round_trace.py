@@ -6,7 +6,7 @@ as ``round_timeline.json`` via ``mlflow.log_table`` (renders in the 3.14 artifac
 browser as a table). One row per server round carrying the attack type,
 participant/malicious counts, the defense's trust-score extremes, and — for hard top-k
 defenses — how many malicious clients landed inside the kept set (``kept_malicious``),
-the "filter bypassed" signal. (Per-round MLflow *traces* were retired in GWU-47: an FL
+the "filter bypassed" signal. (Per-round MLflow *traces* were retired because an FL
 training run has no call tree, so this timeline is tabular data — a table, not a trace.
 The ``search_traces``/``delete_traces`` passthroughs survive only for one-time cleanup.)
 
@@ -40,10 +40,10 @@ _HARD, _SOFT, _NONE = "hard_topk", "soft_ensemble", "none"
 _DEFENSE_SCORE: dict[str, tuple[Optional[str], str]] = {
     "krum": ("krum_score", _HARD),
     "krumtge": ("krum_score", _HARD),      # Krum arm drives selection; TGE gates after
-    "krumtgeprime": ("krum_score", _HARD),  # same chain shape with the TGE′ bank (GWU-53)
+    "krumtgeprime": ("krum_score", _HARD),  # same chain shape with the TGE′ bank
     "trustscore": ("trust_score", _HARD),
     "tgensemble": ("tge_score", _SOFT),
-    "tgeprime": ("tge_score", _SOFT),      # FedAvg + TGE′ bank (GWU-53)
+    "tgeprime": ("tge_score", _SOFT),      # FedAvg + TGE′ bank
     "tge": ("tge_score", _SOFT),
     "fedavg": (None, _NONE),
     # H3 fingerprint arms (image-checklist item 6 sweep, 2026-08-17): FP adds
@@ -304,7 +304,7 @@ _COARSE_TRACE_NAMES = ("run_phase4_flower", "persist_unit")
 def cleanup_traces(
     repo_root: Path, exp_id: str, *, _client: Optional[Any] = None,
 ) -> dict[str, Any]:
-    """One-time removal of RETIRED traces for a sweep (GWU-47). Deletes BOTH:
+    """One-time removal of retired traces for a sweep. Deletes both:
     this sweep's per-round ``fl_training__*`` traces (tagged ``praxis.exp_id``,
     so scoped to the sweep) AND the coarse ``run_phase4_flower``/``persist_unit``
     spans the old ``traced_span`` wrapper emitted (untagged, no run linkage — all

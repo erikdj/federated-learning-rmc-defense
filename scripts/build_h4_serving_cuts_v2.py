@@ -190,7 +190,7 @@ def load_unit_observe(results_dir: Path, unit, v1_sha: str) -> dict:
             f"{unit.unit_id}: no observe_only h2p_observe block — the "
             f"calibration log is absent")
 
-    # --- scenario binding (PR #68 P1 — the H3 event<->unit binding lesson):
+    # --- scenario binding (the H3 event<->unit binding lesson):
     # the result's OWN scenario identity must equal the census cell it is
     # pooled into. A mislabeled or filename-swapped result would otherwise
     # contaminate a neighboring (scenario, arm_class) cell SILENTLY.
@@ -210,7 +210,7 @@ def load_unit_observe(results_dir: Path, unit, v1_sha: str) -> dict:
                 f"{unit.unit_id}: provenance scenario {stem!r} (token "
                 f"{prov_token!r}) does not EQUAL the census cell's scenario "
                 f"token {cell_token!r} — a mislabeled/swapped result must "
-                f"never pool into another cell (PR #68 P1)")
+                f"never pool into another cell")
     block_cuts_version = block.get("cuts_version")
     if block_cuts_version not in ("v1", "v2"):
         raise Refusal(
@@ -228,7 +228,7 @@ def load_unit_observe(results_dir: Path, unit, v1_sha: str) -> dict:
             f"cell's expected token {expected_block_token!r} (cell scenario "
             f"{unit.scenario!r} under the block's declared "
             f"{block_cuts_version} cut table) — the observe log belongs to "
-            f"a different scenario (PR #68 P1)")
+            f"a different scenario")
 
     # --- arm-class binding: block AND (when present) provenance must both
     # name the census cell's arm-class — no bypass path.
@@ -243,7 +243,7 @@ def load_unit_observe(results_dir: Path, unit, v1_sha: str) -> dict:
         raise Refusal(
             f"{unit.unit_id}: provenance.h2p_arm_class={prov_arm!r} does not "
             f"match the config's arm-class {expected_arm!r} — the unit did "
-            f"not run the arm it is being pooled as (PR #68 P1)")
+            f"not run the arm it is being pooled as")
     for field, value in (("h2p_observe", block.get("serving_bundle_sha256")),
                          ("provenance", prov.get("serving_bundle_sha256"))):
         if value != v1_sha:

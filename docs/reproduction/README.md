@@ -11,7 +11,7 @@ descriptors.
 
 | Claim | Historical experiment set | Result | Public evidence |
 |---|---|---|---|
-| H1 | EXP-041, EXP-046, EXP-048 | Not met | `h1-heldout.json` |
+| H1 | EXP-041, EXP-046, EXP-048 | Not met at development-frozen risk cuts | `h1-heldout.json`, `h1-thresholds-dev-frozen.json` |
 | H2 | EXP-048 | Falsified | `h2-heldout.json`, frozen cuts |
 | H2′ | EXP-051 plus two EXP-053 refill cells | Confirmed | `h2prime-confirmatory.json` |
 | H3 | EXP-059 validation, EXP-060 adjudication | Pass | `h3-confirmatory.json` |

@@ -8,13 +8,13 @@ Design authority
   `flowerfl/fingerprint_registry.py` before any eval run**) — as pre-registered."
 * v1.10 § 5.1 / **D9 axis (ii)** — device hold-out: "τ **and** the Mahalanobis
   covariance are calibrated on the **even**-numbered base partitions only
-  (`{0,2,…,18}`) ... and the adjudicating re-link metrics are computed **only**
+  (`{0,2,…,18}`)... and the adjudicating re-link metrics are computed **only**
   over re-entry events of the held-out ODD-partition devices."
 * v1.10 § 5.1 **INTEGRITY ASSERTION** — "the registry's re-link decisions must
   be computable from the signal log independent of enforcement". This module is
   therefore *decision-only*: it computes and returns `MatchAssertion`s and never
   touches aggregation weights. Enforcement lives in `fingerprint_plugin.py`.
-* `docs/PHASE7_DESIGN.md` — the `RegistryEntry` schema and the registry's three
+* `docs/harness/architecture.md` — the `RegistryEntry` schema and the registry's three
   operations (new CID / returning CID / flagged).
 
 PENDING ADDENDUM A — covariance estimator selection
@@ -240,7 +240,7 @@ TAU_LOCK_RECORD: Dict[str, Any] = {
         "validation": "shrinkage_to_identity",
         "adjudicating": "shrinkage_to_identity",
     },
-    # The code state that produced the v3 re-lock: master at the PR #59 merge
+    # The code state that produced the v3 re-lock: master at the merge
     # (het-screen fail-open fix; no-unresolved-screen-value-survives invariant).
     "git_commit": "1ebab1a",
     "calibration_source": "EXP-050 array 06764fe9 (10/10 SUCCEEDED, census 9795/9795)",
@@ -567,7 +567,7 @@ class MahalanobisMetric:
     ) -> "MahalanobisMetric":
         """Estimate Σ⁻¹ from the POOLED WITHIN-DEVICE scatter.
 
-        PHASE7_DESIGN specifies "Σ ... estimated from the honest sub-population
+        PHASE7_DESIGN specifies "Σ... estimated from the honest sub-population
         of the registry". For an identity-linking metric that must be read as
         the **within-device** scatter — how much one device's fingerprint moves
         between rounds — not the total scatter of the pooled population.
@@ -854,7 +854,7 @@ class FingerprintObservation:
     an input**: nothing in this module reads the log back, so no value here can
     reach τ, Σ or a re-link decision.
 
-    `vector` is the vector exactly as `observe()` received it — NOT the EMA
+    `vector` is the vector exactly as `observe` received it — NOT the EMA
     registry state, which by construction differs from the second observation of
     a device onward. The comparator has to see the same per-round draws the
     matcher saw. It is a read-only defensive copy, so a caller reusing its input
@@ -904,7 +904,7 @@ class UpstreamRejectionEvent:
     Recorded UNCONDITIONALLY at the call site, which is the whole point. The
     registry's flag lifecycle records only the FIRST flag: the plugin calls
     :meth:`FingerprintRegistry.flag` under ``if not entry.flag_status``, and
-    ``flag()`` itself preserves an existing ``flag_round``. So once an entry has
+    ``flag`` itself preserves an existing ``flag_round``. So once an entry has
     been INHERITED-flagged by the Mahalanobis matcher, every later upstream
     rejection of it vanishes from custody.
 
@@ -929,7 +929,7 @@ class UpstreamRejectionEvent:
 
 @dataclass(frozen=True)
 class ObservationResult:
-    """What one `observe()` call did."""
+    """What one `observe` call did."""
 
     entry_id: str
     is_first_appearance: bool
@@ -1194,7 +1194,7 @@ class FingerprintRegistry:
         vector = self._validate(fingerprint)
         round_index = int(server_round)
         # A.5(a)/A.6: record the draw AS OBSERVED, before any EMA refresh. This
-        # is the only statement in `observe()` that the log participates in; it
+        # is the only statement in `observe` that the log participates in; it
         # reads nothing and returns nothing, so the decision below is unchanged.
         self._record_observation(key, vector, round_index)
 
@@ -1284,7 +1284,7 @@ class FingerprintRegistry:
         first, then `entry_id`** (assigned in first-appearance order) — so the
         immediate predecessor is the asserted parent and `generation` chains.
         A non-deterministic tie-break here would reproduce the aggregate_fit
-        arrival-order defect of GWU-51 / EXP-019 inside the H3 metric itself.
+        arrival-order defect of EXP-019 inside the H3 metric itself.
         """
         candidates = sorted(
             self.flagged_entries(), key=lambda e: (-e.generation, e.entry_id)
@@ -1304,7 +1304,7 @@ class FingerprintRegistry:
         * **strictly-earlier enrollment** — a session first seen in the SAME
           round is not a candidate. Within a round the observe order is the
           arrival order, and letting it decide candidacy would put the
-          arrival-order non-determinism of GWU-51 / EXP-019 straight inside the
+          arrival-order non-determinism of EXP-019 straight inside the
           H3 metric.
 
         The tie-break is the replay's disclosed Policy-B rule: candidates

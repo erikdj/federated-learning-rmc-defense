@@ -191,7 +191,7 @@ def test_h2p_observe_block_refuses_without_ground_truth_source():
 
 @pytest.mark.unit
 def test_cuts_version_cache_guard_blocks_cross_version_reuse():
-    """PR #68 P2: a cached ENFORCING v1 unit must NOT be silently reused for
+    """: a cached ENFORCING v1 unit must NOT be silently reused for
     a --h2p-cuts-version v2 run (and vice versa)."""
     from run_phase4_flower import _h2p_cuts_version_cache_reusable
 
@@ -212,10 +212,10 @@ def test_cuts_version_cache_guard_blocks_cross_version_reuse():
         v1_cached, {"h2p-cuts-version": "v1"}) is True
     # active absent = the effective v1 default: a v1-cut unit matches it
     assert _h2p_cuts_version_cache_reusable(v1_cached, None) is True
-    # legacy paths byte-unchanged: absent-vs-absent OK ...
+    # legacy paths byte-unchanged: absent-vs-absent OK...
     assert _h2p_cuts_version_cache_reusable(legacy, None) is True
     assert _h2p_cuts_version_cache_reusable(legacy, {}) is True
-    # ... but a legacy cache never stands in for a DECLARED v2 run
+    #... but a legacy cache never stands in for a DECLARED v2 run
     assert _h2p_cuts_version_cache_reusable(
         legacy, {"h2p-cuts-version": "v2"}) is False
     # non-detector arm (declared null): the knob cannot change its behavior

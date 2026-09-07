@@ -58,7 +58,7 @@ def test_placeholder_in_frontmatter_rejected(tmp_path):
         parse_matrix(p)
 
 
-# --- GWU-44 Lane B: optional matrix.repeats -------------------------------
+# --- : optional matrix.repeats -------------------------------
 # repeats is OPTIONAL (defaults to 1) — it must NOT join the required-field
 # validator, or every existing design doc without it would fail to parse.
 

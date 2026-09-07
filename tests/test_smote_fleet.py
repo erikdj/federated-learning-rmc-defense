@@ -1,4 +1,4 @@
-"""Fleet-path SMOTE pass-through (GWU-59): make the knob reachable from the
+"""Fleet-path SMOTE pass-through : make the knob reachable from the
 Batch chain, not just `flwr run`.
 
 The chain: matrix design-doc frontmatter `run_extras:` -> matrix_launch writes it
@@ -435,7 +435,7 @@ def test_random_under_is_registered():
 # 9. Stage-F fleet reachability (image-update checklist item 7): the three
 #    Stage-F knobs (update_match / weight_mode / smote_semantic_target) must be
 #    expressible design-doc -> manifest run_extras -> entrypoint argv -> runner
-#    CLI, or Batch units silently run the incumbent defaults (the GWU-59
+# CLI, or Batch units silently run the incumbent defaults (the
 #    near-miss). Mirrors the SMOTE sections above.
 # ===========================================================================
 

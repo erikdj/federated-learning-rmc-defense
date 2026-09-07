@@ -1,8 +1,8 @@
-"""TGE′ two-leg long-memory BANK — unit + model-integration tests (GWU-53).
+"""TGE′ two-leg long-memory BANK — unit + model-integration tests.
 
 TGE′ keeps the incumbent LSTM long-memory expert and ADDS a second leg — an EMA
 reputation expert over the cold-start (IsolationForest) score s_cs(t) — combined
-by the zero-parameter fail-safe min(). These tests pin, TDD-first:
+by the zero-parameter fail-safe min. These tests pin, TDD-first:
 
 1. The EMA update recurrence incl. absence decay (hand-computed fixture) — the
    RMCDetectionPlugin._temporal_score mechanism with s_cs as the input.
@@ -281,7 +281,7 @@ def test_lstm_mode_details_carry_null_ema_score():
 
 # ---------------------------------------------------------------------------
 # 8. Regression: honest clients are NOT mass-filtered while the EMA matures
-#    (GWU-53). r_init is the neutral no-evidence value (0.85), so a
+#. r_init is the neutral no-evidence value (0.85), so a
 #    fresh EMA leg never drags an honest client below the 0.7 operational cutoff.
 # ---------------------------------------------------------------------------
 

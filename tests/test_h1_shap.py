@@ -1,4 +1,4 @@
-"""GWU-26 — hard-gate that h1_shap's feature-matrix path IS the H1 retrain's.
+"""— hard-gate that h1_shap's feature-matrix path IS the H1 retrain's.
 
 The SHAP script must attribute importance on exactly the matrix each detector was
 trained on. Two guarantees are tested:

@@ -1,6 +1,6 @@
 """parse_eval_trajectory: F1/Acc/Loss are always parsed; Prec/Rec are appended
 by the new-image ScenarioStrategy eval line and captured when present, staying
-backward-compatible with older logs that omit them (PR #15)."""
+backward-compatible with older logs that omit them."""
 from run_phase4_flower import parse_eval_trajectory
 
 

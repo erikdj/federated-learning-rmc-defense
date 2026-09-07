@@ -41,7 +41,7 @@ def test_fake_copies_environment_defensively():
 
 
 def test_fake_job_definition_image_defaults_none_and_is_configurable():
-    """GWU-48: None (default) opts the fake out of the digest guard; a
+    """: None (default) opts the fake out of the digest guard; a
     configured reference drives it."""
     assert FakeBatchSubmitter().job_definition_image("jobdef:7") is None
     fake = FakeBatchSubmitter(job_def_image="repo@sha256:abc")
@@ -49,7 +49,7 @@ def test_fake_job_definition_image_defaults_none_and_is_configurable():
 
 
 def test_boto3_job_definition_image_resolves_via_describe():
-    """GWU-48: resolve the job def's containerProperties.image so launch-matrix
+    """: resolve the job def's containerProperties.image so launch-matrix
     can compare it against the requested digest."""
     client = MagicMock()
     client.describe_job_definitions.return_value = {
