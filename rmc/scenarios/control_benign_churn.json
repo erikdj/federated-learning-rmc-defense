@@ -1,0 +1,42 @@
+{
+  "name": "control_benign_churn",
+  "description": "v23 control condition: 20 honest clients with deterministic participation churn. 3 clients absent per round on a rotating schedule (no malicious activity). Models realistic network intermittency without attack. Used as false-positive control for detectors.",
+  "dataset": "edge_full_20_rmc",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0":  {"physical_id": 0},
+    "client_1":  {"physical_id": 1},
+    "client_2":  {"physical_id": 2},
+    "client_3":  {"physical_id": 3},
+    "client_4":  {"physical_id": 4},
+    "client_5":  {"physical_id": 5},
+    "client_6":  {"physical_id": 6},
+    "client_7":  {"physical_id": 7},
+    "client_8":  {"physical_id": 8},
+    "client_9":  {"physical_id": 9},
+    "client_10": {"physical_id": 10},
+    "client_11": {"physical_id": 11},
+    "client_12": {"physical_id": 12},
+    "client_13": {"physical_id": 13},
+    "client_14": {"physical_id": 14},
+    "client_15": {"physical_id": 15},
+    "client_16": {"physical_id": 16},
+    "client_17": {"physical_id": 17},
+    "client_18": {"physical_id": 18},
+    "client_19": {"physical_id": 19}
+  },
+  "schedule": [
+    {"rounds": [1, 1], "participants": ["client_0","client_1","client_2","client_3","client_4","client_5","client_6","client_7","client_8","client_9","client_10","client_11","client_12","client_13","client_14","client_15","client_16","client_17","client_18","client_19"], "attacks": {}, "comment": "R1 honest warmup: all 20 participate (needed for discovery round to complete)."},
+    {"rounds": [2, 2], "participants": ["client_1","client_2","client_3","client_4","client_5","client_6","client_8","client_9","client_10","client_11","client_13","client_14","client_15","client_16","client_17","client_18","client_19"], "attacks": {}, "comment": "absent: 0, 7, 12"},
+    {"rounds": [3, 3], "participants": ["client_0","client_2","client_3","client_4","client_6","client_7","client_8","client_9","client_10","client_12","client_13","client_14","client_15","client_17","client_18","client_19"], "attacks": {}, "comment": "absent: 1, 5, 11, 16"},
+    {"rounds": [4, 4], "participants": ["client_0","client_1","client_3","client_4","client_5","client_7","client_8","client_9","client_11","client_12","client_13","client_15","client_16","client_17","client_18","client_19"], "attacks": {}, "comment": "absent: 2, 6, 10, 14"},
+    {"rounds": [5, 5], "participants": ["client_0","client_1","client_2","client_4","client_5","client_6","client_8","client_10","client_11","client_12","client_14","client_15","client_16","client_17","client_19"], "attacks": {}, "comment": "absent: 3, 7, 9, 13, 18"},
+    {"rounds": [6, 6], "participants": ["client_0","client_1","client_2","client_3","client_5","client_6","client_7","client_9","client_10","client_11","client_13","client_14","client_16","client_18","client_19"], "attacks": {}, "comment": "absent: 4, 8, 12, 15, 17"},
+    {"rounds": [7, 7], "participants": ["client_0","client_1","client_2","client_3","client_4","client_6","client_7","client_8","client_10","client_12","client_14","client_15","client_16","client_17","client_19"], "attacks": {}, "comment": "absent: 5, 9, 11, 13, 18"},
+    {"rounds": [8, 8], "participants": ["client_0","client_1","client_2","client_4","client_5","client_7","client_8","client_9","client_11","client_13","client_14","client_15","client_16","client_17","client_18"], "attacks": {}, "comment": "absent: 3, 6, 10, 12, 19"},
+    {"rounds": [9, 9], "participants": ["client_1","client_2","client_3","client_5","client_6","client_8","client_10","client_11","client_12","client_13","client_15","client_16","client_17","client_18","client_19"], "attacks": {}, "comment": "absent: 0, 4, 7, 9, 14"},
+    {"rounds": [10, 10], "participants": ["client_0","client_2","client_3","client_4","client_6","client_7","client_9","client_10","client_11","client_12","client_14","client_15","client_17","client_18","client_19"], "attacks": {}, "comment": "absent: 1, 5, 8, 13, 16"},
+    {"rounds": [11, 50], "participants": ["client_0","client_1","client_2","client_3","client_4","client_5","client_6","client_7","client_8","client_9","client_10","client_11","client_12","client_13","client_14","client_15","client_16","client_17","client_18","client_19"], "attacks": {}, "comment": "Steady-state: all 20 participate rounds 11-50 (churn is concentrated early for signal-collection reproducibility)."}
+  ]
+}

@@ -1,0 +1,11 @@
+[
+ "update_norm",
+ "train_loss",
+ "num_examples",
+ "norm_variance",
+ "loss_slope",
+ "cos_to_median",
+ "L2_to_median",
+ "cos_drift",
+ "cos_variance"
+]

@@ -1,0 +1,32 @@
+{
+  "$schema_version": 1,
+  "name": "S4_full_mix",
+  "type": "full_mix",
+  "output_file": "rmc/scenarios/S4_full_mix.json",
+  "params": {
+    "n_adversaries": 9,
+    "n_clients": 20,
+    "n_rounds": 50,
+    "discovery_rounds": 2,
+    "alie_z_max": 0.9,
+    "seed": 42,
+    "malicious_reconnect_cycles": 4,
+    "n_honest_reconnect_cycles": 3,
+    "attack_rotation": [
+      {"type": "gaussian_noise", "params": {"mean": 2.0, "std": 2.0}},
+      {"type": "alie",           "params": {"z_max": 0.9}},
+      {"type": "label_flip",     "params": {}}
+    ],
+    "honest_churn": [
+      {"base": "client_11", "new": "client_11_new1", "disconnect_round": 14, "rejoin_round": 16},
+      {"base": "client_13", "new": "client_13_new1", "disconnect_round": 27, "rejoin_round": 30},
+      {"base": "client_15", "new": "client_15_new1", "disconnect_round": 37, "rejoin_round": 40}
+    ],
+    "schedule_milestones": {
+      "preface_start": 3,
+      "preface_end": 6,
+      "mal_cycle_disconnect_rounds": [7, 19, 31, 41],
+      "mal_cycle_alie_ranges": [[8, 13], [20, 26], [32, 36], [42, 50]]
+    }
+  }
+}

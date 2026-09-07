@@ -1,0 +1,12 @@
+{
+  "locked_at": "2026-07-10",
+  "decision_authority": "Erik Jones (ratified via merge of the pre-experiment readiness PR)",
+  "purpose": "GI-16 attack-specification lockdown: one canonical artifact for the attack-strength values used by every confirmatory run. Values are restated, not invented — each was pre-registered in the experimental-design spec chain and is already encoded per-scenario in rmc/scenario_specs/S{0-4}.spec.json.",
+  "alie_z_max_canonical": 0.9,
+  "alie_z_max_sensitivity": 0.5,
+  "sources": {
+    "alie_z_max_canonical": "spec 2026-05-27 §4.2 'ALIE z_max canonical 0.9 (Szelag-exact)'; reaffirmed amendment v1.4 §5 'ALIE canonical strength z_max=0.9 is retained'",
+    "alie_z_max_sensitivity": "spec 2026-05-27 §4.2 'ALIE z_max sensitivity arm 0.5 (locked 2026-05-27)' and §6.2 sensitivity arm 'ALIE z=0.5'"
+  },
+  "notes": "Sensitivity-arm runs are documented sensitivities, not required for any H1-H4 PASS decision (spec §6.2). Exploratory sweep outputs at other z values (signals/sweep_zmax*) are not pre-registered and must not be cited as confirmatory."
+}

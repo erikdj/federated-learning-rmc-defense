@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "purpose": "H3 sealed adjudication seeds (amendment v1.10 D9). Sealed: do NOT inspect or use during H3 development, tau calibration, or the dev-seed VALIDATION run. Opened only for the sealed H3 adjudicating launch, after the validation run's five INTEGRITY gates pass. Adjudicating metrics are computed only over held-out ODD-partition device re-entry events (D9 axis ii).",
+    "locked_at": "2026-08-02",
+    "generated_by": "scripts/generate_h3_eval_seeds.py",
+    "entropy": "numpy.random.SeedSequence() fresh OS entropy at ratification",
+    "spec": "docs/superpowers/specs/2026-08-02-praxis-experimental-design-v1.10.md \u00a75.1/D9",
+    "disjoint_from": {
+      "dev": "data/seeds.json dev_seeds (public [42,137,256,314,500])",
+      "h2_confirm": "data/h2_confirm_seeds.json h2_confirm_seeds (sealed, n=10)",
+      "h4_sealed": "data/seeds.json confirmatory_seeds (sealed, n=10)"
+    },
+    "disjointness": "generator-asserted against all three reserved sets at draw time"
+  },
+  "h3_eval_seeds": [
+    96112,
+    23186,
+    23051,
+    19247,
+    22018
+  ]
+}

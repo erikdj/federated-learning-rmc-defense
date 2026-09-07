@@ -1,0 +1,317 @@
+{
+ "instrument": "identity_only",
+ "status": "RATIFIED \u2014 amendment 2026-08-14 \u00a7 2, rev-5 (Erik Jones, 2026-08-14 'approve'; methodology v1.50). The bars below are FROZEN; the ONE execution on the sealed adjudicating cohort adjudicates H3.",
+ "registry_policy": "identity_only",
+ "provenance_units": [
+  {
+   "path": "results/s3_identity_reset_only__tge_fp__persistent_optimizer__seed11749.json",
+   "run_uid": "flower_persistent__S3_identity_reset_only__tgefp__seed11749__2026-08-16T15:01:32Z",
+   "scenario": "S3_identity_reset_only",
+   "seed": 11749,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s3_identity_reset_only__tge_fp__persistent_optimizer__seed19025.json",
+   "run_uid": "flower_persistent__S3_identity_reset_only__tgefp__seed19025__2026-08-16T15:02:05Z",
+   "scenario": "S3_identity_reset_only",
+   "seed": 19025,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s3_identity_reset_only__tge_fp__persistent_optimizer__seed66912.json",
+   "run_uid": "flower_persistent__S3_identity_reset_only__tgefp__seed66912__2026-08-16T15:01:45Z",
+   "scenario": "S3_identity_reset_only",
+   "seed": 66912,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s3_identity_reset_only__tge_fp__persistent_optimizer__seed75901.json",
+   "run_uid": "flower_persistent__S3_identity_reset_only__tgefp__seed75901__2026-08-16T15:01:32Z",
+   "scenario": "S3_identity_reset_only",
+   "seed": 75901,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s3_identity_reset_only__tge_fp__persistent_optimizer__seed93207.json",
+   "run_uid": "flower_persistent__S3_identity_reset_only__tgefp__seed93207__2026-08-16T15:54:22Z",
+   "scenario": "S3_identity_reset_only",
+   "seed": 93207,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s4_full_mix__tge_fp__persistent_optimizer__seed11749.json",
+   "run_uid": "flower_persistent__S4_full_mix__tgefp__seed11749__2026-08-16T15:01:34Z",
+   "scenario": "S4_full_mix",
+   "seed": 11749,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s4_full_mix__tge_fp__persistent_optimizer__seed19025.json",
+   "run_uid": "flower_persistent__S4_full_mix__tgefp__seed19025__2026-08-16T15:01:58Z",
+   "scenario": "S4_full_mix",
+   "seed": 19025,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s4_full_mix__tge_fp__persistent_optimizer__seed66912.json",
+   "run_uid": "flower_persistent__S4_full_mix__tgefp__seed66912__2026-08-16T15:02:04Z",
+   "scenario": "S4_full_mix",
+   "seed": 66912,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s4_full_mix__tge_fp__persistent_optimizer__seed75901.json",
+   "run_uid": "flower_persistent__S4_full_mix__tgefp__seed75901__2026-08-16T15:02:28Z",
+   "scenario": "S4_full_mix",
+   "seed": 75901,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  },
+  {
+   "path": "results/s4_full_mix__tge_fp__persistent_optimizer__seed93207.json",
+   "run_uid": "flower_persistent__S4_full_mix__tgefp__seed93207__2026-08-16T15:54:19Z",
+   "scenario": "S4_full_mix",
+   "seed": 93207,
+   "fp_cohort": "adjudicating",
+   "registry_policy": "identity_only",
+   "tau": 26.466874982783164
+  }
+ ],
+ "cohort": "adjudicating",
+ "identity_comparison": "base_partition",
+ "wrong_device_guard_definition": "An honest device correctly re-identified as ITSELF is a CORRECT decision. EXP-056's so-called 'false links' were all self-re-identifications; under an identity-only instrument that outcome is the instrument working. The guard therefore counts WRONG-DEVICE links only \u2014 a link asserted at the locked tau to a device that is not the re-entrant's \u2014 and is scored SEPARATELY on the malicious and honest populations, which differ by an order of magnitude in size. Enforcement consequences of linking honest devices belong to H4's utility metrics, not here.",
+ "arm_rule": "TGE+FP arm only, read from 'h3_arm' (v1.10 \u00a7 5.1)",
+ "n_events_loaded": 375,
+ "n_events_scored": 175,
+ "components": {
+  "rank1_S3": {
+   "label": "rank-1 identification, malicious re-entries (S3)",
+   "scenario": "S3_identity_reset_only",
+   "numerator": 80,
+   "denominator": 80,
+   "indeterminate": 0,
+   "value": 1.0,
+   "bar": 0.85,
+   "direction": "at_least",
+   "ci95": {
+    "method": "clopper_pearson_one_sided_95",
+    "alpha": 0.05,
+    "bound_side": "lower",
+    "bound": 0.9632458022200177,
+    "note": "Exact one-sided 95% bound, taken on the side a failure would come from: guards are bounded above, rank-1 bars below. Exact rather than normal-approximate because the denominators are small.",
+    "error_rate_upper": 0.036754197779982345,
+    "error_rate_note": "the same bound as an UPPER bound on the miss rate (1 - rank1)"
+   },
+   "resolution_note": null,
+   "status": "PASS"
+  },
+  "rank1_S4": {
+   "label": "rank-1 identification, malicious re-entries (S4)",
+   "scenario": "S4_full_mix",
+   "numerator": 80,
+   "denominator": 80,
+   "indeterminate": 0,
+   "value": 1.0,
+   "bar": 0.85,
+   "direction": "at_least",
+   "ci95": {
+    "method": "clopper_pearson_one_sided_95",
+    "alpha": 0.05,
+    "bound_side": "lower",
+    "bound": 0.9632458022200177,
+    "note": "Exact one-sided 95% bound, taken on the side a failure would come from: guards are bounded above, rank-1 bars below. Exact rather than normal-approximate because the denominators are small.",
+    "error_rate_upper": 0.036754197779982345,
+    "error_rate_note": "the same bound as an UPPER bound on the miss rate (1 - rank1)"
+   },
+   "resolution_note": null,
+   "status": "PASS"
+  },
+  "wrong_device_link_rate_malicious": {
+   "label": "wrong-device link rate at the locked tau (malicious events)",
+   "scenario": null,
+   "numerator": 0,
+   "denominator": 160,
+   "indeterminate": 0,
+   "value": 0.0,
+   "bar": 0.1,
+   "direction": "at_most",
+   "ci95": {
+    "method": "clopper_pearson_one_sided_95",
+    "alpha": 0.05,
+    "bound_side": "upper",
+    "bound": 0.018549134077503755,
+    "note": "Exact one-sided 95% bound, taken on the side a failure would come from: guards are bounded above, rank-1 bars below. Exact rather than normal-approximate because the denominators are small."
+   },
+   "resolution_note": null,
+   "status": "PASS"
+  },
+  "wrong_device_link_rate_honest": {
+   "label": "wrong-device link rate at the locked tau (honest events)",
+   "scenario": null,
+   "numerator": 0,
+   "denominator": 15,
+   "indeterminate": 0,
+   "value": 0.0,
+   "bar": 0.1,
+   "direction": "at_most",
+   "ci95": {
+    "method": "clopper_pearson_one_sided_95",
+    "alpha": 0.05,
+    "bound_side": "upper",
+    "bound": 0.18103627252208462,
+    "note": "Exact one-sided 95% bound, taken on the side a failure would come from: guards are bounded above, rank-1 bars below. Exact rather than normal-approximate because the denominators are small."
+   },
+   "resolution_note": "scored on 15 honest event(s); at the design count of 15 the rate resolves only in steps of 1/15 = 0.0667, so a bar of 0.1 admits at most 1 wrong-device link. The exact one-sided bound in `ci95` is what makes that resolution honest \u2014 0/15 does NOT mean the true rate is zero.",
+   "status": "PASS"
+  }
+ },
+ "informs_only": false,
+ "census_gate_enforced": true,
+ "diagnostic_partial_census": false,
+ "component_conjunction": "PASS",
+ "verdict": "PASS",
+ "verdict_status": "PASS",
+ "verdict_withheld_reason": null,
+ "verdict_rule": "RATIFIED (rev-5, methodology v1.50): PASS iff rank1_S3 >= 0.85 AND rank1_S4 >= 0.85 AND wrong_device_link_rate_malicious <= 0.1 AND wrong_device_link_rate_honest <= 0.1 \u2014 the conjunction of all FOUR. The two guards are separate because the populations differ by an order of magnitude: pooled, every honest event could be linked to the wrong device and the guard would still read 15/175 = 0.086 and pass. A zero denominator OR any rank-1 indeterminate event makes that component INCONCLUSIVE and gates the verdict \u2014 never an auto-pass. Bars FROZEN at ratification (rev-5, 2026-08-14).",
+ "design_counts": {
+  "rank1_S3": 80,
+  "rank1_S4": 80,
+  "wrong_device_link_rate_malicious": 160,
+  "wrong_device_link_rate_honest": 15
+ },
+ "realised_counts": {
+  "rank1_S3": 80,
+  "rank1_S4": 80,
+  "wrong_device_link_rate_malicious": 160,
+  "wrong_device_link_rate_honest": 15
+ },
+ "counts_match_design": true,
+ "design_count_deltas": {},
+ "event_tallies": {
+  "S3_identity_reset_only": {
+   "rank1_correct": 80,
+   "rank1_wrong_device": 0,
+   "rank1_no_candidate": 0,
+   "rank1_indeterminate": 0
+  },
+  "S4_full_mix": {
+   "rank1_correct": 95,
+   "rank1_wrong_device": 0,
+   "rank1_no_candidate": 0,
+   "rank1_indeterminate": 0
+  }
+ },
+ "populations": {
+  "malicious_per_scenario": {
+   "S3_identity_reset_only": 80,
+   "S4_full_mix": 80
+  },
+  "malicious_total": 160,
+  "honest_total": 15
+ },
+ "n_indeterminate": 0,
+ "nearest_candidate_coverage": {
+  "field": "nearest_logical_id",
+  "n_with_nearest_field": 175,
+  "n_events_scored": 175,
+  "complete": true,
+  "note": "Rank-1 is threshold-free, so it is fully determinate only on events carrying the nearest-candidate column. A corpus written before that extension reports complete=false, and any of its unmatched events with a finite min_d are INCONCLUSIVE rather than assumed either way."
+ },
+ "reported_only": {
+  "honest_rank1": {
+   "numerator": 15,
+   "denominator": 15,
+   "indeterminate": 0,
+   "rate": 1.0,
+   "note": "an honest device re-identified as ITSELF is a CORRECT decision (\u00a7 2). Reported for context; it gates nothing."
+  },
+  "per_device_rank1": {
+   "1": {
+    "correct": 40,
+    "events": 40,
+    "indeterminate": 0,
+    "rate": 1.0
+   },
+   "3": {
+    "correct": 40,
+    "events": 40,
+    "indeterminate": 0,
+    "rate": 1.0
+   },
+   "5": {
+    "correct": 40,
+    "events": 40,
+    "indeterminate": 0,
+    "rate": 1.0
+   },
+   "7": {
+    "correct": 40,
+    "events": 40,
+    "indeterminate": 0,
+    "rate": 1.0
+   },
+   "11": {
+    "correct": 5,
+    "events": 5,
+    "indeterminate": 0,
+    "rate": 1.0
+   },
+   "13": {
+    "correct": 5,
+    "events": 5,
+    "indeterminate": 0,
+    "rate": 1.0
+   },
+   "15": {
+    "correct": 5,
+    "events": 5,
+    "indeterminate": 0,
+    "rate": 1.0
+   }
+  },
+  "per_device_note": "reported context, never a bar. A device with any indeterminate event reports rate=None rather than a rate computed over the answerable subset, which would flatter the instrument.",
+  "min_d_percentiles": {
+   "n": 175,
+   "min": 4.194928197545975,
+   "p10": 5.7261037125481415,
+   "p50": 7.6658301205136565,
+   "p90": 10.042055932940666,
+   "max": 15.555699979476692,
+   "note": "over every event carrying a finite min_d; events whose candidate pool was empty record a null distance and are excluded"
+  }
+ },
+ "not_derivable": {
+  "cmc_rank_2_3": {
+   "value": null,
+   "reason": "the schema-v5 re-entry row records only the NEAREST candidate, and only when the match fired (min_d <= tau). Ranks beyond the first are never written, so no CMC curve past rank 1 exists in this corpus.",
+   "remedy": "would require the registry to log the ordered candidate list (or at least the top-3) per re-entry event \u2014 a registry and schema change, not a scoring change."
+  },
+  "full_cmc_curve": {
+   "value": null,
+   "reason": "the schema-v5 re-entry row records only the NEAREST candidate, and only when the match fired (min_d <= tau). Ranks beyond the first are never written, so no CMC curve past rank 1 exists in this corpus.",
+   "remedy": "as above"
+  },
+  "distance_separability_census": {
+   "value": null,
+   "reason": "requires the distance to the nearest SAME-device candidate and to the nearest OTHER-device candidate separately; the row carries a single min_d and no per-candidate breakdown.",
+   "remedy": "computable offline from the custody observation_log by re-running the matcher, which is a replay, not a read of the logged assertions \u2014 deliberately out of scope for a scorer whose integrity claim is that it scores what the registry decided."
+  }
+ }
+}

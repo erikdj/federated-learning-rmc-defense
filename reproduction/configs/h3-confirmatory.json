@@ -1,0 +1,21 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H3 corrected-instrument adjudicating cohort",
+  "historical_experiment": "EXP-060",
+  "matrix": {
+    "defenses": ["TGE", "TGE+FP"],
+    "scenarios": ["S3_identity_reset_only", "S4_full_mix"],
+    "seeds": [11749, 19025, 66912, 75901, 93207],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {
+    "fp_cohort": "adjudicating",
+    "fp_registry_policy": "identity_only"
+  },
+  "expected_units": 20,
+  "tau": 26.466874982783164,
+  "scored_partition": "odd_device_holdout"
+}

@@ -1,0 +1,20 @@
+[Unit]
+Description=MLflow tracking server for federated-learning RMC experiments
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ec2-user
+EnvironmentFile=/etc/fl-rmc-mlflow.env
+ExecStart=/usr/local/bin/fl-rmc-start-mlflow
+Restart=always
+RestartSec=10
+
+# MLflow has no application authentication in this deployment. Restrict TCP
+# 5000 at the security-group boundary. Set browser host/origin allowlists in
+# /etc/fl-rmc-mlflow.env when exposing the UI through a private DNS name.
+
+[Install]
+WantedBy=multi-user.target
+

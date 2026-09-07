@@ -1,0 +1,185 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Portable AWS Batch fleet for federated-learning RMC experiments.
+
+Parameters:
+  ImageDigest:
+    Type: String
+    Description: Full ECR URI pinned by sha256 digest.
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  RouteTableIds:
+    Type: CommaDelimitedList
+  BucketArn:
+    Type: String
+  MlflowSgId:
+    Type: AWS::EC2::SecurityGroup::Id
+  CreateS3Endpoint:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+  ProjectTag:
+    Type: String
+  OwnerTag:
+    Type: String
+  PurposeTag:
+    Type: String
+  SpotMaxVcpus:
+    Type: Number
+    Default: 128
+  OnDemandMaxVcpus:
+    Type: Number
+    Default: 32
+  JobVcpus:
+    Type: Number
+    Default: 32
+  JobMemoryMiB:
+    Type: Number
+    Default: 122880
+  RayCpus:
+    Type: Number
+    Default: 32
+  JobTimeoutSeconds:
+    Type: Number
+    Default: 86400
+  InstanceTypes:
+    Type: CommaDelimitedList
+    Default: m6i.8xlarge,m5.8xlarge,m6a.8xlarge,m5a.8xlarge
+
+Conditions:
+  MakeS3Endpoint: !Equals [!Ref CreateS3Endpoint, 'true']
+
+Resources:
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ec2.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: {Roles: [!Ref InstanceRole]}
+
+  JobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ecs-tasks.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: experiment-artifacts
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:GetObject, s3:PutObject, s3:ListBucket]
+                Resource: [!Ref BucketArn, !Sub '${BucketArn}/*']
+
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ecs-tasks.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  SpotComputeEnvironment:
+    Type: AWS::Batch::ComputeEnvironment
+    Properties:
+      Type: MANAGED
+      State: ENABLED
+      ComputeResources:
+        Type: SPOT
+        AllocationStrategy: SPOT_PRICE_CAPACITY_OPTIMIZED
+        MinvCpus: 0
+        MaxvCpus: !Ref SpotMaxVcpus
+        InstanceTypes: !Ref InstanceTypes
+        Subnets: !Ref Subnets
+        SecurityGroupIds: [!Ref MlflowSgId]
+        InstanceRole: !GetAtt InstanceProfile.Arn
+        Tags:
+          Name: !Sub '${ProjectTag}-batch-spot'
+          Project: !Ref ProjectTag
+          Owner: !Ref OwnerTag
+          Purpose: !Ref PurposeTag
+          ManagedBy: cloudformation
+
+  OnDemandComputeEnvironment:
+    Type: AWS::Batch::ComputeEnvironment
+    Properties:
+      Type: MANAGED
+      State: ENABLED
+      ComputeResources:
+        Type: EC2
+        AllocationStrategy: BEST_FIT_PROGRESSIVE
+        MinvCpus: 0
+        MaxvCpus: !Ref OnDemandMaxVcpus
+        InstanceTypes: !Ref InstanceTypes
+        Subnets: !Ref Subnets
+        SecurityGroupIds: [!Ref MlflowSgId]
+        InstanceRole: !GetAtt InstanceProfile.Arn
+        Tags:
+          Name: !Sub '${ProjectTag}-batch-on-demand'
+          Project: !Ref ProjectTag
+          Owner: !Ref OwnerTag
+          Purpose: !Ref PurposeTag
+          ManagedBy: cloudformation
+
+  JobQueue:
+    Type: AWS::Batch::JobQueue
+    Properties:
+      Priority: 1
+      ComputeEnvironmentOrder:
+        - {Order: 1, ComputeEnvironment: !Ref SpotComputeEnvironment}
+        - {Order: 2, ComputeEnvironment: !Ref OnDemandComputeEnvironment}
+
+  JobDefinition:
+    Type: AWS::Batch::JobDefinition
+    Properties:
+      Type: container
+      RetryStrategy:
+        Attempts: 10
+        EvaluateOnExit:
+          - {OnStatusReason: 'Host EC2*', Action: RETRY}
+          - {OnReason: '*', Action: EXIT}
+      Timeout:
+        AttemptDurationSeconds: !Ref JobTimeoutSeconds
+      ContainerProperties:
+        Image: !Ref ImageDigest
+        Vcpus: !Ref JobVcpus
+        Memory: !Ref JobMemoryMiB
+        Environment:
+          - Name: PRAXIS_RAY_CPUS
+            Value: !Sub '${RayCpus}'
+        LinuxParameters:
+          SharedMemorySize: 32768
+        JobRoleArn: !GetAtt JobRole.Arn
+        ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+
+  S3Endpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: MakeS3Endpoint
+    Properties:
+      VpcId: !Ref VpcId
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      RouteTableIds: !Ref RouteTableIds
+
+Outputs:
+  JobQueueArn:
+    Value: !Ref JobQueue
+  JobDefinitionArn:
+    Value: !Ref JobDefinition

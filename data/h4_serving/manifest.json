@@ -1,0 +1,148 @@
+{
+  "built_at": "2026-08-17T12:09:26Z",
+  "bundle_format": "h4-serving-v1",
+  "construction": "docs/superpowers/specs/2026-08-16-h4-composition-preregistration.md \u00a7 7.1",
+  "corpus": {
+    "bucket": "RESEARCH_ARTIFACT_BUCKET",
+    "cells_by_source": {
+      "EXP-051": 48,
+      "EXP-053": 2
+    },
+    "defense_token": "krum_tge",
+    "golden_gate": "PASS",
+    "map_path": "reproduction-inputs/assembly_map.json",
+    "map_sha256": "b794412a75a2bb5340d7296ec92c718f7e908d50b390badfb4f0e5ca0fef2e8f",
+    "n_cells": 50,
+    "n_rows": 49050,
+    "row_census": {
+      "S0": {
+        "honest": 5500,
+        "malicious": 4500,
+        "total": 10000
+      },
+      "S1": {
+        "honest": 5350,
+        "malicious": 4500,
+        "total": 9850
+      },
+      "S2": {
+        "honest": 5500,
+        "malicious": 4500,
+        "total": 10000
+      },
+      "S3": {
+        "honest": 5500,
+        "malicious": 4140,
+        "total": 9640
+      },
+      "S4": {
+        "honest": 5420,
+        "malicious": 4140,
+        "total": 9560
+      }
+    },
+    "seeds_ascending": [
+      17869,
+      29387,
+      39375,
+      39477,
+      45013,
+      47599,
+      70402,
+      90369,
+      96540,
+      98362
+    ]
+  },
+  "cut_semantics": "cut = float(np.quantile(honest_scores, 1 - 0.10)) per scenario (R.cut_from_calibration, higher_is_trust=False); flag = score > cut (strict)",
+  "cuts": {
+    "S0": {
+      "cut": 0.010674324405773459,
+      "n_honest": 5500,
+      "realized_fpr": 0.1
+    },
+    "S1": {
+      "cut": 0.010892867132793213,
+      "n_honest": 5350,
+      "realized_fpr": 0.09981308411214954
+    },
+    "S2": {
+      "cut": 0.017324161838936508,
+      "n_honest": 5500,
+      "realized_fpr": 0.1
+    },
+    "S3": {
+      "cut": 0.007758049496485459,
+      "n_honest": 5500,
+      "realized_fpr": 0.1
+    },
+    "S4": {
+      "cut": 0.023504740285597018,
+      "n_honest": 5420,
+      "realized_fpr": 0.1
+    }
+  },
+  "features_frozen_order": [
+    "update_norm",
+    "train_loss",
+    "num_examples",
+    "norm_variance",
+    "loss_slope",
+    "cos_to_median",
+    "L2_to_median",
+    "cos_drift",
+    "cos_variance"
+  ],
+  "files": {
+    "cuts.json": "edfdfab8cf7fd5e91b1c94800926ab3b46b56b042186badee0a75fe204ca9a94",
+    "features.json": "96a7076e35a3653e1792b2b5b195e06f69a601efc21342a92e23d0ce694af829",
+    "model.joblib": "3569181d47a8b705f9c5e1cff8429eb9451208dbfd46d39e8184e6af2eb0642c"
+  },
+  "fit": {
+    "classifier": "GradientBoostingClassifier",
+    "n_features": 9,
+    "n_honest": 27270,
+    "n_positive": 21780,
+    "n_rows": 49050
+  },
+  "fpr_band": [
+    0.08,
+    0.12
+  ],
+  "gbdt_params": {
+    "ccp_alpha": 0.0,
+    "criterion": "friedman_mse",
+    "init": null,
+    "learning_rate": 0.1,
+    "loss": "log_loss",
+    "max_depth": 3,
+    "max_features": null,
+    "max_leaf_nodes": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 1,
+    "min_samples_split": 2,
+    "min_weight_fraction_leaf": 0.0,
+    "n_estimators": 100,
+    "n_iter_no_change": null,
+    "random_state": 0,
+    "subsample": 1.0,
+    "tol": 0.0001,
+    "validation_fraction": 0.1,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "model_registration": {
+    "alias": "champion__H4",
+    "name": "praxis-h2prime-detector"
+  },
+  "source_commit": "ea14a64c2fa13b281a95c5f96373d63b5af0fd3d",
+  "target_fpr": 0.1,
+  "versions": {
+    "joblib": "1.5.3",
+    "numpy": "2.2.6",
+    "numpy_pinned": "2.2.6",
+    "python": "3.10.20",
+    "sklearn": "1.7.2",
+    "sklearn_pinned": "1.7.2"
+  }
+}

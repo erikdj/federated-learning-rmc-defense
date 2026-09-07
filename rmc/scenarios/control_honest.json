@@ -1,0 +1,42 @@
+{
+  "name": "control_honest",
+  "description": "v23 control condition: all 20 clients honest, 50 rounds. Baseline for matched-control comparisons. No attacks, no churn, no identity reset. Used to establish clean training trajectory for signal baselines.",
+  "dataset": "edge_full_20_rmc",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0":  {"physical_id": 0},
+    "client_1":  {"physical_id": 1},
+    "client_2":  {"physical_id": 2},
+    "client_3":  {"physical_id": 3},
+    "client_4":  {"physical_id": 4},
+    "client_5":  {"physical_id": 5},
+    "client_6":  {"physical_id": 6},
+    "client_7":  {"physical_id": 7},
+    "client_8":  {"physical_id": 8},
+    "client_9":  {"physical_id": 9},
+    "client_10": {"physical_id": 10},
+    "client_11": {"physical_id": 11},
+    "client_12": {"physical_id": 12},
+    "client_13": {"physical_id": 13},
+    "client_14": {"physical_id": 14},
+    "client_15": {"physical_id": 15},
+    "client_16": {"physical_id": 16},
+    "client_17": {"physical_id": 17},
+    "client_18": {"physical_id": 18},
+    "client_19": {"physical_id": 19}
+  },
+  "schedule": [
+    {
+      "rounds": [1, 50],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9",
+        "client_10", "client_11", "client_12", "client_13", "client_14",
+        "client_15", "client_16", "client_17", "client_18", "client_19"
+      ],
+      "attacks": {},
+      "comment": "All 20 clients honest for all 50 rounds."
+    }
+  ]
+}

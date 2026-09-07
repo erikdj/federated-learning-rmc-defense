@@ -1,0 +1,84 @@
+{
+  "name": "control_adaptive_no_reset",
+  "description": "v23 control condition: 9 malicious clients (11-19) switch attack strategy mid-run but keep the SAME identity (no RMC reset). R6-20 Gaussian noise, R21-50 ALIE. Tests whether adaptive attacks alone (without identity reset) evade defenses. Isolates the effect of 'adaptive' vs the effect of 'reset'.",
+  "dataset": "edge_full_20_rmc",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0":  {"physical_id": 0},
+    "client_1":  {"physical_id": 1},
+    "client_2":  {"physical_id": 2},
+    "client_3":  {"physical_id": 3},
+    "client_4":  {"physical_id": 4},
+    "client_5":  {"physical_id": 5},
+    "client_6":  {"physical_id": 6},
+    "client_7":  {"physical_id": 7},
+    "client_8":  {"physical_id": 8},
+    "client_9":  {"physical_id": 9},
+    "client_10": {"physical_id": 10},
+    "client_11": {"physical_id": 11},
+    "client_12": {"physical_id": 12},
+    "client_13": {"physical_id": 13},
+    "client_14": {"physical_id": 14},
+    "client_15": {"physical_id": 15},
+    "client_16": {"physical_id": 16},
+    "client_17": {"physical_id": 17},
+    "client_18": {"physical_id": 18},
+    "client_19": {"physical_id": 19}
+  },
+  "schedule": [
+    {
+      "rounds": [1, 5],
+      "participants": [
+        "client_0","client_1","client_2","client_3","client_4",
+        "client_5","client_6","client_7","client_8","client_9",
+        "client_10","client_11","client_12","client_13","client_14",
+        "client_15","client_16","client_17","client_18","client_19"
+      ],
+      "attacks": {},
+      "comment": "Warmup: all 20 clients honest, 5 rounds."
+    },
+    {
+      "rounds": [6, 20],
+      "participants": [
+        "client_0","client_1","client_2","client_3","client_4",
+        "client_5","client_6","client_7","client_8","client_9",
+        "client_10","client_11","client_12","client_13","client_14",
+        "client_15","client_16","client_17","client_18","client_19"
+      ],
+      "attacks": {
+        "client_11": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_12": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_13": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_14": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_15": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_16": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_17": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_18": {"type": "gaussian_noise", "params": {"sigma": 2.0}},
+        "client_19": {"type": "gaussian_noise", "params": {"sigma": 2.0}}
+      },
+      "comment": "Loud phase: Gaussian noise on malicious clients 11-19 for 15 rounds."
+    },
+    {
+      "rounds": [21, 50],
+      "participants": [
+        "client_0","client_1","client_2","client_3","client_4",
+        "client_5","client_6","client_7","client_8","client_9",
+        "client_10","client_11","client_12","client_13","client_14",
+        "client_15","client_16","client_17","client_18","client_19"
+      ],
+      "attacks": {
+        "client_11": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_12": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_13": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_14": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_15": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_16": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_17": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_18": {"type": "alie", "params": {"z_max": 0.9}},
+        "client_19": {"type": "alie", "params": {"z_max": 0.9}}
+      },
+      "comment": "Adaptive switch: malicious clients 11-19 switch to ALIE (z_max=0.9) from R21 onwards. SAME identities — no reset. Tests whether strategy adaptation alone evades defenses that have built trust during Gaussian phase."
+    }
+  ]
+}

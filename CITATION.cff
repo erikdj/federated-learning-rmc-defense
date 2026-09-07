@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, cite this repository and the exact release or commit."
+type: software
+title: "Federated Learning under Reconnecting Malicious Clients: Research Testbed and Experiment Harness"
+authors:
+  - family-names: Jones
+    given-names: Erik
+version: 0.1.0
+date-released: 2026-09-06
+repository-code: "https://github.com/erikdj/federated-learning-rmc-defense"
+license: MIT
+keywords:
+  - federated learning
+  - Byzantine robustness
+  - reproducibility
+  - AWS Batch
+  - MLflow

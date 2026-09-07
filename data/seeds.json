@@ -1,0 +1,10 @@
+{
+  "_meta": {
+    "description": "Seed split for v23 experiments. Development seeds are used for detector training, hyperparameter tuning, and all iterative/exploratory work. Confirmatory seeds are held out and used ONLY for Phase 7+ confirmatory hypothesis tests (v23 §7.2, §10). No detector, no hparam, no defense is ever tuned on confirmatory seeds.",
+    "v23_rule": "3.5 — Do not train the detector on the same seeds or physical clients used for confirmatory evaluation",
+    "created": "2026-04-16",
+    "phase": "Phase 1 P1.9"
+  },
+  "dev_seeds": [42, 137, 256, 314, 500],
+  "confirmatory_seeds": [731, 999, 1234, 2048, 4096, 8192, 16384, 32768, 65536, 131072]
+}

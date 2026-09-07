@@ -1,0 +1,1459 @@
+{
+  "name": "S4_full_mix",
+  "description": "Design D Scenario S4 (full-mix deployment-realistic). All three confounders enabled: 4 malicious reconnect cycles (_new1..4), 3 honest reconnect cycles (client_11_new1, client_13_new1, client_15_new1), and attack-type rotation across malicious cycles (gaussian_noise \u2192 ALIE \u2192 label_flip \u2192 gaussian_noise \u2192 ALIE; ALIE z_max=0.9). Thesis target per spec \u00a7 6.2.",
+  "dataset": "edge_full_20_rmc",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0": {
+      "physical_id": 0
+    },
+    "client_1": {
+      "physical_id": 1
+    },
+    "client_2": {
+      "physical_id": 2
+    },
+    "client_3": {
+      "physical_id": 3
+    },
+    "client_4": {
+      "physical_id": 4
+    },
+    "client_5": {
+      "physical_id": 5
+    },
+    "client_6": {
+      "physical_id": 6
+    },
+    "client_7": {
+      "physical_id": 7
+    },
+    "client_8": {
+      "physical_id": 8
+    },
+    "client_9": {
+      "physical_id": 9
+    },
+    "client_10": {
+      "physical_id": 10
+    },
+    "client_11": {
+      "physical_id": 11
+    },
+    "client_12": {
+      "physical_id": 12
+    },
+    "client_13": {
+      "physical_id": 13
+    },
+    "client_14": {
+      "physical_id": 14
+    },
+    "client_15": {
+      "physical_id": 15
+    },
+    "client_16": {
+      "physical_id": 16
+    },
+    "client_17": {
+      "physical_id": 17
+    },
+    "client_18": {
+      "physical_id": 18
+    },
+    "client_19": {
+      "physical_id": 19
+    },
+    "client_0_new1": {
+      "physical_id": 20
+    },
+    "client_1_new1": {
+      "physical_id": 21
+    },
+    "client_2_new1": {
+      "physical_id": 22
+    },
+    "client_3_new1": {
+      "physical_id": 23
+    },
+    "client_4_new1": {
+      "physical_id": 24
+    },
+    "client_5_new1": {
+      "physical_id": 25
+    },
+    "client_6_new1": {
+      "physical_id": 26
+    },
+    "client_7_new1": {
+      "physical_id": 27
+    },
+    "client_8_new1": {
+      "physical_id": 28
+    },
+    "client_0_new2": {
+      "physical_id": 29
+    },
+    "client_1_new2": {
+      "physical_id": 30
+    },
+    "client_2_new2": {
+      "physical_id": 31
+    },
+    "client_3_new2": {
+      "physical_id": 32
+    },
+    "client_4_new2": {
+      "physical_id": 33
+    },
+    "client_5_new2": {
+      "physical_id": 34
+    },
+    "client_6_new2": {
+      "physical_id": 35
+    },
+    "client_7_new2": {
+      "physical_id": 36
+    },
+    "client_8_new2": {
+      "physical_id": 37
+    },
+    "client_0_new3": {
+      "physical_id": 38
+    },
+    "client_1_new3": {
+      "physical_id": 39
+    },
+    "client_2_new3": {
+      "physical_id": 40
+    },
+    "client_3_new3": {
+      "physical_id": 41
+    },
+    "client_4_new3": {
+      "physical_id": 42
+    },
+    "client_5_new3": {
+      "physical_id": 43
+    },
+    "client_6_new3": {
+      "physical_id": 44
+    },
+    "client_7_new3": {
+      "physical_id": 45
+    },
+    "client_8_new3": {
+      "physical_id": 46
+    },
+    "client_0_new4": {
+      "physical_id": 47
+    },
+    "client_1_new4": {
+      "physical_id": 48
+    },
+    "client_2_new4": {
+      "physical_id": 49
+    },
+    "client_3_new4": {
+      "physical_id": 50
+    },
+    "client_4_new4": {
+      "physical_id": 51
+    },
+    "client_5_new4": {
+      "physical_id": 52
+    },
+    "client_6_new4": {
+      "physical_id": 53
+    },
+    "client_7_new4": {
+      "physical_id": 54
+    },
+    "client_8_new4": {
+      "physical_id": 55
+    },
+    "client_11_new1": {
+      "physical_id": 56
+    },
+    "client_13_new1": {
+      "physical_id": 57
+    },
+    "client_15_new1": {
+      "physical_id": 58
+    }
+  },
+  "schedule": [
+    {
+      "rounds": [
+        1,
+        2
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9"
+      ],
+      "attacks": {},
+      "comment": "Discovery rounds 1..2 \u2014 all originals honest"
+    },
+    {
+      "rounds": [
+        3,
+        6
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "Gaussian preface from 9 original adversaries"
+    },
+    {
+      "rounds": [
+        7,
+        7
+      ],
+      "participants": [
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_9"
+      ],
+      "attacks": {},
+      "comment": "Mal cycle 1 disconnect: original adversaries leave"
+    },
+    {
+      "rounds": [
+        8,
+        13
+      ],
+      "participants": [
+        "client_0_new1",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new1",
+        "client_2_new1",
+        "client_3_new1",
+        "client_4_new1",
+        "client_5_new1",
+        "client_6_new1",
+        "client_7_new1",
+        "client_8_new1",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Mal cycle 1 ALIE: 9 _new1 adversaries (z_max=0.9)"
+    },
+    {
+      "rounds": [
+        14,
+        14
+      ],
+      "participants": [
+        "client_0_new1",
+        "client_10",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new1",
+        "client_2_new1",
+        "client_3_new1",
+        "client_4_new1",
+        "client_5_new1",
+        "client_6_new1",
+        "client_7_new1",
+        "client_8_new1",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Honest churn 1 disconnect: client_11 leaves; mal_new1 ALIE continues"
+    },
+    {
+      "rounds": [
+        15,
+        15
+      ],
+      "participants": [
+        "client_0_new1",
+        "client_10",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new1",
+        "client_2_new1",
+        "client_3_new1",
+        "client_4_new1",
+        "client_5_new1",
+        "client_6_new1",
+        "client_7_new1",
+        "client_8_new1",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Honest churn 1 absent: client_11 still gone; mal_new1 ALIE continues"
+    },
+    {
+      "rounds": [
+        16,
+        18
+      ],
+      "participants": [
+        "client_0_new1",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new1",
+        "client_2_new1",
+        "client_3_new1",
+        "client_4_new1",
+        "client_5_new1",
+        "client_6_new1",
+        "client_7_new1",
+        "client_8_new1",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Honest churn 1 rejoin: client_11_new1 active; mal_new1 ALIE continues"
+    },
+    {
+      "rounds": [
+        19,
+        19
+      ],
+      "participants": [
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_9"
+      ],
+      "attacks": {},
+      "comment": "Mal cycle 2 disconnect: _new1 adversaries leave"
+    },
+    {
+      "rounds": [
+        20,
+        26
+      ],
+      "participants": [
+        "client_0_new2",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new2",
+        "client_2_new2",
+        "client_3_new2",
+        "client_4_new2",
+        "client_5_new2",
+        "client_6_new2",
+        "client_7_new2",
+        "client_8_new2",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_1_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_2_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_3_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_4_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_5_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_6_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_7_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_8_new2": {
+          "type": "label_flip",
+          "params": {}
+        }
+      },
+      "comment": "Mal cycle 2 label_flip: 9 _new2 adversaries"
+    },
+    {
+      "rounds": [
+        27,
+        27
+      ],
+      "participants": [
+        "client_0_new2",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new2",
+        "client_2_new2",
+        "client_3_new2",
+        "client_4_new2",
+        "client_5_new2",
+        "client_6_new2",
+        "client_7_new2",
+        "client_8_new2",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_1_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_2_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_3_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_4_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_5_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_6_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_7_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_8_new2": {
+          "type": "label_flip",
+          "params": {}
+        }
+      },
+      "comment": "Honest churn 2 disconnect: client_13 leaves"
+    },
+    {
+      "rounds": [
+        28,
+        29
+      ],
+      "participants": [
+        "client_0_new2",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new2",
+        "client_2_new2",
+        "client_3_new2",
+        "client_4_new2",
+        "client_5_new2",
+        "client_6_new2",
+        "client_7_new2",
+        "client_8_new2",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_1_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_2_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_3_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_4_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_5_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_6_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_7_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_8_new2": {
+          "type": "label_flip",
+          "params": {}
+        }
+      },
+      "comment": "Honest churn 2 absent: mal_new2 label_flip continues"
+    },
+    {
+      "rounds": [
+        30,
+        30
+      ],
+      "participants": [
+        "client_0_new2",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new2",
+        "client_2_new2",
+        "client_3_new2",
+        "client_4_new2",
+        "client_5_new2",
+        "client_6_new2",
+        "client_7_new2",
+        "client_8_new2",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_1_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_2_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_3_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_4_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_5_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_6_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_7_new2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_8_new2": {
+          "type": "label_flip",
+          "params": {}
+        }
+      },
+      "comment": "Honest churn 2 rejoin: client_13_new1 active; mal_new2 label_flip"
+    },
+    {
+      "rounds": [
+        31,
+        31
+      ],
+      "participants": [
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_9"
+      ],
+      "attacks": {},
+      "comment": "Mal cycle 3 disconnect: _new2 adversaries leave"
+    },
+    {
+      "rounds": [
+        32,
+        36
+      ],
+      "participants": [
+        "client_0_new3",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new3",
+        "client_2_new3",
+        "client_3_new3",
+        "client_4_new3",
+        "client_5_new3",
+        "client_6_new3",
+        "client_7_new3",
+        "client_8_new3",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "Mal cycle 3 gaussian_noise: 9 _new3 adversaries"
+    },
+    {
+      "rounds": [
+        37,
+        37
+      ],
+      "participants": [
+        "client_0_new3",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new3",
+        "client_2_new3",
+        "client_3_new3",
+        "client_4_new3",
+        "client_5_new3",
+        "client_6_new3",
+        "client_7_new3",
+        "client_8_new3",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "Honest churn 3 disconnect: client_15 leaves"
+    },
+    {
+      "rounds": [
+        38,
+        39
+      ],
+      "participants": [
+        "client_0_new3",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new3",
+        "client_2_new3",
+        "client_3_new3",
+        "client_4_new3",
+        "client_5_new3",
+        "client_6_new3",
+        "client_7_new3",
+        "client_8_new3",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "Honest churn 3 absent: mal_new3 gaussian_noise continues"
+    },
+    {
+      "rounds": [
+        40,
+        40
+      ],
+      "participants": [
+        "client_0_new3",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_15_new1",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new3",
+        "client_2_new3",
+        "client_3_new3",
+        "client_4_new3",
+        "client_5_new3",
+        "client_6_new3",
+        "client_7_new3",
+        "client_8_new3",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8_new3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "Honest churn 3 rejoin: client_15_new1 active; mal_new3 gaussian_noise"
+    },
+    {
+      "rounds": [
+        41,
+        41
+      ],
+      "participants": [
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_15_new1",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_9"
+      ],
+      "attacks": {},
+      "comment": "Mal cycle 4 disconnect: _new3 adversaries leave"
+    },
+    {
+      "rounds": [
+        42,
+        50
+      ],
+      "participants": [
+        "client_0_new4",
+        "client_10",
+        "client_11_new1",
+        "client_12",
+        "client_13_new1",
+        "client_14",
+        "client_15_new1",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19",
+        "client_1_new4",
+        "client_2_new4",
+        "client_3_new4",
+        "client_4_new4",
+        "client_5_new4",
+        "client_6_new4",
+        "client_7_new4",
+        "client_8_new4",
+        "client_9"
+      ],
+      "attacks": {
+        "client_0_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Mal cycle 4 ALIE: 9 _new4 adversaries (z_max=0.9)"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "purpose": "H3 sealed adjudication seeds, SECOND draw (corrected-instrument pre-registration 2026-08-14 \u00a7 3.3; replaces the exposed 2026-08-02 h3_eval draw, whose values are in this draw's exclusion universe). Sealed: do NOT inspect or use during H3 development, calibration, or the dev-seed corrected-VALIDATION run. OPENING CONDITION: transcribed mechanically at the sealed adjudicating launch prep ONLY after the corrected-validation cohort (20 units, identity_only policy, image v16) passes INTEGRITY gates (a)-(e) of v1.10 \u00a7 5.1 verbatim on its exports. Adjudicating metrics per the corrected instrument: P1 rank-1 malicious-only + P2m/P2h, ODD-partition hold-out events only.",
+    "locked_at": "2026-08-14",
+    "generated_by": "scripts/generate_h3_eval_seeds_v2.py",
+    "entropy": "numpy.random.SeedSequence() fresh OS entropy at draw time",
+    "spec": "docs/superpowers/specs/2026-08-14-h3-corrected-instrument-preregistration.md \u00a7 3.3 (RATIFIED rev-5, methodology v1.50)",
+    "disjoint_from": {
+      "dev": "data/seeds.json dev_seeds (public [42,137,256,314,500])",
+      "h2_confirm": "data/h2_confirm_seeds.json h2_confirm_seeds (sealed, n=10)",
+      "h4_sealed": "data/seeds.json confirmatory_seeds (sealed, n=10)",
+      "h3_eval_v1_exposed": "data/h3_eval_seeds.json h3_eval_seeds (n=5; EXPOSED at the EXP-056 launch transcription; excluded so the corrected sealed cohort shares no seed with the invalidated run)"
+    },
+    "disjointness": "generator-asserted against all four reserved sets at draw time"
+  },
+  "h3_eval_seeds": [
+    93207,
+    75901,
+    66912,
+    11749,
+    19025
+  ]
+}

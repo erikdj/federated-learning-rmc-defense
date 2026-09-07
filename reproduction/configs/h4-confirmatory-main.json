@@ -1,0 +1,22 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H4 composition confirmatory main fleet",
+  "historical_experiment": "EXP-064",
+  "matrix": {
+    "defenses": [
+      "H2P+FP+Krum", "Krum", "H2P+FP", "H2P+Krum",
+      "H2P+FP+TS", "TrustScore", "H2P+TS", "FedAvg"
+    ],
+    "scenarios": [
+      "C0_clean_no_attack", "S0_clean_baseline", "S1_benign_churn_only",
+      "S2_adaptive_switching_only", "S3_identity_reset_only", "S4_full_mix"
+    ],
+    "seeds": [731, 999, 1234, 2048, 4096, 8192, 16384, 32768, 65536, 131072],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {"eval_split": "sealed_test", "h2p_cuts_version": "v2"},
+  "expected_units": 480
+}

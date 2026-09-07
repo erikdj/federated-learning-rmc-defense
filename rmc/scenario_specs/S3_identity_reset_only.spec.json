@@ -1,0 +1,17 @@
+{
+  "$schema_version": 1,
+  "name": "S3_identity_reset_only",
+  "type": "identity_reset_only",
+  "output_file": "rmc/scenarios/S3_identity_reset_only.json",
+  "params": {
+    "n_adversaries": 9,
+    "n_clients": 20,
+    "n_rounds": 50,
+    "discovery_rounds": 2,
+    "alie_z_max": 0.9,
+    "seed": 42,
+    "reconnect_cycles": 4,
+    "gaussian_preface_duration": 5,
+    "cycle_gap": 1
+  }
+}

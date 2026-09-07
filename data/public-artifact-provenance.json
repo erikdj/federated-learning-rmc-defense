@@ -1,0 +1,37 @@
+{
+  "source_commit": "a8605f60b1d75c0b76f42a4aea4023533af3f54d",
+  "purpose": "Metadata-only redaction of personal resource locations; all numeric leaves are preserved exactly. Runtime pins bind these public bytes. Active H4 v2 manifest/cuts/model are unchanged.",
+  "artifacts": [
+    {
+      "path": "data/fingerprint_tau_locked_v1.json",
+      "original_sha256": "30f19f33950bf4eba94906c435e2830edcc3182a14699fc338e561eb87d55bbb",
+      "public_sha256": "d260eb4bfe3ea18f88eb708e85f0bfb8767c080767830e139cf3c9cf1dc80cd4",
+      "changed_metadata_fields": [
+        "._meta.observation_sources[0]"
+      ],
+      "numeric_values_changed": false
+    },
+    {
+      "path": "data/fingerprint_tau_locked_v2.json",
+      "original_sha256": "8b94fe7fb2fd123b6fa1892e047720f37c2292282213d4efd1787c515a6712ed",
+      "public_sha256": "034ace2b1b85074d44e39c663f3345612996269a5f104b674a5d1a1f376f847f",
+      "changed_metadata_fields": [
+        "._meta.pool_screen_dir",
+        "._meta.observation_sources[0]",
+        ".cohorts.validation.feature_selection.pool_screen.parquet_dir",
+        ".cohorts.adjudicating.feature_selection.pool_screen.parquet_dir"
+      ],
+      "numeric_values_changed": false
+    },
+    {
+      "path": "data/h4_serving/manifest.json",
+      "original_sha256": "56eca8e31d1352a73e70962d2d3375e412def6f983bae6be29a7897fef16db8a",
+      "public_sha256": "a80e9eb61ab144914772e20ddd39a9b09c76f2fbbafebb7efffda7d35ccb480a",
+      "changed_metadata_fields": [
+        ".corpus.bucket",
+        ".corpus.map_path"
+      ],
+      "numeric_values_changed": false
+    }
+  ]
+}

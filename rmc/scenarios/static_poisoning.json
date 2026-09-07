@@ -1,0 +1,31 @@
+{
+  "name": "static_poisoning",
+  "description": "Client 9 attacks with gaussian_noise_loud all 30 rounds. No churn, same logical ID. Shows ordinary poisoning damage.",
+  "dataset": "edge_full",
+  "num_rounds": 30,
+  "seed": 42,
+  "clients": {
+    "client_0": {"physical_id": 0},
+    "client_1": {"physical_id": 1},
+    "client_2": {"physical_id": 2},
+    "client_3": {"physical_id": 3},
+    "client_4": {"physical_id": 4},
+    "client_5": {"physical_id": 5},
+    "client_6": {"physical_id": 6},
+    "client_7": {"physical_id": 7},
+    "client_8": {"physical_id": 8},
+    "client_9": {"physical_id": 9}
+  },
+  "schedule": [
+    {
+      "rounds": [1, 30],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9"
+      ],
+      "attacks": {
+        "client_9": {"type": "gaussian_noise_loud", "params": {"sigma": 1.0}}
+      }
+    }
+  ]
+}

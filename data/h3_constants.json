@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "description": "Locked H3 (RQ3) malicious-rejoin success event rule and re-entry-prevention thresholds. Resolves spec v1.0 soft-spot 2 (GI-05 / MG-05) via Variant 2B (generous any-round-acceptance-within-window). Pre-registration evidence: locked before any H3 tau-calibration or evaluation run.",
+    "resolves": "docs/superpowers/specs/2026-05-28-soft-spot-amendments.md soft-spot 2, Variant 2B",
+    "advisor_decision": "1B + 2B + 3B selected 2026-06-05 (Erik Jones)",
+    "affected_spec_sections": [
+      "v1.0 6.3 (H3 metrics)",
+      "v27 Ch.3 3.7",
+      "v27 Ch.3 3.9"
+    ],
+    "locked_at": "2026-06-05",
+    "git_commit": "c68f3127ad35150eff6632fb202328bdaaba6e7e",
+    "git_commit_stamped_at": "2026-08-09 (EXP-050 launch prep; director stamp per s7 Q3 ruling)"
+  },
+  "rejoin_success_rule": {
+    "variant": "2B",
+    "name": "any-round acceptance within post-rejoin window",
+    "definition": "A malicious rejoin is SUCCESSFUL iff the rejoining client's aggregation coefficient is >= alpha * normal_contribution in ANY round during the post-rejoin window of w rounds following the new logical identity's first participation. Otherwise the rejoin is UNSUCCESSFUL.",
+    "alpha_acceptance_fraction": 0.5,
+    "post_rejoin_window_rounds": 5,
+    "normal_contribution_basis": "round-average aggregation coefficient over honest (non-flagged, non-malicious) participants in the same round",
+    "outcome_classes": {
+      "accepted": "coefficient >= alpha * normal_contribution",
+      "downweighted": "0 < coefficient < alpha * normal_contribution",
+      "blocked": "coefficient == 0"
+    }
+  },
+  "pre_registered_thresholds": {
+    "re_entry_block_rate_delta_min": 0.5,
+    "benign_false_block_rate_max": 0.05,
+    "_note": "re_entry_block_rate = blocked-malicious-rejoins / total-malicious-rejoin-attempts; benign_false_block_rate = blocked-honest-rejoins / total-honest-rejoin-attempts. Both per spec v1.0 6.3. Falsification: either threshold fails."
+  }
+}

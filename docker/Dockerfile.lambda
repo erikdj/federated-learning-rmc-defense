@@ -1,0 +1,73 @@
+# docker/Dockerfile.lambda — praxis-fleet self-heal Lambda image (GWU-45 Lane E).
+#
+# A SLIM, enrich-only sibling of the "gold" image (docker/Dockerfile). It runs the
+# EventBridge finalizer (praxis_exp.selfheal_lambda.handler) and the scheduled
+# reaper (praxis_exp.selfheal_lambda.reaper) as an AWS Lambda container image.
+#
+# Why slim (design 2026-07-14-gwu-45 § 5.11): enrich_experiment reconciles the
+# MLflow record from the durable S3 result JSON via PURE helpers — it never
+# re-runs FL, so it needs NO torch / ray / flwr. Verified 2026-07-14 and re-checked
+# here: docker/entrypoint.py and the whole enrich import chain have no top-level
+# torch/ray/flwr/flowerfl import (torch is lazy inside log_native_model, unused by
+# enrich). Dropping that ML stack gives a far smaller image + faster reaper cold start.
+#
+# What ships (and why each is load-bearing):
+#   - the pinned mlflow client + boto3 (versions mirror environment-aws.yml) + the
+#     awslambdaric Runtime Interface Client;
+#   - the praxis_exp package (enrich + its deps);
+#   - docker/entrypoint.py at its REPO-ROOT-RELATIVE path (/app/docker/entrypoint.py):
+#     praxis_exp/enrich.py file-loads it by ABSOLUTE path at import
+#     (importlib.spec_from_file_location(<repo>/docker/entrypoint.py) + exec_module,
+#     enrich.py:59-73) to rebind build_unit_params/build_unit_tags/final_metrics/…,
+#     bypassing the local `docker` package's name clash with the PyPI docker SDK.
+#     If this file is absent, `import praxis_exp.selfheal_lambda` raises at HANDLER
+#     IMPORT — before any event — so it MUST be present at exactly /app/docker/entrypoint.py.
+#   - data/edge_full_20/metadata.json at its repo-relative path (read by
+#     enrich._read_local_metadata, enrich.py:141) for the dataset-input digest.
+#
+# NOT baked: docs/experiments/ (the finalizer/reaper resolve the MLflow experiment
+# from the parent run's experiment_id — design § 5.4 — keeping _find_design_doc off
+# the critical path so a build-time doc set can never go stale for a future EXP); the
+# 4GB edge_full_20 dataset (only its small metadata.json is needed); torch/ray/flwr.
+#
+# BUILD CONTEXT: built by scripts/aws/selfheal/build_push_lambda.sh from a MINIMAL
+# staged context (git-archive of the tracked recipe paths + the gitignored
+# metadata.json), NOT the repo root — the repo-root .dockerignore excludes
+# data/edge_full_20/, so a repo-root `COPY data/edge_full_20/metadata.json` would be
+# unreachable. The staged context has no .dockerignore, so the COPYs below resolve.
+FROM mambaorg/micromamba:1.5-bookworm-slim
+USER root
+WORKDIR /app
+
+# Slim env: python + pip only, then the enrich-only pip closure. Pins mirror
+# environment-aws.yml (mlflow==3.12.0, boto3==1.43.15/botocore==1.43.46) so the
+# reconciler behaves identically to the gold image; full `mlflow` (not
+# mlflow-skinny) is chosen so no tracking/dataset import can fail at handler load.
+# awslambdaric ships manylinux wheels for cpython 3.10 — no compiler needed.
+RUN micromamba create -y -n selfheal -c conda-forge python=3.10 pip \
+    && micromamba clean -ay
+RUN /opt/conda/envs/selfheal/bin/pip install --no-cache-dir \
+      mlflow==3.12.0 \
+      boto3==1.43.15 \
+      botocore==1.43.46 \
+      awslambdaric==2.0.4
+
+# Bake only what enrich reads. Layout resolves PRAXIS_REPO_ROOT=/app:
+#   /app/praxis_exp/**            (the package)
+#   /app/docker/entrypoint.py     (file-loaded by enrich.py's absolute-path importer)
+#   /app/data/edge_full_20/metadata.json  (dataset-input digest)
+COPY praxis_exp /app/praxis_exp
+COPY docker/entrypoint.py /app/docker/entrypoint.py
+COPY data/edge_full_20/metadata.json /app/data/edge_full_20/metadata.json
+
+ENV PATH=/opt/conda/envs/selfheal/bin:$PATH \
+    PYTHONPATH=/app \
+    PRAXIS_REPO_ROOT=/app
+
+# ENTRYPOINT = the Lambda Runtime Interface Client (absolute python: the micromamba
+# base's login profile resets PATH — gold image lesson, docker/Dockerfile:27-31). The
+# stack overrides CMD per function: FinalizerFn -> `…handler`, ReaperFn -> `…reaper`
+# (design § 5.10 — without the per-function CMD override the reaper would run the
+# finalizer on its schedule and the backstop would silently never reconcile).
+ENTRYPOINT ["/opt/conda/envs/selfheal/bin/python", "-m", "awslambdaric"]
+CMD ["praxis_exp.selfheal_lambda.handler"]

@@ -1,0 +1,73 @@
+# Container context exclusions. Keep local data, outputs, credentials and
+# working files out of worker images. The build script supplies committed source.
+#
+# KEPT (runtime needs them): praxis_exp/ flowerfl/ rmc/ scripts/ docker/
+#   models/ (cold-start detector pkls the runner loads), pyproject.toml,
+#   environment-aws.yml, and data/*.json manifests (hparams_locked, holdout,
+#   val_test_split, seeds, h2/h3 constants).
+# NOT baked: data/edge_full_20/ is synced from S3 at container start.
+
+# --- secrets: NEVER bake into an image (it gets pushed to ECR) ---
+.env
+.env.*
+.env.local
+
+# --- VCS + harness state ---
+.git
+.gitignore
+.omc/
+.claude/
+.planning/
+
+# --- experiment outputs + logs (never part of the image) ---
+# signals/ especially: the in-container runner APPENDS to signal-log filenames;
+# a baked stale log with the same stem would silently mix runs (the ramp
+# analysis loud-fails on >1 run_started_at, but logs must never start dirty).
+results/
+signals/
+logs/
+*.pid
+*.log
+mlruns/
+
+# --- large datasets: edge_full_20 arrives via S3 sync at runtime; the rest are
+#     other-dataset / legacy and not needed for the edge_full_20 H2 matrix ---
+data/brfss_20/
+data/cic/
+data/cic_full/
+data/edge/
+data/edge_full/
+data/edge_full_20/
+data/edge_full_enc/
+
+# --- python / tooling caches ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+venv/
+
+# --- editor / OS noise ---
+.DS_Store
+*.swp
+
+# Release development and documentation artifacts
+.release-work/
+.superpowers/
+.cache/
+outputs/
+.git*
+.codex/
+AGENTS.md
+CLAUDE.md
+SKILL.md
+praxis_exp/local_defaults.py
+build/
+dist/
+.release-download/
+staging/

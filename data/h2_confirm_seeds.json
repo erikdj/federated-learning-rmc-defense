@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "purpose": "H2 out-of-sample confirmatory seeds (F1). Sealed: do NOT inspect during dev/threshold selection. Disjoint from dev and the H4 sealed set.",
+    "locked_at": "2026-06-06",
+    "disjoint_from": {
+      "dev": [
+        42,
+        137,
+        256,
+        314,
+        500
+      ],
+      "h4_sealed": [
+        731,
+        999,
+        1234,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768,
+        65536,
+        131072
+      ]
+    }
+  },
+  "h2_confirm_seeds": [
+    1009,
+    1733,
+    2521,
+    3299,
+    4127,
+    5051,
+    6079,
+    7177,
+    8231,
+    9337
+  ]
+}

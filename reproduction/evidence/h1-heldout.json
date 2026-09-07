@@ -1,0 +1,93 @@
+{
+ "_meta": {
+  "read": "H1 confirmatory held-out; frozen detectors ce483fee; per-(scenario,seed) cell (collision-free); committed _compute_recall_at_fpr",
+  "k": 3,
+  "target_fpr": 0.1,
+  "seeds": [
+   1009,
+   1733,
+   2521,
+   3299,
+   4127,
+   5051,
+   6079,
+   7177,
+   8231,
+   9337
+  ],
+  "fpr_degeneracy_note": "realized FPR at nominal 10% reported per cell; dev stage saw ~0.88 on ~42 honest cold-start rows; per-cell honest support here ~33-42 (same regime)"
+ },
+ "per_scenario": {
+  "S0": {
+   "C": 0.9925925925925926,
+   "S": 0.9925925925925926,
+   "W": 0.9740740740740741,
+   "C_minus_S": 0.0,
+   "C_minus_W": 0.01851851851851849,
+   "C_actual_fpr": 0.8727272727272727,
+   "S_actual_fpr": 0.8787878787878788
+  },
+  "S1": {
+   "C": 0.9962962962962962,
+   "S": 0.9962962962962962,
+   "W": 0.9740740740740741,
+   "C_minus_S": 0.0,
+   "C_minus_W": 0.022222222222222143,
+   "C_actual_fpr": 0.8809523809523809,
+   "S_actual_fpr": 0.8809523809523809
+  },
+  "S2": {
+   "C": 0.7962962962962963,
+   "S": 0.6888888888888889,
+   "W": 0.9148148148148147,
+   "C_minus_S": 0.1074074074074074,
+   "C_minus_W": -0.11851851851851847,
+   "C_actual_fpr": 0.8787878787878788,
+   "S_actual_fpr": 0.8787878787878788
+  },
+  "S3": {
+   "C": 0.9607407407407407,
+   "S": 0.9318518518518518,
+   "W": 0.977037037037037,
+   "C_minus_S": 0.028888888888888853,
+   "C_minus_W": -0.016296296296296364,
+   "C_actual_fpr": 0.8757575757575757,
+   "S_actual_fpr": 0.8757575757575757
+  },
+  "S4": {
+   "C": 0.8711111111111111,
+   "S": 0.8266666666666667,
+   "W": 0.78,
+   "C_minus_S": 0.0444444444444444,
+   "C_minus_W": 0.09111111111111103,
+   "C_actual_fpr": 0.8785714285714286,
+   "S_actual_fpr": 0.8809523809523809
+  }
+ },
+ "wilcoxon": {
+  "S2": {
+   "p_C_gt_S": 0.0009765625,
+   "p_C_gt_W": 1.0,
+   "n_pairs": 10,
+   "pass": false
+  },
+  "S3": {
+   "p_C_gt_S": 0.0009765625,
+   "p_C_gt_W": 1.0,
+   "n_pairs": 10,
+   "pass": false
+  },
+  "S4": {
+   "p_C_gt_S": 0.0439453125,
+   "p_C_gt_W": 0.0009765625,
+   "n_pairs": 10,
+   "pass": false
+  }
+ },
+ "verdict": {
+  "a_C_gt_S_5pp_all_S2S3S4": false,
+  "b_C_gt_W_5pp_all_S2S3S4": false,
+  "c_wilcoxon_all": false,
+  "H1": "H1 NOT MET (held-out) \u2014 falsification condition fired"
+ }
+}

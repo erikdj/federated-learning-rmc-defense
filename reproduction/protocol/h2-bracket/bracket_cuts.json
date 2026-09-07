@@ -1,0 +1,590 @@
+{
+  "_meta": {
+    "purpose": "Amendment v1.8 \u00a74 pre-unblinding lock: {1%,5%} F8 bracket cuts + the frozen 10% points, per defense config",
+    "spec": "docs/superpowers/specs/2026-07-26-praxis-experimental-design-v1.8.md \u00a72-\u00a74",
+    "procedure": "h2_threshold_pipeline.select_threshold on per-defense honest-only pool (malicious_gt False, non-null score, ALL ROUNDS); same frozen F8 procedure, computed at each bracket FPR",
+    "bracket_fprs": [
+      0.01,
+      0.05,
+      0.1
+    ],
+    "primary_scope": "S4-only faithful (adjudicated)",
+    "sensitivity_scope": "S0-S4 pooled (reported, not adjudicated)",
+    "anchor_gate": "every pool with a frozen 10% record reproduces it EXACTLY",
+    "anchor_gate_passed": true,
+    "anchors_checked": [
+      "krum/primary_s4",
+      "trustscore/primary_s4",
+      "tge/primary_s4",
+      "tge/sensitivity_s0s4",
+      "krum_tge/primary_s4",
+      "krum_tge/sensitivity_s0s4"
+    ]
+  },
+  "configs": {
+    "krum": {
+      "primary_s4": {
+        "defense": "krum",
+        "scope": "primary_s4",
+        "scope_scenarios": [
+          "S4"
+        ],
+        "provenance": "EXP-005c + EXP-005e, S4_full_mix, seed42",
+        "n_honest": 1084,
+        "bracket_cuts": {
+          "0.01": {
+            "fpr_target": 0.01,
+            "cut": 0.0,
+            "realized_honest_fpr": 0.0,
+            "effective_support_points": 10.84
+          },
+          "0.05": {
+            "fpr_target": 0.05,
+            "cut": 0.01298590128408994,
+            "realized_honest_fpr": 0.04981549815498155,
+            "effective_support_points": 54.2
+          },
+          "0.10": {
+            "fpr_target": 0.1,
+            "cut": 0.3983150958009648,
+            "realized_honest_fpr": 0.0996309963099631,
+            "effective_support_points": 108.4
+          }
+        },
+        "anchor": {
+          "has_frozen_record": true,
+          "unanchored": false,
+          "frozen_10pct": 0.3983150958009648,
+          "computed_10pct": 0.3983150958009648,
+          "match": true
+        },
+        "source_files": [
+          {
+            "file": "results/20260726/_dev_honest_sources/EXP-005c/s4_full_mix__krum__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260726/_dev_honest_sources/EXP-005e/s4_full_mix__krum__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          }
+        ]
+      }
+    },
+    "trustscore": {
+      "primary_s4": {
+        "defense": "trustscore",
+        "scope": "primary_s4",
+        "scope_scenarios": [
+          "S4"
+        ],
+        "provenance": "EXP-005c + EXP-005e, S4_full_mix, seed42",
+        "n_honest": 1084,
+        "bracket_cuts": {
+          "0.01": {
+            "fpr_target": 0.01,
+            "cut": 0.17867407202720642,
+            "realized_honest_fpr": 0.00922509225092251,
+            "effective_support_points": 10.84
+          },
+          "0.05": {
+            "fpr_target": 0.05,
+            "cut": 0.2549275755882263,
+            "realized_honest_fpr": 0.04981549815498155,
+            "effective_support_points": 54.2
+          },
+          "0.10": {
+            "fpr_target": 0.1,
+            "cut": 0.3574853539466858,
+            "realized_honest_fpr": 0.0996309963099631,
+            "effective_support_points": 108.4
+          }
+        },
+        "anchor": {
+          "has_frozen_record": true,
+          "unanchored": false,
+          "frozen_10pct": 0.3574853539466858,
+          "computed_10pct": 0.3574853539466858,
+          "match": true
+        },
+        "source_files": [
+          {
+            "file": "results/20260726/_dev_honest_sources/EXP-005c/s4_full_mix__trustscore__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260726/_dev_honest_sources/EXP-005e/s4_full_mix__trustscore__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          }
+        ]
+      }
+    },
+    "tge": {
+      "primary_s4": {
+        "defense": "tge",
+        "scope": "primary_s4",
+        "scope_scenarios": [
+          "S4"
+        ],
+        "provenance": "EXP-014 ramp-3 closed-loop, S4_full_mix, 5 dev seeds",
+        "n_honest": 2710,
+        "bracket_cuts": {
+          "0.01": {
+            "fpr_target": 0.01,
+            "cut": 0.0359,
+            "realized_honest_fpr": 0.00996309963099631,
+            "effective_support_points": 27.1
+          },
+          "0.05": {
+            "fpr_target": 0.05,
+            "cut": 0.442,
+            "realized_honest_fpr": 0.04981549815498155,
+            "effective_support_points": 135.5
+          },
+          "0.10": {
+            "fpr_target": 0.1,
+            "cut": 0.5754,
+            "realized_honest_fpr": 0.1,
+            "effective_support_points": 271.0
+          }
+        },
+        "anchor": {
+          "has_frozen_record": true,
+          "unanchored": false,
+          "frozen_10pct": 0.5754,
+          "computed_10pct": 0.5754,
+          "match": true
+        },
+        "source_files": [
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed137.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed256.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed314.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed500.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          }
+        ]
+      },
+      "sensitivity_s0s4": {
+        "defense": "tge",
+        "scope": "sensitivity_s0s4",
+        "scope_scenarios": [
+          "S0",
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "provenance": "EXP-014 ramp-3 closed-loop, all S0-S4, 5 dev seeds (same runs, broader scope)",
+        "n_honest": 13635,
+        "bracket_cuts": {
+          "0.01": {
+            "fpr_target": 0.01,
+            "cut": 0.0816,
+            "realized_honest_fpr": 0.009974330766409974,
+            "effective_support_points": 136.35
+          },
+          "0.05": {
+            "fpr_target": 0.05,
+            "cut": 0.2189,
+            "realized_honest_fpr": 0.049944994499449946,
+            "effective_support_points": 681.75
+          },
+          "0.10": {
+            "fpr_target": 0.1,
+            "cut": 0.2885,
+            "realized_honest_fpr": 0.09996332966629996,
+            "effective_support_points": 1363.5
+          }
+        },
+        "anchor": {
+          "has_frozen_record": true,
+          "unanchored": false,
+          "frozen_10pct": 0.2885,
+          "computed_10pct": 0.2885,
+          "match": true
+        },
+        "source_files": [
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__tge__persistent_optimizer__seed42.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__tge__persistent_optimizer__seed137.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__tge__persistent_optimizer__seed256.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__tge__persistent_optimizer__seed314.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__tge__persistent_optimizer__seed500.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__tge__persistent_optimizer__seed42.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 535
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__tge__persistent_optimizer__seed137.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 535
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__tge__persistent_optimizer__seed256.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 535
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__tge__persistent_optimizer__seed314.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 535
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__tge__persistent_optimizer__seed500.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 535
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__tge__persistent_optimizer__seed42.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__tge__persistent_optimizer__seed137.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__tge__persistent_optimizer__seed256.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__tge__persistent_optimizer__seed314.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__tge__persistent_optimizer__seed500.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__tge__persistent_optimizer__seed42.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__tge__persistent_optimizer__seed137.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__tge__persistent_optimizer__seed256.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__tge__persistent_optimizer__seed314.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__tge__persistent_optimizer__seed500.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 550
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed137.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed256.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed314.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__tge__persistent_optimizer__seed500.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 542
+          }
+        ]
+      }
+    },
+    "krum_tge": {
+      "primary_s4": {
+        "defense": "krum_tge",
+        "scope": "primary_s4",
+        "scope_scenarios": [
+          "S4"
+        ],
+        "provenance": "EXP-014 ramp-3 closed-loop, S4_full_mix, 5 dev seeds",
+        "n_honest": 889,
+        "bracket_cuts": {
+          "0.01": {
+            "fpr_target": 0.01,
+            "cut": 0.0001,
+            "realized_honest_fpr": 0.008998875140607425,
+            "effective_support_points": 8.89
+          },
+          "0.05": {
+            "fpr_target": 0.05,
+            "cut": 0.0097,
+            "realized_honest_fpr": 0.049493813273340834,
+            "effective_support_points": 44.45
+          },
+          "0.10": {
+            "fpr_target": 0.1,
+            "cut": 0.0391,
+            "realized_honest_fpr": 0.09898762654668167,
+            "effective_support_points": 88.9
+          }
+        },
+        "anchor": {
+          "has_frozen_record": true,
+          "unanchored": false,
+          "frozen_10pct": 0.0391,
+          "computed_10pct": 0.0391,
+          "match": true
+        },
+        "source_files": [
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 206
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed137.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 210
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed256.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 152
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed314.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 167
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed500.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 154
+          }
+        ]
+      },
+      "sensitivity_s0s4": {
+        "defense": "krum_tge",
+        "scope": "sensitivity_s0s4",
+        "scope_scenarios": [
+          "S0",
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "provenance": "EXP-014 ramp-3 closed-loop, all S0-S4, 5 dev seeds (same runs, broader scope)",
+        "n_honest": 3024,
+        "bracket_cuts": {
+          "0.01": {
+            "fpr_target": 0.01,
+            "cut": 0.0004,
+            "realized_honest_fpr": 0.00958994708994709,
+            "effective_support_points": 30.24
+          },
+          "0.05": {
+            "fpr_target": 0.05,
+            "cut": 0.0175,
+            "realized_honest_fpr": 0.0496031746031746,
+            "effective_support_points": 151.2
+          },
+          "0.10": {
+            "fpr_target": 0.1,
+            "cut": 0.0562,
+            "realized_honest_fpr": 0.09953703703703703,
+            "effective_support_points": 302.4
+          }
+        },
+        "anchor": {
+          "has_frozen_record": true,
+          "unanchored": false,
+          "frozen_10pct": 0.0562,
+          "computed_10pct": 0.0562,
+          "match": true
+        },
+        "source_files": [
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__krum_tge__persistent_optimizer__seed42.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 14
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__krum_tge__persistent_optimizer__seed137.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 13
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__krum_tge__persistent_optimizer__seed256.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 13
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__krum_tge__persistent_optimizer__seed314.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 13
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s0_clean_baseline__krum_tge__persistent_optimizer__seed500.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 14
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__krum_tge__persistent_optimizer__seed42.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 13
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__krum_tge__persistent_optimizer__seed137.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 13
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__krum_tge__persistent_optimizer__seed256.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 14
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__krum_tge__persistent_optimizer__seed314.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 12
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s1_benign_churn_only__krum_tge__persistent_optimizer__seed500.jsonl",
+            "rows": 985,
+            "honest_scored_in_scope": 14
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__krum_tge__persistent_optimizer__seed42.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 336
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__krum_tge__persistent_optimizer__seed137.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 336
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__krum_tge__persistent_optimizer__seed256.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 323
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__krum_tge__persistent_optimizer__seed314.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 336
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s2_adaptive_switching_only__krum_tge__persistent_optimizer__seed500.jsonl",
+            "rows": 1000,
+            "honest_scored_in_scope": 303
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__krum_tge__persistent_optimizer__seed42.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 74
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__krum_tge__persistent_optimizer__seed137.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 74
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__krum_tge__persistent_optimizer__seed256.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 73
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__krum_tge__persistent_optimizer__seed314.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 74
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s3_identity_reset_only__krum_tge__persistent_optimizer__seed500.jsonl",
+            "rows": 964,
+            "honest_scored_in_scope": 73
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed42.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 206
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed137.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 210
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed256.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 152
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed314.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 167
+          },
+          {
+            "file": "results/20260724/exp014_closed_loop/signals/s4_full_mix__krum_tge__persistent_optimizer__seed500.jsonl",
+            "rows": 956,
+            "honest_scored_in_scope": 154
+          }
+        ]
+      }
+    }
+  }
+}

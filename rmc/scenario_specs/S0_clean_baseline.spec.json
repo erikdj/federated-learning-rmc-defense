@@ -1,0 +1,14 @@
+{
+  "$schema_version": 1,
+  "name": "S0_clean_baseline",
+  "type": "clean_baseline",
+  "output_file": "rmc/scenarios/S0_clean_baseline.json",
+  "params": {
+    "n_adversaries": 9,
+    "n_clients": 20,
+    "n_rounds": 50,
+    "discovery_rounds": 2,
+    "alie_z_max": 0.9,
+    "seed": 42
+  }
+}

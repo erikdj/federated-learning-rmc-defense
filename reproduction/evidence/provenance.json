@@ -1,0 +1,149 @@
+{
+  "schema": "flowerfl.reproduction.evidence-provenance.v1",
+  "source_commit": "a8605f60b1d75c0b76f42a4aea4023533af3f54d",
+  "source_paths_are_repository_relative": true,
+  "artifacts": [
+    {
+      "claim": "H1",
+      "status": "NOT_MET",
+      "public_path": "reproduction/evidence/h1-heldout.json",
+      "public_sha256": "a4f6ebe9f577da740e2c4bc06bd066a80b3226a720bbbb3ebabf652c7d9e7092",
+      "source_path": "results/20260809/exp048_heldout/h1_confirm_read.json",
+      "source_sha256": "a4f6ebe9f577da740e2c4bc06bd066a80b3226a720bbbb3ebabf652c7d9e7092",
+      "derivation": "byte-for-byte copy"
+    },
+    {
+      "claim": "H2",
+      "status": "FALSIFIED",
+      "public_path": "reproduction/evidence/h2-heldout.json",
+      "public_sha256": "5e2a3fe1a5503b3b1f796828c3525caae9ec09787ce052d5ebf015b3e2558fb7",
+      "source_path": "results/20260809/exp048_heldout/h2_confirm_read.json",
+      "source_sha256": "5e2a3fe1a5503b3b1f796828c3525caae9ec09787ce052d5ebf015b3e2558fb7",
+      "derivation": "byte-for-byte copy"
+    },
+    {
+      "claim": "H2 operating thresholds",
+      "status": "FROZEN",
+      "public_path": "reproduction/evidence/h2-thresholds-leakfree-10pct.json",
+      "public_sha256": "7fca5fcdb76be4aa4be2940c6b16731fdda3929bcf51c742a6f8a677d71ec480",
+      "source_path": "results/20260809/exp048_heldout/thresholds_leakfree_10pct.json",
+      "source_sha256": "7fca5fcdb76be4aa4be2940c6b16731fdda3929bcf51c742a6f8a677d71ec480",
+      "derivation": "byte-for-byte copy"
+    },
+    {
+      "claim": "H2-prime",
+      "status": "CONFIRMED",
+      "public_path": "reproduction/evidence/h2prime-confirmatory.json",
+      "public_sha256": "31068d721c115585f53de103c810e072b482bc5c061d5b2756c46eae5003bef9",
+      "source_path": "results/20260813/h2prime_read/H2PRIME_ADJUDICATION.json",
+      "source_sha256": "79d531baa1f4c831dc07401d61ca2a9edf7811a4d19d0e2aaa3439dca8ca2577",
+      "derivation": "JSON values preserved except private historical storage bucket, custody-record path, and temporary assembly-map path; those three fields carry explicit non-distributed markers"
+    },
+    {
+      "claim": "H3",
+      "status": "PASS",
+      "public_path": "reproduction/evidence/h3-confirmatory.json",
+      "public_sha256": "9aa65c8651cda1602ff3e648295039572e66a414cc1f894ad3f0197a37bc0423",
+      "source_path": "results/20260816/h3_corrected_read/H3_IDENTITY_VERDICT.json",
+      "source_sha256": "d772ee20a7ee2e313b06f318e82db4d92da993cafd6db8a4ae6316cf041378c0",
+      "derivation": "JSON values preserved except ten provenance_units.path values, which were replaced by portable results/<basename> paths"
+    },
+    {
+      "claim": "H4",
+      "status": "FALSIFIED",
+      "public_path": "reproduction/evidence/h4-confirmatory.json",
+      "public_sha256": "68f2c0862a6c1c6828ce4050c9f933b747697530bda5834b70bd5963096642f2",
+      "source_path": "results/20260826/h4_read/H4_COMPOSITION_VERDICT.json",
+      "source_sha256": "68f2c0862a6c1c6828ce4050c9f933b747697530bda5834b70bd5963096642f2",
+      "derivation": "byte-for-byte copy"
+    },
+    {
+      "claim": "H4-prime",
+      "status": "DRAFT_UNRATIFIED_UNRUN",
+      "public_path": null,
+      "source_path": null,
+      "source_sha256": null,
+      "derivation": "no result artifact exists"
+    }
+  ],
+  "frozen_protocol": [
+    {
+      "public_path": "reproduction/protocol/h2-bracket/bracket_cuts.json",
+      "source_path": "results/20260806/leakfree_reseal/bracket_cuts_leakfree.json",
+      "public_sha256": "adf4525e1beb2102aee8e60e6cc9ecbca9369ecc884ccd07acf6d05edbd656f8",
+      "source_sha256": "744af38bde8b5910d5d0bb1ba745ec4f9e590ed3f23f18243da001553948f14c",
+      "derivation": "frozen numeric snapshot with source repository paths rewritten to public repository paths"
+    },
+    {
+      "public_path": "reproduction/protocol/h2prime/revalidate_v115.py",
+      "source_path": ".planning/h2prime/protocol_exact_revalidation/revalidate_v115.py",
+      "public_sha256": "3e38133599fb38ab9e632b0263d5976e8a3c84351c8933c010e4c7293f638a63",
+      "source_sha256": "760eb2ef07678d4124af876517a8fe05bd863360416be872a3da632f8218452d",
+      "derivation": "public numerical-primitives extraction: module documentation replaced and unused standalone report main, __main__ dispatch, and OUT path removed; all retained function and constant source is unchanged"
+    },
+    {
+      "public_path": "reproduction/protocol/h2prime/blended_loao.py",
+      "source_path": ".planning/h2prime/protocol_exact_revalidation/blended_loao.py",
+      "public_sha256": "e7f94224fe25f08b42823d75606163caeb83b2f75c9118c218f088bccf10f1f4",
+      "source_sha256": "16c8de9d514552fbd25cf9d54c70f2294307158534effd50a92b032473ba1e68",
+      "derivation": "public numerical-primitives extraction: module documentation replaced and unused standalone report main and __main__ dispatch removed; all retained constants are unchanged"
+    },
+    {
+      "public_path": "reproduction/protocol/h2prime/s4_alie_diagnostic.py",
+      "source_path": ".planning/h2prime/protocol_exact_revalidation/s4_alie_diagnostic.py",
+      "public_sha256": "6bbb26702f9a619934756ee6defc003d14847fabf9b25b34a4c3fa6b8ccf938b",
+      "source_sha256": "83520ac4443d0cf29d23543836604b5774e3ea00c0380cd79a75c4f839f4ef96",
+      "derivation": "public numerical-primitives extraction: module documentation replaced and unused standalone report main and __main__ dispatch removed; all retained functions and constants are unchanged"
+    },
+    {
+      "public_path": "reproduction/protocol/h2prime/golden/window_feats_golden_input.jsonl",
+      "source_path": ".planning/h2prime/protocol_exact_revalidation/golden/window_feats_golden_input.jsonl",
+      "sha256": "b955b3eca522b1361a7bc39732cf8609c86968886369dddee18b5591506562f3"
+    },
+    {
+      "public_path": "reproduction/protocol/h2prime/golden/window_feats_golden_expected.json",
+      "source_path": ".planning/h2prime/protocol_exact_revalidation/golden/window_feats_golden_expected.json",
+      "sha256": "82a55a94b912b41d59ec842ebd5c94b85bd348a995f8db14e8f7dd58c2ae0eb8"
+    },
+    {
+      "public_path": "reproduction/protocol/h2prime/golden/GOLDEN_HASHES.md",
+      "source_path": ".planning/h2prime/protocol_exact_revalidation/golden/GOLDEN_HASHES.md",
+      "sha256": "cac297dd72caf3497d8fe498a3d0f6a126baf59a1c0fb28e04a820d16b9673db"
+    }
+  ],
+  "frozen_models": {
+    "h1_S_k3": "9638fede835cc72498e503271f5090ae00c47ae6fe2cd24d1dd01aecebc305f5",
+    "h1_W_k3": "590e57ee788431fff704fa3724fa5f16bb984f0df364f42573fab499e75c26ae",
+    "h1_C_k3": "9271838d7d14c513f731def94c16725a242bf012cce4bb28f3c18d02639e71a2",
+    "h2prime_serving_model": "3569181d47a8b705f9c5e1cff8429eb9451208dbfd46d39e8184e6af2eb0642c",
+    "h2prime_serving_features": "96a7076e35a3653e1792b2b5b195e06f69a601efc21342a92e23d0ce694af829",
+    "h2prime_serving_cuts_v2": "4688b0043b7da6b01bdde90331886ed4e89efcc9764c9c8d2223616739fa913f",
+    "h2prime_serving_manifest_v2": "3bfeefb45700dff2e02a14acb0de4acfadcc717a7b82d6c246d44a8f44fa062c"
+  },
+  "registered_input_hashes": {
+    "h2_confirm_seeds": "19e8eac72025dbd7b3adc05c35ea3fd871518ba3be6f53d7953f5ef8c44be19b",
+    "h2prime_confirm_seeds": "db97f8d38232f6eacf717c413ccb0aa9d0b2c1ffa0d9632c0351a30470df6d04",
+    "h3_eval_seeds_v2": "d3dabcb535b0e5398b5c4c7669248a5da6d137551d34f3092db8032786f1d7d8",
+    "h4_seed_file": "0f48179d303c8c018904f34fdaa4d2f54880a03982cfb247d8ce92510950da5e",
+    "fixed_holdout_manifest": "6733688dbcb0238efebc23d17c4f04b4d9ef0a3eef3e9d44550534c36db96a10",
+    "validation_test_split_manifest": "51410a5ff840f860bb72f89a0107dad444e472091bf07010518a5dc5cc712327"
+  },
+  "calibration_artifact": {
+    "public_path": "data/fingerprint_tau_locked_v2.json",
+    "public_sha256": "2b0a23349c7d55916e165ad20e47cceb121cb57c1c69296016236aa203c28eee",
+    "source_sha256": "8b94fe7fb2fd123b6fa1892e047720f37c2292282213d4efd1787c515a6712ed",
+    "derivation": "private local-path metadata redacted; numerical calibration leaves unchanged",
+    "code_pin": "flowerfl/fingerprint_registry.py:CALIBRATION_ARTIFACT_SHA256"
+  },
+  "historical_raw_inputs": {
+    "published_in_this_repository": false,
+    "missing_sets": [
+      "EXP-041 and EXP-046 H1 training signal logs",
+      "EXP-048 result JSON and signal logs",
+      "EXP-051 and EXP-053 H2-prime signal logs and assembly map",
+      "EXP-060 event JSONL and per-unit result JSON",
+      "EXP-064 and EXP-065 per-unit result JSON"
+    ],
+    "implication": "the curated final artifacts permit numerical result inspection; raw-to-verdict regeneration requires a fresh fleet or separately released custody corpus"
+  }
+}

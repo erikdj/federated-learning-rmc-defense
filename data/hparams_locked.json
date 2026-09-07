@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "description": "Locked client training hyperparameters per exec mode. Both modes use the SAME model architecture (Net: 45→64→Dropout(0.3)→32→Dropout(0.3)→2, ReLU, CrossEntropyLoss). Phase 2 P2.7 validated on 4 held-out dev seeds.",
+    "architecture_note": "Architecture unified 2026-04-17. Previous version used SzelagNet for persistent-opt (invalidated — was a confounding variable). SzelagNet preserved ONLY in reproduce_szelag_v2.py (BRFSS Track A anchor).",
+    "grid_size": "160 combos per mode (5 lr × 4 epochs × 4 batch × 2 weight_decay)",
+    "grid_rounds": 5,
+    "grid_max_samples": 5000,
+    "grid_seed": 42,
+    "validation_seeds": [137, 256, 314, 500],
+    "validation_tolerance": 0.02,
+    "szelag_anchor_check": "P2.8 PASS — acc 0.5038 vs 0.504 target (BRFSS, SzelagNet, wd=0, Δ=0.0002)",
+    "locked_at": "2026-04-17",
+    "git_commit": "pending"
+  },
+  "flower_reset": {
+    "lr": 0.005,
+    "local_epochs": 5,
+    "batch_size": 32,
+    "weight_decay": 0.0,
+    "optimizer": "adam",
+    "model": "Net (45→64→Dropout(0.3)→32→Dropout(0.3)→2, ReLU, CrossEntropyLoss)",
+    "grid_rank": 1,
+    "grid_f1": 0.9713,
+    "validation_mean_f1": 0.9711,
+    "validation_per_seed": {
+      "137": 0.9722,
+      "256": 0.9702,
+      "314": 0.9712,
+      "500": 0.9707
+    }
+  },
+  "persistent_optimizer": {
+    "lr": 0.001,
+    "local_epochs": 5,
+    "batch_size": 32,
+    "weight_decay": 0.0,
+    "optimizer": "adam",
+    "model": "Net (45→64→Dropout(0.3)→32→Dropout(0.3)→2, ReLU, CrossEntropyLoss)",
+    "grid_rank": 1,
+    "grid_accuracy": 0.9797,
+    "validation_mean_accuracy": 0.9792,
+    "validation_per_seed": {
+      "137": 0.9794,
+      "256": 0.9783,
+      "314": 0.9796,
+      "500": 0.9796
+    },
+    "notes": "Same architecture as Flower (Net). Persistent-opt outperforms Flower by ~0.8% because Adam momentum accumulates useful gradient info. Only lr differs (0.001 vs 0.005) — persistent momentum needs smaller steps."
+  }
+}

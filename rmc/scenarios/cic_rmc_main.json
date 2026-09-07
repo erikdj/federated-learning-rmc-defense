@@ -1,0 +1,71 @@
+{
+  "name": "cic_rmc_main",
+  "description": "RMC scenario on CIC-IoT2023: client 14 honest warmup (1-5), loud attack (6-10), absent (11-15), stealth rejoin under new ID (16-30).",
+  "dataset": "cic_full",
+  "num_rounds": 30,
+  "seed": 42,
+  "clients": {
+    "client_0": {"physical_id": 0},
+    "client_1": {"physical_id": 1},
+    "client_2": {"physical_id": 2},
+    "client_3": {"physical_id": 3},
+    "client_4": {"physical_id": 4},
+    "client_5": {"physical_id": 5},
+    "client_6": {"physical_id": 6},
+    "client_7": {"physical_id": 7},
+    "client_8": {"physical_id": 8},
+    "client_9": {"physical_id": 9},
+    "client_10": {"physical_id": 10},
+    "client_11": {"physical_id": 11},
+    "client_12": {"physical_id": 12},
+    "client_13": {"physical_id": 13},
+    "client_14": {"physical_id": 14},
+    "client_14_new": {"physical_id": 15}
+  },
+  "schedule": [
+    {
+      "rounds": [1, 5],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9",
+        "client_10", "client_11", "client_12", "client_13", "client_14"
+      ],
+      "attacks": {},
+      "comment": "Warmup: all honest"
+    },
+    {
+      "rounds": [6, 10],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9",
+        "client_10", "client_11", "client_12", "client_13", "client_14"
+      ],
+      "attacks": {
+        "client_14": {"type": "gaussian_noise_loud", "params": {"sigma": 1.0}}
+      },
+      "comment": "Loud attack phase: client 14 detected and excluded"
+    },
+    {
+      "rounds": [11, 15],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9",
+        "client_10", "client_11", "client_12", "client_13"
+      ],
+      "attacks": {},
+      "comment": "Absence phase: client 14 gone, model recovers"
+    },
+    {
+      "rounds": [16, 30],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9",
+        "client_10", "client_11", "client_12", "client_13", "client_14_new"
+      ],
+      "attacks": {
+        "client_14_new": {"type": "norm_matched_noise", "params": {}}
+      },
+      "comment": "Stealth rejoin: same physical device, new logical ID, subtle attack"
+    }
+  ]
+}

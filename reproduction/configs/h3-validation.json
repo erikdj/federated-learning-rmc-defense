@@ -1,0 +1,20 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H3 corrected-instrument validation cohort; non-adjudicating",
+  "historical_experiment": "EXP-059",
+  "matrix": {
+    "defenses": ["TGE", "TGE+FP"],
+    "scenarios": ["S3_identity_reset_only", "S4_full_mix"],
+    "seeds": [42, 137, 256, 314, 500],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {
+    "fp_cohort": "validation",
+    "fp_registry_policy": "identity_only"
+  },
+  "expected_units": 20,
+  "tau": 18.639429816855873
+}

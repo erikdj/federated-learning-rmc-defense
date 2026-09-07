@@ -1,0 +1,37 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H4-prime future confirmatory fleet without Krum",
+  "status": "draft-unratified-unrun",
+  "launchable": false,
+  "historical_experiment": null,
+  "matrix": {
+    "defenses": ["H2P+FP", "FedAvg"],
+    "scenarios": [
+      "C0_clean_no_attack", "S0_clean_baseline", "S1_benign_churn_only",
+      "S2_adaptive_switching_only", "S3_identity_reset_only", "S4_full_mix"
+    ],
+    "seeds": [],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {"eval_split": "sealed_test", "h2p_cuts_version": "v2"},
+  "expected_units_after_seed_draw": 120,
+  "blocking_requirements": [
+    "ratify a final protocol",
+    "freeze and review the scorer and deterministic seed-draw implementation",
+    "draw one fresh sealed set of 10 seeds disjoint from all prior cohorts",
+    "replace the empty seeds array and set launchable only in a dated ratified revision"
+  ],
+  "proposed_gate": {
+    "endpoint": "acc_final5",
+    "reference_scenario": "C0",
+    "treatment": "h2p_fp",
+    "comparator": "fedavg",
+    "scenarios": ["S1", "S2", "S3", "S4"],
+    "median_reduction_min": 0.05,
+    "exact_paired_two_sided_wilcoxon_p_max": 0.05,
+    "conjunction": "all four scenarios must pass both bars"
+  }
+}

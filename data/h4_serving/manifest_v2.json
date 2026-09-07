@@ -1,0 +1,686 @@
+{
+ "built_at": "2026-08-20T17:13:53Z",
+ "bundle_format": "h4-serving-v2",
+ "calibration": {
+  "cells": {
+   "C0": {
+    "fedavg_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.903734420528929,
+       "realized_fpr": 0.009,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.02": {
+       "cut": 0.844882089208759,
+       "realized_fpr": 0.0195,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.05": {
+       "cut": 0.7426785118314637,
+       "realized_fpr": 0.05,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.10": {
+       "cut": 0.48980367825119625,
+       "realized_fpr": 0.0805,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      }
+     },
+     "cut": 0.48980367825119625,
+     "n_honest": 2000,
+     "n_malicious": 0,
+     "realized_fpr": 0.0805,
+     "tie_fallback": null
+    },
+    "krum_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.9168092117642415,
+       "realized_fpr": 0.009,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.02": {
+       "cut": 0.9165393202397908,
+       "realized_fpr": 0.02,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.05": {
+       "cut": 0.7677982639791762,
+       "realized_fpr": 0.0425,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.10": {
+       "cut": 0.31870454776968915,
+       "realized_fpr": 0.0985,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      }
+     },
+     "cut": 0.31870454776968915,
+     "n_honest": 2000,
+     "n_malicious": 0,
+     "realized_fpr": 0.0985,
+     "tie_fallback": null
+    },
+    "ts_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.9038492512373255,
+       "realized_fpr": 0.01,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.02": {
+       "cut": 0.8360381250985904,
+       "realized_fpr": 0.018,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.05": {
+       "cut": 0.6524249177246673,
+       "realized_fpr": 0.05,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      },
+      "0.10": {
+       "cut": 0.48980367825119625,
+       "realized_fpr": 0.07,
+       "recall": null,
+       "recall_reason": "no ground-truth malicious rows in this cell (clean scenario) \u2014 recall is undefined, reported null (\u00a7 B1)"
+      }
+     },
+     "cut": 0.4878960665333995,
+     "n_honest": 2000,
+     "n_malicious": 0,
+     "realized_fpr": 0.1095,
+     "tie_fallback": {
+      "note": "erratum-C C1 step-down: E3 quantile landed on a tie plateau; adopted the largest distinct honest-score value with in-band realized FPR",
+      "primary_cut": 0.48980367825119625,
+      "primary_realized_fpr": 0.07
+     }
+    }
+   },
+   "S0": {
+    "fedavg_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.4716440916549777,
+       "realized_fpr": 0.00909090909090909,
+       "recall": 0.9377777777777778,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.4272914324714105,
+       "realized_fpr": 0.014545454545454545,
+       "recall": 0.9388888888888889,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.3724965665478391,
+       "realized_fpr": 0.046363636363636364,
+       "recall": 0.9533333333333334,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.08314153330006487,
+       "realized_fpr": 0.08727272727272728,
+       "recall": 0.9922222222222222,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.08314153330006487,
+     "n_honest": 1100,
+     "n_malicious": 900,
+     "realized_fpr": 0.08727272727272728,
+     "tie_fallback": null
+    },
+    "krum_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.508942781742605,
+       "realized_fpr": 0.01,
+       "recall": 0.9766666666666667,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.46685457263508073,
+       "realized_fpr": 0.02,
+       "recall": 0.9766666666666667,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.44900833528181416,
+       "realized_fpr": 0.034545454545454546,
+       "recall": 0.9766666666666667,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.4233202528870638,
+       "realized_fpr": 0.08818181818181818,
+       "recall": 0.9766666666666667,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.4233202528870638,
+     "n_honest": 1100,
+     "n_malicious": 900,
+     "realized_fpr": 0.08818181818181818,
+     "tie_fallback": null
+    },
+    "ts_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.37277049257426953,
+       "realized_fpr": 0.01,
+       "recall": 0.9933333333333333,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.3724965665478391,
+       "realized_fpr": 0.01090909090909091,
+       "recall": 0.9933333333333333,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.0862231658701781,
+       "realized_fpr": 0.04909090909090909,
+       "recall": 0.9977777777777778,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.05835434689830986,
+       "realized_fpr": 0.1,
+       "recall": 0.9988888888888889,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.05835434689830986,
+     "n_honest": 1100,
+     "n_malicious": 900,
+     "realized_fpr": 0.1,
+     "tie_fallback": null
+    }
+   },
+   "S1": {
+    "fedavg_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.4716440916549777,
+       "realized_fpr": 0.005607476635514018,
+       "recall": 0.9866666666666667,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.4597571835939359,
+       "realized_fpr": 0.018691588785046728,
+       "recall": 0.9866666666666667,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.37329939140773744,
+       "realized_fpr": 0.05046728971962617,
+       "recall": 0.9877777777777778,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.08314153330006487,
+       "realized_fpr": 0.07663551401869159,
+       "recall": 0.9977777777777778,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.08211057075994123,
+     "n_honest": 1070,
+     "n_malicious": 900,
+     "realized_fpr": 0.10093457943925234,
+     "tie_fallback": {
+      "note": "erratum-C C1 step-down: E3 quantile landed on a tie plateau; adopted the largest distinct honest-score value with in-band realized FPR",
+      "primary_cut": 0.08314153330006487,
+      "primary_realized_fpr": 0.07663551401869159
+     }
+    },
+    "krum_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.5242614333078383,
+       "realized_fpr": 0.010280373831775701,
+       "recall": 0.9922222222222222,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.471691754036215,
+       "realized_fpr": 0.020560747663551402,
+       "recall": 0.9944444444444445,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.44900833528181416,
+       "realized_fpr": 0.04018691588785047,
+       "recall": 0.9955555555555555,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.4272914324714105,
+       "realized_fpr": 0.09813084112149532,
+       "recall": 0.9955555555555555,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.4272914324714105,
+     "n_honest": 1070,
+     "n_malicious": 900,
+     "realized_fpr": 0.09813084112149532,
+     "tie_fallback": null
+    },
+    "ts_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.4716440916549777,
+       "realized_fpr": 0.008411214953271028,
+       "recall": 0.9688888888888889,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.4244186584072096,
+       "realized_fpr": 0.020560747663551402,
+       "recall": 0.9688888888888889,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.3284689896955334,
+       "realized_fpr": 0.05046728971962617,
+       "recall": 0.9788888888888889,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.08314153330006487,
+       "realized_fpr": 0.09532710280373832,
+       "recall": 0.9977777777777778,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.08314153330006487,
+     "n_honest": 1070,
+     "n_malicious": 900,
+     "realized_fpr": 0.09532710280373832,
+     "tie_fallback": null
+    }
+   },
+   "S2": {
+    "fedavg_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.21737188110928296,
+       "realized_fpr": 0.01,
+       "recall": 0.9966666666666667,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.08943143480515812,
+       "realized_fpr": 0.02,
+       "recall": 0.9977777777777778,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.046642968933908596,
+       "realized_fpr": 0.04909090909090909,
+       "recall": 0.9988888888888889,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.023170426033811673,
+       "realized_fpr": 0.1,
+       "recall": 1.0,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.023170426033811673,
+     "n_honest": 1100,
+     "n_malicious": 900,
+     "realized_fpr": 0.1,
+     "tie_fallback": null
+    },
+    "krum_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.4233202528870638,
+       "realized_fpr": 0.008181818181818182,
+       "recall": 0.9633333333333334,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.3724965665478391,
+       "realized_fpr": 0.014545454545454545,
+       "recall": 0.98,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.08438847480370192,
+       "realized_fpr": 0.04818181818181818,
+       "recall": 1.0,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.05362647834338436,
+       "realized_fpr": 0.09636363636363636,
+       "recall": 1.0,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.05362647834338436,
+     "n_honest": 1100,
+     "n_malicious": 900,
+     "realized_fpr": 0.09636363636363636,
+     "tie_fallback": null
+    },
+    "ts_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.8340680115570104,
+       "realized_fpr": 0.01,
+       "recall": 0.84,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.23765868188142292,
+       "realized_fpr": 0.02,
+       "recall": 0.9955555555555555,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.06857826448513978,
+       "realized_fpr": 0.05,
+       "recall": 0.9977777777777778,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.025891961334817557,
+       "realized_fpr": 0.09818181818181818,
+       "recall": 1.0,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.025891961334817557,
+     "n_honest": 1100,
+     "n_malicious": 900,
+     "realized_fpr": 0.09818181818181818,
+     "tie_fallback": null
+    }
+   },
+   "S3": {
+    "fedavg_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.12057334250458286,
+       "realized_fpr": 0.00909090909090909,
+       "recall": 0.9975845410628019,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.08658750174192366,
+       "realized_fpr": 0.019090909090909092,
+       "recall": 0.9975845410628019,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.06359687871216296,
+       "realized_fpr": 0.05,
+       "recall": 0.998792270531401,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.026245250518151873,
+       "realized_fpr": 0.09636363636363636,
+       "recall": 1.0,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.026245250518151873,
+     "n_honest": 1100,
+     "n_malicious": 828,
+     "realized_fpr": 0.09636363636363636,
+     "tie_fallback": null
+    },
+    "krum_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.4716440916549777,
+       "realized_fpr": 0.005454545454545455,
+       "recall": 0.9625603864734299,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.4716440916549777,
+       "realized_fpr": 0.005454545454545455,
+       "recall": 0.9625603864734299,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.4233202528870638,
+       "realized_fpr": 0.035454545454545454,
+       "recall": 0.9685990338164251,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.19830895247510097,
+       "realized_fpr": 0.1,
+       "recall": 0.9891304347826086,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.19830895247510097,
+     "n_honest": 1100,
+     "n_malicious": 828,
+     "realized_fpr": 0.1,
+     "tie_fallback": null
+    },
+    "ts_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.16205914177363198,
+       "realized_fpr": 0.01,
+       "recall": 0.9963768115942029,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.08314153330006487,
+       "realized_fpr": 0.019090909090909092,
+       "recall": 0.9975845410628019,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.05590784796581545,
+       "realized_fpr": 0.05,
+       "recall": 0.998792270531401,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.023119017440676137,
+       "realized_fpr": 0.09909090909090909,
+       "recall": 1.0,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.023119017440676137,
+     "n_honest": 1100,
+     "n_malicious": 828,
+     "realized_fpr": 0.09909090909090909,
+     "tie_fallback": null
+    }
+   },
+   "S4": {
+    "fedavg_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.615672360269488,
+       "realized_fpr": 0.01014760147601476,
+       "recall": 0.9516908212560387,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.1963938728813591,
+       "realized_fpr": 0.02029520295202952,
+       "recall": 0.9927536231884058,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.07228063891818401,
+       "realized_fpr": 0.0507380073800738,
+       "recall": 0.9963768115942029,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.029366164168884427,
+       "realized_fpr": 0.09778597785977859,
+       "recall": 0.9975845410628019,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.029366164168884427,
+     "n_honest": 1084,
+     "n_malicious": 828,
+     "realized_fpr": 0.09778597785977859,
+     "tie_fallback": null
+    },
+    "krum_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.1317083487146158,
+       "realized_fpr": 0.01014760147601476,
+       "recall": 1.0,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.08045264083317366,
+       "realized_fpr": 0.02029520295202952,
+       "recall": 1.0,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.043596611739007265,
+       "realized_fpr": 0.0507380073800738,
+       "recall": 1.0,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.017554468150034145,
+       "realized_fpr": 0.10055350553505535,
+       "recall": 1.0,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.017554468150034145,
+     "n_honest": 1084,
+     "n_malicious": 828,
+     "realized_fpr": 0.10055350553505535,
+     "tie_fallback": null
+    },
+    "ts_family": {
+     "bracket": {
+      "0.01": {
+       "cut": 0.21761892850794812,
+       "realized_fpr": 0.01014760147601476,
+       "recall": 0.9975845410628019,
+       "recall_reason": null
+      },
+      "0.02": {
+       "cut": 0.10633558503137203,
+       "realized_fpr": 0.02029520295202952,
+       "recall": 0.9975845410628019,
+       "recall_reason": null
+      },
+      "0.05": {
+       "cut": 0.05147836692163961,
+       "realized_fpr": 0.04981549815498155,
+       "recall": 0.9975845410628019,
+       "recall_reason": null
+      },
+      "0.10": {
+       "cut": 0.021053938338878794,
+       "realized_fpr": 0.10055350553505535,
+       "recall": 1.0,
+       "recall_reason": null
+      }
+     },
+     "cut": 0.021053938338878794,
+     "n_honest": 1084,
+     "n_malicious": 828,
+     "realized_fpr": 0.10055350553505535,
+     "tie_fallback": null
+    }
+   }
+  },
+  "design": "3 arm-classes x 6 scenarios (C0, S0-S4) x 2 dev seeds, observe-only (erratum B \u00a7 B1)",
+  "exp_id": "EXP-062",
+  "n_units": 36,
+  "unit_census": [
+   "c0_clean_no_attack__fedavg__persistent_optimizer__seed137",
+   "c0_clean_no_attack__fedavg__persistent_optimizer__seed42",
+   "c0_clean_no_attack__krum__persistent_optimizer__seed137",
+   "c0_clean_no_attack__krum__persistent_optimizer__seed42",
+   "c0_clean_no_attack__trustscore__persistent_optimizer__seed137",
+   "c0_clean_no_attack__trustscore__persistent_optimizer__seed42",
+   "s0_clean_baseline__fedavg__persistent_optimizer__seed137",
+   "s0_clean_baseline__fedavg__persistent_optimizer__seed42",
+   "s0_clean_baseline__krum__persistent_optimizer__seed137",
+   "s0_clean_baseline__krum__persistent_optimizer__seed42",
+   "s0_clean_baseline__trustscore__persistent_optimizer__seed137",
+   "s0_clean_baseline__trustscore__persistent_optimizer__seed42",
+   "s1_benign_churn_only__fedavg__persistent_optimizer__seed137",
+   "s1_benign_churn_only__fedavg__persistent_optimizer__seed42",
+   "s1_benign_churn_only__krum__persistent_optimizer__seed137",
+   "s1_benign_churn_only__krum__persistent_optimizer__seed42",
+   "s1_benign_churn_only__trustscore__persistent_optimizer__seed137",
+   "s1_benign_churn_only__trustscore__persistent_optimizer__seed42",
+   "s2_adaptive_switching_only__fedavg__persistent_optimizer__seed137",
+   "s2_adaptive_switching_only__fedavg__persistent_optimizer__seed42",
+   "s2_adaptive_switching_only__krum__persistent_optimizer__seed137",
+   "s2_adaptive_switching_only__krum__persistent_optimizer__seed42",
+   "s2_adaptive_switching_only__trustscore__persistent_optimizer__seed137",
+   "s2_adaptive_switching_only__trustscore__persistent_optimizer__seed42",
+   "s3_identity_reset_only__fedavg__persistent_optimizer__seed137",
+   "s3_identity_reset_only__fedavg__persistent_optimizer__seed42",
+   "s3_identity_reset_only__krum__persistent_optimizer__seed137",
+   "s3_identity_reset_only__krum__persistent_optimizer__seed42",
+   "s3_identity_reset_only__trustscore__persistent_optimizer__seed137",
+   "s3_identity_reset_only__trustscore__persistent_optimizer__seed42",
+   "s4_full_mix__fedavg__persistent_optimizer__seed137",
+   "s4_full_mix__fedavg__persistent_optimizer__seed42",
+   "s4_full_mix__krum__persistent_optimizer__seed137",
+   "s4_full_mix__krum__persistent_optimizer__seed42",
+   "s4_full_mix__trustscore__persistent_optimizer__seed137",
+   "s4_full_mix__trustscore__persistent_optimizer__seed42"
+  ]
+ },
+ "construction": "docs/superpowers/specs/2026-08-18-h4-preregistration-erratum-b.md \u00a7\u00a7 B1-B2 (RULED, methodology v1.53), as amended by docs/superpowers/specs/2026-08-20-h4-preregistration-erratum-c.md \u00a7 C1 (RULED, methodology v1.54: tie-aware step-down fallback)",
+ "cut_semantics": "primary: cut = float(np.quantile(honest_scores, 1 - 0.10)) per (scenario, arm_class) on OBSERVED online honest scores (NumPy default linear interpolation, frozen E3 mechanics); flag = score > cut (strict). Erratum-C C1 fallback: where the primary cut's realized strict-> FPR falls outside [0.08, 0.12], the cut steps DOWN to the largest distinct honest-score value realizing an in-band FPR (per-cell tie_fallback discloses both cuts); refusal where no distinct value is in band.",
+ "files": {
+  "cuts_v2.json": "4688b0043b7da6b01bdde90331886ed4e89efcc9764c9c8d2223616739fa913f",
+  "features.json": "96a7076e35a3653e1792b2b5b195e06f69a601efc21342a92e23d0ce694af829",
+  "model.joblib": "3569181d47a8b705f9c5e1cff8429eb9451208dbfd46d39e8184e6af2eb0642c"
+ },
+ "fpr_band": [
+  0.08,
+  0.12
+ ],
+ "min_honest_rows": 400,
+ "model_registration": {
+  "alias": "champion__H4",
+  "name": "praxis-h2prime-detector",
+  "note": "v2 \u2014 alias moved from v1 (\u00a7 B2)"
+ },
+ "source_commit": "fd37fa46bd142f870d1190768a396fc0cf8f24a8",
+ "target_fpr": 0.1,
+ "v1_bundle_sha256": "56eca8e31d1352a73e70962d2d3375e412def6f983bae6be29a7897fef16db8a",
+ "versions": {
+  "numpy": "2.2.6"
+ }
+}

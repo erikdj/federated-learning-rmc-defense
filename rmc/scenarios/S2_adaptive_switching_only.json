@@ -1,0 +1,441 @@
+{
+  "name": "S2_adaptive_switching_only",
+  "description": "Design D Scenario S2 (adaptive-switching-only). 45% adversaries keep original identities; rotate Gaussian noise \u2192 ALIE (z_max=0.9) \u2192 label_flip across 4 cycles. No benign churn, no identity reset. Isolates within-identity attack variation per spec \u00a7 5.",
+  "dataset": "edge_full_20_rmc",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0": {
+      "physical_id": 0
+    },
+    "client_1": {
+      "physical_id": 1
+    },
+    "client_2": {
+      "physical_id": 2
+    },
+    "client_3": {
+      "physical_id": 3
+    },
+    "client_4": {
+      "physical_id": 4
+    },
+    "client_5": {
+      "physical_id": 5
+    },
+    "client_6": {
+      "physical_id": 6
+    },
+    "client_7": {
+      "physical_id": 7
+    },
+    "client_8": {
+      "physical_id": 8
+    },
+    "client_9": {
+      "physical_id": 9
+    },
+    "client_10": {
+      "physical_id": 10
+    },
+    "client_11": {
+      "physical_id": 11
+    },
+    "client_12": {
+      "physical_id": 12
+    },
+    "client_13": {
+      "physical_id": 13
+    },
+    "client_14": {
+      "physical_id": 14
+    },
+    "client_15": {
+      "physical_id": 15
+    },
+    "client_16": {
+      "physical_id": 16
+    },
+    "client_17": {
+      "physical_id": 17
+    },
+    "client_18": {
+      "physical_id": 18
+    },
+    "client_19": {
+      "physical_id": 19
+    }
+  },
+  "schedule": [
+    {
+      "rounds": [
+        1,
+        2
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {},
+      "comment": "Discovery rounds 1..2 \u2014 all honest"
+    },
+    {
+      "rounds": [
+        3,
+        14
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "S2 cycle 1: 9 adversaries rotate to attack_type=gaussian_noise (rounds 3..14)"
+    },
+    {
+      "rounds": [
+        15,
+        26
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "S2 cycle 2: 9 adversaries rotate to attack_type=alie (rounds 15..26)"
+    },
+    {
+      "rounds": [
+        27,
+        38
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_1": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_2": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_3": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_4": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_5": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_6": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_7": {
+          "type": "label_flip",
+          "params": {}
+        },
+        "client_8": {
+          "type": "label_flip",
+          "params": {}
+        }
+      },
+      "comment": "S2 cycle 3: 9 adversaries rotate to attack_type=label_flip (rounds 27..38)"
+    },
+    {
+      "rounds": [
+        39,
+        50
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "S2 cycle 4: 9 adversaries rotate to attack_type=gaussian_noise (rounds 39..50)"
+    }
+  ]
+}

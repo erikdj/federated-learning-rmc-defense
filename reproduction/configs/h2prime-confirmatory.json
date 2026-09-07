@@ -1,0 +1,35 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H2-prime confirmatory signal-log corpus",
+  "historical_experiments": ["EXP-051", "EXP-053"],
+  "matrix": {
+    "defenses": ["Krum+TGE"],
+    "scenarios": [
+      "S0_clean_baseline",
+      "S1_benign_churn_only",
+      "S2_adaptive_switching_only",
+      "S3_identity_reset_only",
+      "S4_full_mix"
+    ],
+    "seeds": [90369, 29387, 98362, 45013, 39477, 70402, 47599, 39375, 17869, 96540],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {"normalize_train_only": true},
+  "expected_units": 50,
+  "analysis": {
+    "seed_order": "ascending_numeric",
+    "target_fpr": 0.1,
+    "flag_rule": "score_strictly_greater_than_cut",
+    "quantile_method": "linear",
+    "comparability_interval": [0.08, 0.12],
+    "features": [
+      "update_norm", "train_loss", "num_examples", "norm_variance",
+      "loss_slope", "cos_to_median", "L2_to_median", "cos_drift",
+      "cos_variance"
+    ],
+    "pinned_versions": {"numpy": "2.2.6", "scikit-learn": "1.7.2"}
+  }
+}

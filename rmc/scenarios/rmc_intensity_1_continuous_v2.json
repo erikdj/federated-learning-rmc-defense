@@ -1,0 +1,415 @@
+{
+  "name": "rmc_intensity_1_continuous_v2",
+  "description": "Continuous-reconnect scenario at intensity=1/20 = 5% per-round malicious. 4 reconnect cycles in 50 rounds \u2192 5 cumulative malicious-identity sessions (1 initial + 4 reconnect waves). Closer to Szelag 2504.03077v1 \u00a7V continuous-reconnection threat model.",
+  "dataset": "edge_full_20_rmc",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0": {
+      "physical_id": 0
+    },
+    "client_1": {
+      "physical_id": 1
+    },
+    "client_2": {
+      "physical_id": 2
+    },
+    "client_3": {
+      "physical_id": 3
+    },
+    "client_4": {
+      "physical_id": 4
+    },
+    "client_5": {
+      "physical_id": 5
+    },
+    "client_6": {
+      "physical_id": 6
+    },
+    "client_7": {
+      "physical_id": 7
+    },
+    "client_8": {
+      "physical_id": 8
+    },
+    "client_9": {
+      "physical_id": 9
+    },
+    "client_10": {
+      "physical_id": 10
+    },
+    "client_11": {
+      "physical_id": 11
+    },
+    "client_12": {
+      "physical_id": 12
+    },
+    "client_13": {
+      "physical_id": 13
+    },
+    "client_14": {
+      "physical_id": 14
+    },
+    "client_15": {
+      "physical_id": 15
+    },
+    "client_16": {
+      "physical_id": 16
+    },
+    "client_17": {
+      "physical_id": 17
+    },
+    "client_18": {
+      "physical_id": 18
+    },
+    "client_19": {
+      "physical_id": 19
+    },
+    "client_19_new1": {
+      "physical_id": 20
+    },
+    "client_19_new2": {
+      "physical_id": 21
+    },
+    "client_19_new3": {
+      "physical_id": 22
+    },
+    "client_19_new4": {
+      "physical_id": 23
+    }
+  },
+  "schedule": [
+    {
+      "rounds": [
+        1,
+        5
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {},
+      "comment": "Warmup: all 20 clients honest"
+    },
+    {
+      "rounds": [
+        6,
+        10
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_19": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 0.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "Initial Gaussian attack from 1 adversaries (original identities)"
+    },
+    {
+      "rounds": [
+        11,
+        12
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18"
+      ],
+      "attacks": {},
+      "comment": "Cycle 1 disconnect: 1 adversaries absent"
+    },
+    {
+      "rounds": [
+        13,
+        20
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19_new1"
+      ],
+      "attacks": {
+        "client_19_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.5
+          }
+        }
+      },
+      "comment": "Cycle 1 ALIE: 1 adversaries return as `_new1` identities (z_max=0.5)"
+    },
+    {
+      "rounds": [
+        21,
+        22
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18"
+      ],
+      "attacks": {},
+      "comment": "Cycle 2 disconnect: 1 adversaries absent"
+    },
+    {
+      "rounds": [
+        23,
+        30
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19_new2"
+      ],
+      "attacks": {
+        "client_19_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.5
+          }
+        }
+      },
+      "comment": "Cycle 2 ALIE: 1 adversaries return as `_new2` identities (z_max=0.5)"
+    },
+    {
+      "rounds": [
+        31,
+        32
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18"
+      ],
+      "attacks": {},
+      "comment": "Cycle 3 disconnect: 1 adversaries absent"
+    },
+    {
+      "rounds": [
+        33,
+        40
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19_new3"
+      ],
+      "attacks": {
+        "client_19_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.5
+          }
+        }
+      },
+      "comment": "Cycle 3 ALIE: 1 adversaries return as `_new3` identities (z_max=0.5)"
+    },
+    {
+      "rounds": [
+        41,
+        42
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18"
+      ],
+      "attacks": {},
+      "comment": "Cycle 4 disconnect: 1 adversaries absent"
+    },
+    {
+      "rounds": [
+        43,
+        50
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19_new4"
+      ],
+      "attacks": {
+        "client_19_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.5
+          }
+        }
+      },
+      "comment": "Cycle 4 ALIE: 1 adversaries return as `_new4` identities (z_max=0.5)"
+    }
+  ]
+}

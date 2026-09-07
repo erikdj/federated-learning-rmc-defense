@@ -1,0 +1,13 @@
+{
+ "_meta": {
+  "purpose": "FROZEN leak-free F8 10% cuts (S4-only faithful scope) for the EXP-048 confirmatory H2 read; extracted from bracket_cuts_leakfree.json sha 744af38b, commit 36d32df; applied UNCHANGED per v1.10 \u00a74.3 gate 2 (no operating-point change post-unblinding)",
+  "source": "results/20260806/leakfree_reseal/bracket_cuts_leakfree.json",
+  "bracket": "0.10"
+ },
+ "thresholds": {
+  "krum": 0.18790065502712283,
+  "trustscore": 0.3677150011062622,
+  "tge": 0.3822,
+  "krum_tge": 0.0932
+ }
+}

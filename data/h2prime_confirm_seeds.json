@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "description": "H2' sealed confirmatory seeds \u2014 v1.15 \u00a7 5 frozen procedure. SEALED: do not open until the confirmatory launches per the ratified protocol.",
+    "ratification_commit": "bada1b8ed684298fe5c0482133c6404a5a49e82f",
+    "master_derivation": "int(sha256(commit_sha_ascii).hexdigest(), 16)",
+    "generator": "random.Random(master).randint(10000, 99999), rejection per exclusion list, order = draw order",
+    "python_version": "3.10.20",
+    "n": 10,
+    "exclusion_sources": [
+      "seeds.json",
+      "h2_confirm_seeds.json",
+      "h3_eval_seeds.json"
+    ],
+    "excluded_value_count": 30
+  },
+  "seeds": [
+    90369,
+    29387,
+    98362,
+    45013,
+    39477,
+    70402,
+    47599,
+    39375,
+    17869,
+    96540
+  ]
+}

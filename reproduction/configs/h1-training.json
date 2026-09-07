@@ -1,0 +1,29 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H1 detector training corpus",
+  "historical_sources": ["EXP-046", "EXP-041"],
+  "matrix": {
+    "defenses": ["Krum+TGE"],
+    "scenarios": [
+      "S0_clean_baseline",
+      "S1_benign_churn_only",
+      "S2_adaptive_switching_only",
+      "S3_identity_reset_only",
+      "S4_full_mix"
+    ],
+    "seeds": [42, 137, 256, 314, 500],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {"normalize_train_only": true},
+  "expected_units": 25,
+  "fit": {
+    "families": ["S", "W", "C"],
+    "cold_start_window": 3,
+    "target_fpr": 0.1,
+    "model": "sklearn.ensemble.GradientBoostingClassifier",
+    "model_parameters": {"random_state": 0}
+  }
+}

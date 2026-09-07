@@ -1,0 +1,34 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H1 and H2 held-out evaluation",
+  "historical_experiment": "EXP-048",
+  "matrix": {
+    "defenses": ["Krum", "TrustScore", "TGE", "Krum+TGE"],
+    "scenarios": [
+      "S0_clean_baseline",
+      "S1_benign_churn_only",
+      "S2_adaptive_switching_only",
+      "S3_identity_reset_only",
+      "S4_full_mix"
+    ],
+    "seeds": [1009, 1733, 2521, 3299, 4127, 5051, 6079, 7177, 8231, 9337],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {"normalize_train_only": true},
+  "expected_units": 200,
+  "h1_signal_subset": {
+    "defense": "Krum+TGE",
+    "expected_units": 50,
+    "families": ["S", "W", "C"],
+    "cold_start_window": 3,
+    "target_fpr": 0.1
+  },
+  "h2": {
+    "adjudication_scope": "all_rounds",
+    "target_fpr": 0.1,
+    "thresholds_file": "reproduction/evidence/h2-thresholds-leakfree-10pct.json"
+  }
+}

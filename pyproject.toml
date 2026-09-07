@@ -1,0 +1,150 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "flowerfl"
+version = "0.1.0"
+description = "Federated Learning Experiments for Byzantine Robustness Analysis"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+    "flwr[simulation]>=1.13.0",
+    "torch>=2.0.0",
+    "pandas>=2.0.0",
+    "pyarrow>=14.0.0",
+    "scikit-learn>=1.3.0",
+    "numpy>=1.24.0",
+    "mlflow>=2.18",
+    "psutil>=5.9",
+    "click>=8.1",
+    "pyyaml>=6.0",
+    "boto3>=1.34",
+    "GitPython>=3.1",
+    "scipy==1.15.3",
+    "joblib==1.5.3",
+    "xgboost==3.2.0",
+    "imbalanced-learn==0.14.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "openpyxl>=3.1",
+    "shap==0.49.1",
+    "pycryptodome==3.23.0",
+]
+
+[project.scripts]
+praxis = "praxis_exp.cli:main"
+
+# ============================================================================
+# FLOWER APP CONFIGURATION
+# ============================================================================
+
+[tool.flwr.app]
+publisher = "praxis"
+
+[tool.flwr.app.components]
+serverapp = "flowerfl.server_app:app"
+clientapp = "flowerfl.client_app:app"
+
+[tool.flwr.app.config]
+# Dataset configuration
+dataset = "cic"  # "edge" or "cic"
+
+# Training parameters
+num-server-rounds = 5
+local-epochs = 1
+batch-size = 32
+learning-rate = 0.01
+
+# Aggregation strategy: FedAvg, Krum, FedMedian, FedTrimmedAvg
+strategy = "FedAvg"
+
+# Attack configuration
+malicious-fraction = 0.0  # 0.0 to 1.0
+attack-type = "label_flip"  # "label_flip" or "noise"
+
+# RMC scenario configuration (used with Scenario* strategies)
+scenario = ""  # Path to scenario JSON, e.g. "rmc/scenarios/baseline.json"
+max-samples = 0  # Max samples per client (0 = default 200K)
+
+# Layered-defense experiment configuration
+seed = 42          # Experiment RNG seed (dev_seeds from data/seeds.json)
+signal-log = "1"   # "1" = emit per-client per-round signals to signals/*.jsonl; "0" = disable
+weight-decay = 0.003  # Frozen Adam weight decay; explicit study configurations may override
+
+# Cold-start detector plugin configuration (used with Scenario*CS strategies)
+cs-model = ""              # Path to trained ColdStartDetector .pkl (empty = disabled)
+cs-weighting = "linear"    # Weighting fn: linear | squared | sigmoid
+cs-k = 3                   # Cold-start window size (rounds since first seen)
+
+# TGEnsemble plugin configuration (used with ScenarioTGEnsemble strategy)
+tge-ramp-rounds = "8"      # Blend GBDT -> LSTM over this tenure; provisional canonical 8 (amendment v1.6 § 2, never hand-edited). NOTE: 999 makes the pure-LSTM regime unreachable (GBDT-dominant) but a small LSTM blend weight persists once fitted — not truly "GBDT-only"
+tge-long-memory-expert = "lstm"  # Long-memory mode: "lstm" (incumbent TGE) | "ema" | "bank" (TGE′ = min(LSTM, EMA), GWU-53). A bare `flwr run` stays on the incumbent.
+tge-ema-alpha = "0.9"      # EMA retention weight for the TGE′ reputation leg (inert for lstm); ADOPTED from TrustScore's validated 0.9, amendment v1.7 dev gate may revise
+
+# SMOTE study knob (GWU-59): flag-gated per-client training-split oversampling.
+# Default OFF — this is an experiment-relevant path and MUST be inert for a bare
+# `flwr run` / any incumbent run. Enabled only by an explicit study launch.
+smote-enabled = false            # true = oversample each client's TRAIN split before training
+smote-variant = "smote"          # "smote" (interpolation) | "random_over" (duplication)
+smote-target = "balanced"        # "balanced" (50/50) | float minority-ratio in (0, 1]
+
+# H3 fingerprint emission (EMISSION_CONTRACT_20260808 § 4; v1.10 § 5.1).
+# Default OFF and MUST stay off: with the flag false the client never builds the
+# raw float64 fingerprint pool, never draws, and emits no
+# `FitRes.metrics["fingerprint"]` — so a bare `flwr run` and every sealed H1/H2
+# token are byte-identical to the pre-H3 image. Turned on ONLY by the `TGE+FP` /
+# `Krum+TGE+FP` config labels (scripts/run_phase4_flower.py
+# build_strategy_for_config), never by a CLI flag or a scenario.
+fingerprint-enabled = false      # true = emit the 180-dim fingerprint every round
+
+# ============================================================================
+# FEDERATION CONFIGURATIONS
+# ============================================================================
+
+[tool.flwr.federations]
+default = "rmc-local"
+
+[tool.flwr.federations.rmc-local]
+options.num-supernodes = 11
+options.backend.client-resources.num-cpus = 1
+options.backend.client-resources.num-gpus = 0.0
+
+[tool.flwr.federations.edge-full-local]
+options.num-supernodes = 10
+options.backend.client-resources.num-cpus = 1
+options.backend.client-resources.num-gpus = 0.0
+
+[tool.flwr.federations.rmc-20-local]
+options.num-supernodes = 21
+options.backend.client-resources.num-cpus = 1
+options.backend.client-resources.num-gpus = 0.0
+
+[tool.flwr.federations.brfss-20-local]
+options.num-supernodes = 21
+options.backend.client-resources.num-cpus = 1
+options.backend.client-resources.num-gpus = 0.0
+
+[tool.hatch.build.targets.wheel]
+packages = ["flowerfl", "praxis_exp", "rmc"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "unit: offline unit and contract verification",
+    "integration: integration verification",
+    "golden: exact floating-point protocol gate; run before H2prime scoring",
+    "slow: takes >10s; opt-in via pytest -m slow",
+    "anchor: full-data anchor regression; ~4hr per test; opt-in via pytest -m anchor",
+    "ray: spins up a real local Ray cluster (fleet-shape cache regression gate)",
+]
+addopts = "-m 'not slow and not anchor and not ray'"

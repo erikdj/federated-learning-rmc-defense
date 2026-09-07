@@ -1,0 +1,13 @@
+{
+  "$schema_version": 1,
+  "name": "C0_clean_no_attack",
+  "type": "clean_no_attack",
+  "output_file": "rmc/scenarios/C0_clean_no_attack.json",
+  "params": {
+    "n_adversaries": 0,
+    "n_clients": 20,
+    "n_rounds": 50,
+    "discovery_rounds": 2,
+    "seed": 42
+  }
+}

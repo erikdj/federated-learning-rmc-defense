@@ -1,0 +1,42 @@
+{
+  "schema": "flowerfl.reproduction.matrix.v1",
+  "claim": "H4 composition confirmatory fleet",
+  "status": "assembly-descriptor",
+  "launchable": false,
+  "historical_experiments": ["EXP-064", "EXP-065"],
+  "matrix": {
+    "defenses": [
+      "H2P+FP+Krum", "Krum", "H2P+FP", "Krum+TGE+FP", "H2P+Krum",
+      "H2P+FP+TS", "TrustScore", "H2P+TS", "FedAvg"
+    ],
+    "scenarios": [
+      "C0_clean_no_attack", "S0_clean_baseline", "S1_benign_churn_only",
+      "S2_adaptive_switching_only", "S3_identity_reset_only", "S4_full_mix"
+    ],
+    "seeds": [731, 999, 1234, 2048, 4096, 8192, 16384, 32768, 65536, 131072],
+    "mode": "persistent_optimizer",
+    "max_per_client": 2000000,
+    "rounds": 50,
+    "repeats": 1
+  },
+  "run_extras": {"eval_split": "sealed_test", "h2p_cuts_version": "v2"},
+  "expected_units": 540,
+  "historical_companion_override": {
+    "scope": "Krum+TGE+FP only",
+    "run_extras": {
+      "eval_split": "sealed_test",
+      "h2p_cuts_version": "v2",
+      "fp_cohort": "validation",
+      "fp_registry_policy": "flag_gated"
+    }
+  },
+  "launch_descriptors": [
+    "reproduction/configs/h4-confirmatory-main.json",
+    "reproduction/configs/h4-confirmatory-arm4.json"
+  ],
+  "semantic_arm_numbers": {
+    "1": "h2p_fp_krum", "2": "krum", "3": "h2p_fp",
+    "4": "krum_tge_fp", "5": "h2p_krum", "6": "h2p_fp_ts",
+    "7": "trustscore", "8": "fedavg", "9": "h2p_ts"
+  }
+}

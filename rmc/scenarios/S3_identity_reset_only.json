@@ -1,0 +1,727 @@
+{
+  "name": "S3_identity_reset_only",
+  "description": "Design D Scenario S3 (identity-reset-only). 9 adversaries (client_0..client_8) attack with Gaussian-then-ALIE, then reconnect under `client_N_new{K}` identities across 4 cycles (z_max=0.9). No benign churn, no strategy switching. Identity reset is the SOLE active confounder per spec \u00a7 5.",
+  "dataset": "edge_full_20_rmc",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0": {
+      "physical_id": 0
+    },
+    "client_1": {
+      "physical_id": 1
+    },
+    "client_2": {
+      "physical_id": 2
+    },
+    "client_3": {
+      "physical_id": 3
+    },
+    "client_4": {
+      "physical_id": 4
+    },
+    "client_5": {
+      "physical_id": 5
+    },
+    "client_6": {
+      "physical_id": 6
+    },
+    "client_7": {
+      "physical_id": 7
+    },
+    "client_8": {
+      "physical_id": 8
+    },
+    "client_9": {
+      "physical_id": 9
+    },
+    "client_10": {
+      "physical_id": 10
+    },
+    "client_11": {
+      "physical_id": 11
+    },
+    "client_12": {
+      "physical_id": 12
+    },
+    "client_13": {
+      "physical_id": 13
+    },
+    "client_14": {
+      "physical_id": 14
+    },
+    "client_15": {
+      "physical_id": 15
+    },
+    "client_16": {
+      "physical_id": 16
+    },
+    "client_17": {
+      "physical_id": 17
+    },
+    "client_18": {
+      "physical_id": 18
+    },
+    "client_19": {
+      "physical_id": 19
+    },
+    "client_0_new1": {
+      "physical_id": 20
+    },
+    "client_1_new1": {
+      "physical_id": 21
+    },
+    "client_2_new1": {
+      "physical_id": 22
+    },
+    "client_3_new1": {
+      "physical_id": 23
+    },
+    "client_4_new1": {
+      "physical_id": 24
+    },
+    "client_5_new1": {
+      "physical_id": 25
+    },
+    "client_6_new1": {
+      "physical_id": 26
+    },
+    "client_7_new1": {
+      "physical_id": 27
+    },
+    "client_8_new1": {
+      "physical_id": 28
+    },
+    "client_0_new2": {
+      "physical_id": 29
+    },
+    "client_1_new2": {
+      "physical_id": 30
+    },
+    "client_2_new2": {
+      "physical_id": 31
+    },
+    "client_3_new2": {
+      "physical_id": 32
+    },
+    "client_4_new2": {
+      "physical_id": 33
+    },
+    "client_5_new2": {
+      "physical_id": 34
+    },
+    "client_6_new2": {
+      "physical_id": 35
+    },
+    "client_7_new2": {
+      "physical_id": 36
+    },
+    "client_8_new2": {
+      "physical_id": 37
+    },
+    "client_0_new3": {
+      "physical_id": 38
+    },
+    "client_1_new3": {
+      "physical_id": 39
+    },
+    "client_2_new3": {
+      "physical_id": 40
+    },
+    "client_3_new3": {
+      "physical_id": 41
+    },
+    "client_4_new3": {
+      "physical_id": 42
+    },
+    "client_5_new3": {
+      "physical_id": 43
+    },
+    "client_6_new3": {
+      "physical_id": 44
+    },
+    "client_7_new3": {
+      "physical_id": 45
+    },
+    "client_8_new3": {
+      "physical_id": 46
+    },
+    "client_0_new4": {
+      "physical_id": 47
+    },
+    "client_1_new4": {
+      "physical_id": 48
+    },
+    "client_2_new4": {
+      "physical_id": 49
+    },
+    "client_3_new4": {
+      "physical_id": 50
+    },
+    "client_4_new4": {
+      "physical_id": 51
+    },
+    "client_5_new4": {
+      "physical_id": 52
+    },
+    "client_6_new4": {
+      "physical_id": 53
+    },
+    "client_7_new4": {
+      "physical_id": 54
+    },
+    "client_8_new4": {
+      "physical_id": 55
+    }
+  },
+  "schedule": [
+    {
+      "rounds": [
+        1,
+        2
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {},
+      "comment": "Discovery rounds 1..2 \u2014 all originals honest"
+    },
+    {
+      "rounds": [
+        3,
+        7
+      ],
+      "participants": [
+        "client_0",
+        "client_1",
+        "client_2",
+        "client_3",
+        "client_4",
+        "client_5",
+        "client_6",
+        "client_7",
+        "client_8",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_1": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_2": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_3": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_4": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_5": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_6": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_7": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        },
+        "client_8": {
+          "type": "gaussian_noise",
+          "params": {
+            "mean": 2.0,
+            "std": 2.0
+          }
+        }
+      },
+      "comment": "Initial Gaussian attack from 9 original adversaries"
+    },
+    {
+      "rounds": [
+        8,
+        8
+      ],
+      "participants": [
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {},
+      "comment": "Cycle 1 disconnect: 9 adversaries absent"
+    },
+    {
+      "rounds": [
+        9,
+        17
+      ],
+      "participants": [
+        "client_0_new1",
+        "client_1_new1",
+        "client_2_new1",
+        "client_3_new1",
+        "client_4_new1",
+        "client_5_new1",
+        "client_6_new1",
+        "client_7_new1",
+        "client_8_new1",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new1": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Cycle 1 ALIE: 9 adversaries return as `_new1` identities (z_max=0.9)"
+    },
+    {
+      "rounds": [
+        18,
+        18
+      ],
+      "participants": [
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {},
+      "comment": "Cycle 2 disconnect: 9 adversaries absent"
+    },
+    {
+      "rounds": [
+        19,
+        27
+      ],
+      "participants": [
+        "client_0_new2",
+        "client_1_new2",
+        "client_2_new2",
+        "client_3_new2",
+        "client_4_new2",
+        "client_5_new2",
+        "client_6_new2",
+        "client_7_new2",
+        "client_8_new2",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new2": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Cycle 2 ALIE: 9 adversaries return as `_new2` identities (z_max=0.9)"
+    },
+    {
+      "rounds": [
+        28,
+        28
+      ],
+      "participants": [
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {},
+      "comment": "Cycle 3 disconnect: 9 adversaries absent"
+    },
+    {
+      "rounds": [
+        29,
+        37
+      ],
+      "participants": [
+        "client_0_new3",
+        "client_1_new3",
+        "client_2_new3",
+        "client_3_new3",
+        "client_4_new3",
+        "client_5_new3",
+        "client_6_new3",
+        "client_7_new3",
+        "client_8_new3",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new3": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Cycle 3 ALIE: 9 adversaries return as `_new3` identities (z_max=0.9)"
+    },
+    {
+      "rounds": [
+        38,
+        38
+      ],
+      "participants": [
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {},
+      "comment": "Cycle 4 disconnect: 9 adversaries absent"
+    },
+    {
+      "rounds": [
+        39,
+        50
+      ],
+      "participants": [
+        "client_0_new4",
+        "client_1_new4",
+        "client_2_new4",
+        "client_3_new4",
+        "client_4_new4",
+        "client_5_new4",
+        "client_6_new4",
+        "client_7_new4",
+        "client_8_new4",
+        "client_9",
+        "client_10",
+        "client_11",
+        "client_12",
+        "client_13",
+        "client_14",
+        "client_15",
+        "client_16",
+        "client_17",
+        "client_18",
+        "client_19"
+      ],
+      "attacks": {
+        "client_0_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_1_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_2_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_3_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_4_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_5_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_6_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_7_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        },
+        "client_8_new4": {
+          "type": "alie",
+          "params": {
+            "z_max": 0.9
+          }
+        }
+      },
+      "comment": "Cycle 4 ALIE: 9 adversaries return as `_new4` identities (z_max=0.9)"
+    }
+  ]
+}

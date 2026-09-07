@@ -1,0 +1,35 @@
+{
+  "name": "cic_baseline",
+  "description": "All 15 CIC-IoT2023 clients honest, no churn, no attacks. Establishes best-case F1.",
+  "dataset": "cic_full",
+  "num_rounds": 30,
+  "seed": 42,
+  "clients": {
+    "client_0": {"physical_id": 0},
+    "client_1": {"physical_id": 1},
+    "client_2": {"physical_id": 2},
+    "client_3": {"physical_id": 3},
+    "client_4": {"physical_id": 4},
+    "client_5": {"physical_id": 5},
+    "client_6": {"physical_id": 6},
+    "client_7": {"physical_id": 7},
+    "client_8": {"physical_id": 8},
+    "client_9": {"physical_id": 9},
+    "client_10": {"physical_id": 10},
+    "client_11": {"physical_id": 11},
+    "client_12": {"physical_id": 12},
+    "client_13": {"physical_id": 13},
+    "client_14": {"physical_id": 14}
+  },
+  "schedule": [
+    {
+      "rounds": [1, 30],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9",
+        "client_10", "client_11", "client_12", "client_13", "client_14"
+      ],
+      "attacks": {}
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Event-driven and scheduled MLflow reconciliation for a Batch experiment fleet.
+
+Parameters:
+  LambdaImageDigest: {Type: String}
+  JobQueueArn: {Type: String}
+  Subnets: {Type: List<AWS::EC2::Subnet::Id>}
+  VpcId: {Type: AWS::EC2::VPC::Id}
+  MlflowSgId: {Type: AWS::EC2::SecurityGroup::Id}
+  BucketName: {Type: String}
+  BucketArn: {Type: String}
+  MlflowUri: {Type: String}
+  ProjectTag: {Type: String}
+  OwnerTag: {Type: String}
+  PurposeTag: {Type: String}
+  CreateBatchEndpoint:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+
+Conditions:
+  MakeBatchEndpoint: !Equals [!Ref CreateBatchEndpoint, 'true']
+
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: lambda.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: experiment-artifact-reconciliation
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:GetObject, s3:PutObject, s3:DeleteObject, s3:ListBucket]
+                Resource: [!Ref BucketArn, !Sub '${BucketArn}/*']
+        - PolicyName: batch-status-read
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: batch:DescribeJobs
+                Resource: '*'
+
+  FinalizerFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      PackageType: Image
+      Code: {ImageUri: !Ref LambdaImageDigest}
+      ImageConfig: {Command: ['praxis_exp.selfheal_lambda.handler']}
+      Role: !GetAtt LambdaRole.Arn
+      Architectures: [x86_64]
+      Timeout: 900
+      MemorySize: 1024
+      ReservedConcurrentExecutions: 1
+      Tags:
+        - {Key: Project, Value: !Ref ProjectTag}
+        - {Key: Owner, Value: !Ref OwnerTag}
+        - {Key: Purpose, Value: !Ref PurposeTag}
+      VpcConfig: {SubnetIds: !Ref Subnets, SecurityGroupIds: [!Ref MlflowSgId]}
+      Environment:
+        Variables:
+          PRAXIS_USE_INSTANCE_ROLE: '1'
+          PRAXIS_ARTIFACT_BUCKET: !Ref BucketName
+          MLFLOW_TRACKING_URI: !Ref MlflowUri
+          PRAXIS_REPO_ROOT: /app
+
+  ReaperFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      PackageType: Image
+      Code: {ImageUri: !Ref LambdaImageDigest}
+      ImageConfig: {Command: ['praxis_exp.selfheal_lambda.reaper']}
+      Role: !GetAtt LambdaRole.Arn
+      Architectures: [x86_64]
+      Timeout: 900
+      MemorySize: 1024
+      ReservedConcurrentExecutions: 1
+      Tags:
+        - {Key: Project, Value: !Ref ProjectTag}
+        - {Key: Owner, Value: !Ref OwnerTag}
+        - {Key: Purpose, Value: !Ref PurposeTag}
+      VpcConfig: {SubnetIds: !Ref Subnets, SecurityGroupIds: [!Ref MlflowSgId]}
+      Environment:
+        Variables:
+          PRAXIS_USE_INSTANCE_ROLE: '1'
+          PRAXIS_ARTIFACT_BUCKET: !Ref BucketName
+          MLFLOW_TRACKING_URI: !Ref MlflowUri
+          PRAXIS_REPO_ROOT: /app
+
+  BatchEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: MakeBatchEndpoint
+    Properties:
+      GroupDescription: HTTPS from self-heal Lambda functions to the Batch API endpoint
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - {IpProtocol: tcp, FromPort: 443, ToPort: 443, SourceSecurityGroupId: !Ref MlflowSgId}
+
+  BatchEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: MakeBatchEndpoint
+    Properties:
+      VpcId: !Ref VpcId
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.batch'
+      VpcEndpointType: Interface
+      PrivateDnsEnabled: true
+      SubnetIds: !Ref Subnets
+      SecurityGroupIds: [!Ref BatchEndpointSecurityGroup]
+
+  CompletionRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Reconcile a terminal Batch array parent with MLflow.
+      EventPattern:
+        source: [aws.batch]
+        detail-type: [Batch Job State Change]
+        detail:
+          status: [SUCCEEDED, FAILED]
+          jobQueue: [!Ref JobQueueArn]
+          arrayProperties:
+            size: [{exists: true}]
+            index: [{exists: false}]
+      Targets:
+        - {Arn: !GetAtt FinalizerFunction.Arn, Id: finalizer}
+
+  FinalizerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref FinalizerFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt CompletionRule.Arn
+
+  ReaperSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Periodic backstop for missed or partial finalization.
+      ScheduleExpression: rate(20 minutes)
+      Targets:
+        - {Arn: !GetAtt ReaperFunction.Arn, Id: reaper}
+
+  ReaperPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ReaperFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ReaperSchedule.Arn
+
+Outputs:
+  FinalizerFunctionArn: {Value: !GetAtt FinalizerFunction.Arn}
+  ReaperFunctionArn: {Value: !GetAtt ReaperFunction.Arn}
+  CompletionRuleName: {Value: !Ref CompletionRule}
+  ReaperScheduleName: {Value: !Ref ReaperSchedule}

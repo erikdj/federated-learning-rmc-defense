@@ -1,0 +1,62 @@
+{
+  "name": "rmc_szelag",
+  "description": "Szelag-faithful RMC: adaptive attack, minimal absence, matches 2504.03077v1 conditions. Client 9 attacks with loud Gaussian noise (sigma=2.0), gets 'detected' and removed for 1 round, then immediately reconnects as client_9_new with ALIE attack. Tests whether Krum degrades under adaptive RMC (Szelag reports Krum drops from 0.678 to 0.505).",
+  "dataset": "edge_full",
+  "num_rounds": 50,
+  "seed": 42,
+  "clients": {
+    "client_0": {"physical_id": 0},
+    "client_1": {"physical_id": 1},
+    "client_2": {"physical_id": 2},
+    "client_3": {"physical_id": 3},
+    "client_4": {"physical_id": 4},
+    "client_5": {"physical_id": 5},
+    "client_6": {"physical_id": 6},
+    "client_7": {"physical_id": 7},
+    "client_8": {"physical_id": 8},
+    "client_9": {"physical_id": 9},
+    "client_9_new": {"physical_id": 10}
+  },
+  "schedule": [
+    {
+      "rounds": [1, 5],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9"
+      ],
+      "attacks": {},
+      "comment": "Warmup: all honest, model converges"
+    },
+    {
+      "rounds": [6, 15],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9"
+      ],
+      "attacks": {
+        "client_9": {"type": "gaussian_noise_loud", "params": {"sigma": 2.0}}
+      },
+      "comment": "Loud attack phase (sigma=2.0 per Szelag). Krum should detect and filter."
+    },
+    {
+      "rounds": [16, 16],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8"
+      ],
+      "attacks": {},
+      "comment": "Minimal absence: 1 round only (Szelag: immediate reconnection)"
+    },
+    {
+      "rounds": [17, 50],
+      "participants": [
+        "client_0", "client_1", "client_2", "client_3", "client_4",
+        "client_5", "client_6", "client_7", "client_8", "client_9_new"
+      ],
+      "attacks": {
+        "client_9_new": {"type": "alie", "params": {"z_max": 1.0}}
+      },
+      "comment": "ADAPTIVE rejoin: new identity, switches to ALIE attack (per Szelag). Krum should degrade because ALIE stays within honest update distribution."
+    }
+  ]
+}
